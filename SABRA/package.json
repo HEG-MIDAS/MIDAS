@@ -1,0 +1,28 @@
+{
+  "name": "sabra",
+  "version": "1.0.0",
+  "description": "Scrapper for SABRA",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HEG-MIDAS/MIDAS.git"
+  },
+  "keywords": [
+    "scrapper",
+    "cypress",
+    "midas",
+    "sabra"
+  ],
+  "author": "Amir Alwash",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/HEG-MIDAS/MIDAS/issues"
+  },
+  "homepage": "https://github.com/HEG-MIDAS/MIDAS#readme",
+  "devDependencies": {
+    "cypress": "^9.5.0"
+  }
+}
