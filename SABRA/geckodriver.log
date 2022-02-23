@@ -1,0 +1,457 @@
+1645630372679	geckodriver	INFO	Listening on 127.0.0.1:37965
+1645630372685	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "41991" "-no-remote" "-profile" "/tmp/rust_mozprofilejP2z5f"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1645630373188	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofilejP2z5f/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:41991/devtools/browser/468541f0-a9f3-45ce-94e7-04ac185aeb93
+1645630374346	Marionette	INFO	Listening on port 36087
+1645630374399	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+1645630473894	geckodriver	INFO	Listening on 127.0.0.1:38997
+1645630473898	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "53223" "-no-remote" "-profile" "/tmp/rust_mozprofileMPVWu7"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1645630474350	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileMPVWu7/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:53223/devtools/browser/27a5d254-1a3c-44be-a770-e28b6196b7e8
+1645630475467	Marionette	INFO	Listening on port 33317
+1645630475512	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+1645630496707	geckodriver	INFO	Listening on 127.0.0.1:32795
+1645630496711	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "50997" "-no-remote" "-profile" "/tmp/rust_mozprofileYEbhCw"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1645630497198	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileYEbhCw/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:50997/devtools/browser/61d67fa2-5587-4e4f-95b9-3c414472e88d
+1645630498475	Marionette	INFO	Listening on port 44995
+1645630498529	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+1645630504851	Marionette	INFO	Stopped listening on port 44995
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+JavaScript error: chrome://remote/content/marionette/cert.js, line 55: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsICertOverrideService.setDisableAllSecurityChecksAndLetAttackersInterceptMyData]
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
+1645630891540	geckodriver	INFO	Listening on 127.0.0.1:39965
+1645630891544	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "60983" "-no-remote" "-profile" "/tmp/rust_mozprofilerBSbqq"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1645630891977	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofilerBSbqq/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:60983/devtools/browser/c6b1c4b8-200a-4783-bd49-8c8611237ebf
+1645630893100	Marionette	INFO	Listening on port 43761
+1645630893157	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+1645630898808	Marionette	INFO	Stopped listening on port 43761
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+JavaScript error: chrome://remote/content/marionette/cert.js, line 55: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsICertOverrideService.setDisableAllSecurityChecksAndLetAttackersInterceptMyData]
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
+1645630955418	geckodriver	INFO	Listening on 127.0.0.1:59023
+1645630955423	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "46471" "-no-remote" "-profile" "/tmp/rust_mozprofileqEh9IY"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1645630955952	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileqEh9IY/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:46471/devtools/browser/90ba0908-a87e-4013-a176-a38cb7ca3079
+1645630957063	Marionette	INFO	Listening on port 40155
+1645630957138	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+1645630968616	Marionette	INFO	Stopped listening on port 40155
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+JavaScript error: chrome://remote/content/marionette/cert.js, line 55: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsICertOverrideService.setDisableAllSecurityChecksAndLetAttackersInterceptMyData]
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
+1645631013808	geckodriver	INFO	Listening on 127.0.0.1:59859
+1645631013813	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "33179" "-no-remote" "-profile" "/tmp/rust_mozprofileQGqR90"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1645631014326	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileQGqR90/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:33179/devtools/browser/ca36aca6-69e6-4c1b-ac94-bcf0d428cc85
+1645631015415	Marionette	INFO	Listening on port 41555
+1645631015432	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+1645631019901	Marionette	INFO	Stopped listening on port 41555
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+JavaScript error: chrome://remote/content/marionette/cert.js, line 55: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsICertOverrideService.setDisableAllSecurityChecksAndLetAttackersInterceptMyData]
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
+1645631114527	geckodriver	INFO	Listening on 127.0.0.1:34669
+1645631114532	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "45507" "-no-remote" "-profile" "/tmp/rust_mozprofile8oD553"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1645631115045	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofile8oD553/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:45507/devtools/browser/559abf48-cba2-4745-ad66-e1a7f4edbe44
+1645631116212	Marionette	INFO	Listening on port 39779
+1645631117158	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+1645631130725	Marionette	INFO	Stopped listening on port 39779
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+JavaScript error: chrome://remote/content/marionette/cert.js, line 55: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsICertOverrideService.setDisableAllSecurityChecksAndLetAttackersInterceptMyData]
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
+1645631174972	geckodriver	INFO	Listening on 127.0.0.1:35583
+1645631174977	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "57807" "-no-remote" "-profile" "/tmp/rust_mozprofilekDwhY6"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1645631175410	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofilekDwhY6/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:57807/devtools/browser/1196507b-217f-45a1-896a-2df39857f55d
+1645631176758	Marionette	INFO	Listening on port 39035
+1645631176798	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+1645631182495	Marionette	INFO	Stopped listening on port 39035
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+JavaScript error: chrome://remote/content/marionette/cert.js, line 55: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsICertOverrideService.setDisableAllSecurityChecksAndLetAttackersInterceptMyData]
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
+1645631209104	geckodriver	INFO	Listening on 127.0.0.1:55169
+1645631209107	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "34497" "-no-remote" "-profile" "/tmp/rust_mozprofilecyOKY6"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1645631209545	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofilecyOKY6/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:34497/devtools/browser/b6dbbd71-a0bc-4776-90bf-821464529e4d
+1645631210662	Marionette	INFO	Listening on port 32867
+1645631210721	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+1645631220746	geckodriver	INFO	Listening on 127.0.0.1:43573
+1645631220750	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "37753" "-no-remote" "-profile" "/tmp/rust_mozprofilewVo6nc"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1645631221194	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofilewVo6nc/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:37753/devtools/browser/f7582767-06c0-46fb-9c30-e277994cf25a
+1645631222281	Marionette	INFO	Listening on port 38105
+1645631222363	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+1645631231590	Marionette	INFO	Stopped listening on port 38105
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+JavaScript error: chrome://remote/content/marionette/cert.js, line 55: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsICertOverrideService.setDisableAllSecurityChecksAndLetAttackersInterceptMyData]
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
+1645631309407	geckodriver	INFO	Listening on 127.0.0.1:40477
+1645631309411	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "33625" "-no-remote" "-profile" "/tmp/rust_mozprofilePINybp"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1645631309855	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofilePINybp/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:33625/devtools/browser/152fad48-3e5d-4fe3-a277-06bb5b731158
+1645631311227	Marionette	INFO	Listening on port 38233
+1645631311326	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+1645631410872	geckodriver	INFO	Listening on 127.0.0.1:42713
+1645631410877	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "36829" "-no-remote" "-profile" "/tmp/rust_mozprofileUlpBSt"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1645631411393	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileUlpBSt/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:36829/devtools/browser/ea8bc01e-420f-4673-ae47-4b816c27b286
+1645631413046	Marionette	INFO	Listening on port 36199
+1645631413096	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+1645631573924	geckodriver	INFO	Listening on 127.0.0.1:39063
+1645631573928	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "49363" "-no-remote" "-profile" "/tmp/rust_mozprofile0SX1IE"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1645631574524	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofile0SX1IE/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:49363/devtools/browser/fc19b2ef-3dca-4a63-8b2f-2a4b4bd689d9
+1645631575728	Marionette	INFO	Listening on port 45989
+1645631575746	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+1645631609032	geckodriver	INFO	Listening on 127.0.0.1:54243
+1645631609544	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "59715" "-no-remote" "-profile" "/tmp/rust_mozprofile4j0afG"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1645631610100	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofile4j0afG/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:59715/devtools/browser/fe4ee961-b430-48e9-95ec-c540af8c49c4
+1645631611911	Marionette	INFO	Listening on port 43577
+1645631611963	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+1645631615081	Marionette	INFO	Stopped listening on port 43577
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+JavaScript error: chrome://remote/content/marionette/cert.js, line 55: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsICertOverrideService.setDisableAllSecurityChecksAndLetAttackersInterceptMyData]
+1645631707978	geckodriver	INFO	Listening on 127.0.0.1:46327
+1645631707982	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "60787" "-no-remote" "-profile" "/tmp/rust_mozprofilegbfpqe"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1645631708469	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofilegbfpqe/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:60787/devtools/browser/bc864f20-ec8f-4924-8859-5254f6318eac
+1645631709641	Marionette	INFO	Listening on port 45591
+1645631710470	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+1645631787780	geckodriver	INFO	Listening on 127.0.0.1:42109
+1645631787785	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "46161" "-no-remote" "-profile" "/tmp/rust_mozprofile4biqgl"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1645631788295	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofile4biqgl/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:46161/devtools/browser/bb6705a5-d81f-4a01-8379-2d57b65472f5
+1645631789947	Marionette	INFO	Listening on port 46211
+1645631789999	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+1645632009966	geckodriver	INFO	Listening on 127.0.0.1:36581
+1645632009971	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "42367" "-no-remote" "-profile" "/tmp/rust_mozprofileAbb2Nm"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1645632010535	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileAbb2Nm/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:42367/devtools/browser/9d1fbf7f-dbc4-4b29-bd21-2905b03b7893
+1645632012141	Marionette	INFO	Listening on port 36337
+1645632012188	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+1645632016734	Marionette	INFO	Stopped listening on port 36337
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+JavaScript error: chrome://remote/content/marionette/cert.js, line 55: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsICertOverrideService.setDisableAllSecurityChecksAndLetAttackersInterceptMyData]
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
+1645632260546	geckodriver	INFO	Listening on 127.0.0.1:48163
+1645632260550	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-headless" "--remote-debugging-port" "36703" "-no-remote" "-profile" "/tmp/rust_mozprofileKbz3IZ"
+*** You are running in headless mode.
+1645632260767	Marionette	INFO	Marionette enabled
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileKbz3IZ/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:36703/devtools/browser/ab6f54eb-6baf-4f4c-b0da-a5720b7c01d1
+1645632261872	Marionette	INFO	Listening on port 36443
+1645632261966	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:36355): GLib-GObject-CRITICAL **: 17:04:23.541: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+1645632271641	geckodriver	INFO	Listening on 127.0.0.1:32869
+1645632271645	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-headless" "--remote-debugging-port" "37865" "-no-remote" "-profile" "/tmp/rust_mozprofilevIlWOw"
+*** You are running in headless mode.
+1645632271843	Marionette	INFO	Marionette enabled
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofilevIlWOw/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:37865/devtools/browser/558daa02-9459-46af-a484-f8751cbf86fb
+1645632273015	Marionette	INFO	Listening on port 41909
+1645632273058	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:36621): GLib-GObject-CRITICAL **: 17:04:34.814: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+1645632700038	geckodriver	INFO	Listening on 127.0.0.1:38953
+1645632700043	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-headless" "--remote-debugging-port" "60305" "-no-remote" "-profile" "/tmp/rust_mozprofilemlxX0Z"
+*** You are running in headless mode.
+1645632700346	Marionette	INFO	Marionette enabled
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofilemlxX0Z/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:60305/devtools/browser/88e7ae57-bb72-46b8-940d-3d0926a5ce9c
+1645632701440	Marionette	INFO	Listening on port 46791
+1645632701457	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:38246): GLib-GObject-CRITICAL **: 17:11:43.164: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+1645634032759	geckodriver	INFO	Listening on 127.0.0.1:35183
+1645634033269	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-headless" "--remote-debugging-port" "52869" "-no-remote" "-profile" "/tmp/rust_mozprofileGv0kYG"
+*** You are running in headless mode.
+1645634033587	Marionette	INFO	Marionette enabled
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileGv0kYG/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:52869/devtools/browser/6684c2ae-3d8a-4b8c-94b9-93d4f87e5ca2
+1645634034680	Marionette	INFO	Listening on port 43259
+1645634034785	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1645634093467	geckodriver	INFO	Listening on 127.0.0.1:46239
+1645634093471	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-headless" "--remote-debugging-port" "59019" "-no-remote" "-profile" "/tmp/rust_mozprofilecDfT2w"
+*** You are running in headless mode.
+1645634093730	Marionette	INFO	Marionette enabled
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofilecDfT2w/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:59019/devtools/browser/0eac4654-8230-488a-b04a-8101948736a0
+1645634094903	Marionette	INFO	Listening on port 44013
+1645634095018	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:40094): GLib-GObject-CRITICAL **: 17:34:56.910: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+1645634255516	geckodriver	INFO	Listening on 127.0.0.1:58365
+1645634255521	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-headless" "--remote-debugging-port" "37991" "-no-remote" "-profile" "/tmp/rust_mozprofileI9fQ1c"
+*** You are running in headless mode.
+1645634255771	Marionette	INFO	Marionette enabled
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileI9fQ1c/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:37991/devtools/browser/acf0a47b-cabb-4be4-a692-c8433514267f
+1645634256967	Marionette	INFO	Listening on port 33785
+1645634257089	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1645634485210	geckodriver	INFO	Listening on 127.0.0.1:33621
+1645634485709	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-headless" "--remote-debugging-port" "47383" "-no-remote" "-profile" "/tmp/rust_mozprofileYdHym5"
+*** You are running in headless mode.
+1645634485982	Marionette	INFO	Marionette enabled
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileYdHym5/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:47383/devtools/browser/1d8299ba-7931-4b22-90b5-612b61fb3bb4
+1645634487263	Marionette	INFO	Listening on port 32887
+1645634487325	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:41442): GLib-GObject-CRITICAL **: 17:41:28.869: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+1645634708923	geckodriver	INFO	Listening on 127.0.0.1:50843
+1645634709435	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-headless" "--remote-debugging-port" "54505" "-no-remote" "-profile" "/tmp/rust_mozprofileIFAUra"
+*** You are running in headless mode.
+1645634709920	Marionette	INFO	Marionette enabled
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileIFAUra/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:54505/devtools/browser/5b0d92d8-2752-4860-b9e4-8e97fa281650
+1645634710984	Marionette	INFO	Listening on port 37337
+1645634711052	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:42558): GLib-GObject-CRITICAL **: 17:45:18.304: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+1645634755107	geckodriver	INFO	Listening on 127.0.0.1:41249
+1645634755619	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-headless" "--remote-debugging-port" "58359" "-no-remote" "-profile" "/tmp/rust_mozprofilecfHI3h"
+*** You are running in headless mode.
+1645634756471	Marionette	INFO	Marionette enabled
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofilecfHI3h/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:58359/devtools/browser/e177b859-28f2-40c2-82e6-2b0c0802d2a1
+1645634774730	Marionette	INFO	Listening on port 46529
+1645634774845	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:42875): GLib-GObject-CRITICAL **: 17:46:18.820: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:42875): GLib-GObject-CRITICAL **: 17:46:21.883: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:42875): GLib-GObject-CRITICAL **: 17:52:03.326: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:42875): GLib-GObject-CRITICAL **: 17:52:10.206: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+1645637865447	Marionette	INFO	Stopped listening on port 46211
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+1645637868351	Marionette	INFO	Stopped listening on port 45591
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
+1645637871345	Marionette	INFO	Stopped listening on port 38233
+1645637871348	Marionette	INFO	Stopped listening on port 36199
+1645637871351	Marionette	INFO	Stopped listening on port 45989
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+1645637871510	Marionette	INFO	Stopped listening on port 33317
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
+1645637872004	Marionette	INFO	Stopped listening on port 32867
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
+1645637872314	Marionette	INFO	Stopped listening on port 36087
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
