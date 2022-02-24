@@ -1,0 +1,10 @@
+LICENSE
+README.md
+pyproject.toml
+setup.cfg
+src/merge_package/__init__.py
+src/merge_package/merge.py
+src/merge_package_MagiPrince.egg-info/PKG-INFO
+src/merge_package_MagiPrince.egg-info/SOURCES.txt
+src/merge_package_MagiPrince.egg-info/dependency_links.txt
+src/merge_package_MagiPrince.egg-info/top_level.txt
