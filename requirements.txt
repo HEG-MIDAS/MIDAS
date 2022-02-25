@@ -38,6 +38,7 @@ regex==2021.10.21
 requests==2.25.1
 scikit-learn==1.0
 scipy==1.5.4
+selenium==4.1.2
 six==1.15.0
 sklearn==0.0
 smart-open==5.2.1
