@@ -28,7 +28,7 @@ def scraper(URL,urbain_input,polluants_input,time_input,timelapse_input):
     # Get submit button and assert its value
     submit_button = driver.find_element(By.ID,"submit_button")
     assert submit_button.get_attribute('value') == "Extraire"
-    # Download with params
+    # Set params in Form
     driver.find_element(By.CSS_SELECTOR,'table input[value="'+urbain_input+'"]').click()
     driver.find_element(By.CSS_SELECTOR,'table input[value="'+polluants_input+'"]').click()
     driver.find_element(By.CSS_SELECTOR,'table input[value="'+time_input+'"]').click()
@@ -41,7 +41,9 @@ def scraper(URL,urbain_input,polluants_input,time_input,timelapse_input):
     driver.find_element(By.ID,"submit_button").click()
     # Find the Download button and download it
     csv_button = driver.find_element(By.CSS_SELECTOR,'a[title="Télécharger les données"]').click()
+    # Print Debug for download
     print("Downloaded "+urbain_input+" "+polluants_input)
+    # Need to wait of website can crash
     time.sleep(2)
 
 # Debug Start
@@ -69,4 +71,5 @@ for u in urbanArea:
         scraper(URL,u,k,'autre',v)
 # Close Firefox Driver
 driver.close()
+# Print Debug for End
 print("Done "+time.strftime("%Y-%m-%d %H:%M:%S"))
