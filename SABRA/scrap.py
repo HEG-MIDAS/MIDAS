@@ -1,5 +1,6 @@
 import os
 import time
+import re
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -21,6 +22,30 @@ URL = "https://www.ropag-data.ch/gechairmo/i_extr.php"
 def logs():
     with open(os.path.join(scraper_path,'log.txt'), 'a') as file:
         file.write(time.strftime('%Y-%m-%d %H:%M:%S'))
+
+def manipulate():
+    for f in os.listdir(scraper_path):
+        polluant=""
+        station=""
+        typologie=""
+        if f.find('.csv')>-1:
+            file = open(f)
+            for x in file:
+                x = x.strip()
+                if x.find('Typologie')>-1:
+                    typologie = x.strip().split("Typologie:  ")[1]
+                elif x.find('Polluant')>-1:
+                    polluant = re.search("\((.*?)\)",x.strip().split("Polluant:  ")[1]).group(1)
+                elif x.find('Date  [GMT+1]')>-1:
+                    stations = x.strip().split("Date  [GMT+1]")[1].strip().split(";")
+                    stations.pop(0)
+                    stations = ['{0}-{1}'.format(element,typologie) for element in stations]
+                elif x.find('Date')>-1:
+                    stations = x.strip().split("Date")[1].strip().split(";")
+                    stations.pop(0)
+                    stations = ['{0}-{1}'.format(element,typologie) for element in stations]
+                elif x != "":
+                    print(x)
 
 def scraper(URL,urbain_input,polluants_input,time_input,timelapse_input):
     # Go to URL
@@ -46,30 +71,35 @@ def scraper(URL,urbain_input,polluants_input,time_input,timelapse_input):
     # Need to wait of website can crash
     time.sleep(2)
 
+def download():
+    # Create Firefox Options needed to autodownload
+    options = webdriver.FirefoxOptions()
+    options.headless = True
+    options.set_preference("browser.download.folderList", 2)
+    options.set_preference("browser.download.viewableInternally.enabledTypes", "")
+    options.set_preference("browser.download.useDownloadDir", True)
+    options.set_preference("browser.download.dir", scraper_path)
+    options.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/csv,application/octet-stream")
+    options.set_preference("pdfjs.disabled", True)
+    options.set_preference("browser.helperApps.neverAsk.openFile", "text/csv,application/octet-stream")
+    # Create Service for Firefox (Gecko) Driver Location
+    service = Service(os.path.join(scraper_path,'geckodriver'))
+    # Create Driver
+    driver = webdriver.Firefox(options=options,service=service)
+    # Array of params
+    urbanArea = ['urbain','suburbain','rural']
+    pollTimeStep = {'1':'quot','18':'quot','2':'hor','3':'hor'}
+    # Loop through both array to get all files
+    for u in urbanArea:
+        for k, v in pollTimeStep.items():
+            scraper(URL,u,k,'autre',v)
+    # Close Firefox Driver
+    driver.close()
 # Debug Start
 print("Starting "+time.strftime("%Y-%m-%d %H:%M:%S"))
-# Create Firefox Options needed to autodownload
-options = webdriver.FirefoxOptions()
-options.headless = True
-options.set_preference("browser.download.folderList", 2)
-options.set_preference("browser.download.viewableInternally.enabledTypes", "")
-options.set_preference("browser.download.useDownloadDir", True)
-options.set_preference("browser.download.dir", scraper_path)
-options.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/csv,application/octet-stream")
-options.set_preference("pdfjs.disabled", True)
-options.set_preference("browser.helperApps.neverAsk.openFile", "text/csv,application/octet-stream")
-# Create Service for Firefox (Gecko) Driver Location
-service = Service(os.path.join(scraper_path,'geckodriver'))
-# Create Driver
-driver = webdriver.Firefox(options=options,service=service)
-# Array of params
-urbanArea = ['urbain','suburbain','rural']
-pollTimeStep = {'1':'quot','18':'quot','2':'hor','3':'hor'}
-# Loop through both array to get all files
-for u in urbanArea:
-    for k, v in pollTimeStep.items():
-        scraper(URL,u,k,'autre',v)
-# Close Firefox Driver
-driver.close()
+# Download Function
+# download()
+# Manipulating
+manipulate()
 # Print Debug for End
 print("Done "+time.strftime("%Y-%m-%d %H:%M:%S"))
