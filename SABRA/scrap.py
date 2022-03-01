@@ -7,11 +7,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
 
 # Set Up Paths
-# Root of Project
+## Root of Project
 root_path = os.path.dirname(os.getcwd())
-# Path of Scraper
+## Path of Scraper
 scraper_path = os.path.join(root_path,'SABRA')
-# Path of Media
+## Path of Media
 media_path = os.path.join(root_path,'media/SABRA')
 
 # URL to scrap
@@ -23,27 +23,41 @@ def logs():
     with open(os.path.join(scraper_path,'log.txt'), 'a') as file:
         file.write(time.strftime('%Y-%m-%d %H:%M:%S'))
 
+# Function to manipulate the downloaded files
 def manipulate():
+    # Loop through all files in the scraper folder
     for f in os.listdir(scraper_path):
-        polluant=""
-        station=""
-        typologie=""
+        # If files is a CSV
         if f.find('.csv')>-1:
+            # Set up variables for each files
+            polluant=""
+            station=""
+            typologie=""
+            # Open File
             file = open(f)
+            # Loop each line of file
             for x in file:
+                # Strip whitespaces
                 x = x.strip()
+                # If the line has 'Typologie'
                 if x.find('Typologie')>-1:
                     typologie = x.strip().split("Typologie:  ")[1]
+                # If line has 'Polluant'
                 elif x.find('Polluant')>-1:
                     polluant = re.search("\((.*?)\)",x.strip().split("Polluant:  ")[1]).group(1)
+                # If line has 'Date [GMT+1]'
                 elif x.find('Date  [GMT+1]')>-1:
                     stations = x.strip().split("Date  [GMT+1]")[1].strip().split(";")
                     stations.pop(0)
                     stations = ['{0}-{1}'.format(element,typologie) for element in stations]
+                    ## Need to add something to open/create/check file?!
+                # If line has 'Date'
                 elif x.find('Date')>-1:
                     stations = x.strip().split("Date")[1].strip().split(";")
                     stations.pop(0)
                     stations = ['{0}-{1}'.format(element,typologie) for element in stations]
+                    ## Need to add something to open/create/check file?!
+                # Else if date isn't an empty string
                 elif x != "":
                     print(x)
 
