@@ -1,6 +1,6 @@
 import requests
 import time
-from merge_package import merge 
+from merge_csv_by_date_package import merge_csv_by_date
 
 def add_logs():
     with open("log.txt", "a") as file:
@@ -35,5 +35,5 @@ url = """http://www.climacity.org/Axis/a_data_export.gwt?fdate={}&tdate={}&h_loc
     h_Tsv=on&h_Gh_Avg=on&h_Dh_Avg=on&h_Tamb_Avg=on&h_HRamb_Avg=on&h_Prec_Tot=on&h_Vv_Avg=on&h_Vv_Avg=on&
     h_Vv_Max=on&h_Dv_Avg=on&h_Baro=on&h_CS125_Vis=on&chB_PM25=on&h_PM10=on&h_Hc=on&h_Az=on""".format(today, today)
 
-merge.my_function()
+merge_csv_by_date.my_function()
 #extract_data(url)
