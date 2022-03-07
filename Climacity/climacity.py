@@ -1,15 +1,16 @@
+from httplib2 import Response
 import requests
 import time
 import re
 import os
 from merge_csv_by_date_package import merge_csv_by_date
 
-def add_logs():
+def add_logs() -> None:
     with open("log.txt", "a") as file:
         file.write(time.strftime("%Y-%m-%d %H:%M:%S"))
 
 
-def download_data(url):
+def download_data(url: str) -> Response:
     #start_time = time.time()
     r = requests.get(url)
     #print(time.time()-start_time)
@@ -19,7 +20,7 @@ def download_data(url):
         add_logs()
 
 
-def decode_request(r):
+def decode_request(r: Response) -> None:
     data_lines = []
     for line in r.iter_lines():
         data_lines.append(line.decode())
@@ -28,7 +29,7 @@ def decode_request(r):
 
 
 
-def extract_relevant_data(r):
+def extract_relevant_data(r: Response) -> None:
     header_beggining = False
     data_beggining = False
     dict_header = {}
@@ -51,7 +52,7 @@ def process_data(data):
     pass
 
 
-def write_request_in_tmp_file(r, path):
+def write_request_in_tmp_file(r: Response, path: str) -> None:
     f = open('{}/tmp_data_request.csv'.format(path), 'a')
     for line in r.iter_lines():
         f.write(line.decode())
