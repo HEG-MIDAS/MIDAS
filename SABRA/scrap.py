@@ -28,11 +28,13 @@ def manipulate():
     # Loop through all files in the scraper folder
     for f in os.listdir(scraper_path):
         # If files is a CSV
-        if f.find('.csv')>-1:
+        if f.find('.csv') >-1 and f.find('temp') < 0:
+            # Merge Script Here to create original file
             # Set up variables for each files
             polluant=""
-            station=""
             typologie=""
+            stations=[]
+            tempFiles = []
             # Open File
             file = open(f)
             # Loop each line of file
@@ -45,22 +47,39 @@ def manipulate():
                 # If line has 'Polluant'
                 elif x.find('Polluant')>-1:
                     polluant = re.search("\((.*?)\)",x.strip().split("Polluant:  ")[1]).group(1)
-                # If line has 'Date [GMT+1]'
+                # If line has 'Date [GMT+1]' => Daily Datas
                 elif x.find('Date  [GMT+1]')>-1:
                     stations = x.strip().split("Date  [GMT+1]")[1].strip().split(";")
                     stations.pop(0)
-                    stations = ['{0}-{1}'.format(element,typologie) for element in stations]
+                    temp = stations
+                    stations = [os.path.join(media_path,'{0}-{1}.csv'.format(element,typologie)) for element in stations]
+                    tempFiles = [os.path.join(scraper_path,'temp-{0}-{1}.csv'.format(element,typologie)) for element in temp]
                     ## Need to add something to open/create/check file?!
-                # If line has 'Date'
+                # If line has 'Date' => Weekly Datas
                 elif x.find('Date')>-1:
                     stations = x.strip().split("Date")[1].strip().split(";")
                     stations.pop(0)
-                    stations = ['{0}-{1}'.format(element,typologie) for element in stations]
+                    temp = stations
+                    stations = [os.path.join(media_path,'{0}-{1}.csv'.format(element,typologie)) for element in stations]
+                    tempFiles = [os.path.join(scraper_path,'temp-{0}-{1}.csv'.format(element,typologie)) for element in temp]
                     ## Need to add something to open/create/check file?!
                 # Else if date isn't an empty string
-                elif x != "":
-                    print(x)
+                elif x != "" and x.find('Unité') < 0:
+                    for tF in tempFiles:
+                        if(os.path.isfile(tF) == False):
+                            print("No file")
+                            open(tF, 'w').close()
+                        else:
+                            print("File")
 
+# Clean Folder Script
+def clean():
+    for f in os.listdir(scraper_path):
+        # If files is a CSV
+        if f.find('.csv') >-1 and f.find('temp') > -1:
+            os.remove(f)
+
+# Scrap website
 def scraper(URL,urbain_input,polluants_input,time_input,timelapse_input):
     # Go to URL
     driver.get(URL)
@@ -85,6 +104,7 @@ def scraper(URL,urbain_input,polluants_input,time_input,timelapse_input):
     # Need to wait of website can crash
     time.sleep(2)
 
+# Setup the headless browser (Using Firefox/Gecko)
 def download():
     # Create Firefox Options needed to autodownload
     options = webdriver.FirefoxOptions()
@@ -115,5 +135,7 @@ print("Starting "+time.strftime("%Y-%m-%d %H:%M:%S"))
 # download()
 # Manipulating
 manipulate()
+# Clean folder
+clean()
 # Print Debug for End
 print("Done "+time.strftime("%Y-%m-%d %H:%M:%S"))
