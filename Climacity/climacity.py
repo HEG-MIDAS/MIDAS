@@ -1,4 +1,3 @@
-from httplib2 import Response
 import requests
 import time
 import re
@@ -10,7 +9,7 @@ def add_logs() -> None:
         file.write(time.strftime("%Y-%m-%d %H:%M:%S"))
 
 
-def download_data(url: str) -> Response:
+def download_data(url: str) -> requests.Request:
     #start_time = time.time()
     r = requests.get(url)
     #print(time.time()-start_time)
@@ -20,7 +19,7 @@ def download_data(url: str) -> Response:
         add_logs()
 
 
-def decode_request(r: Response) -> None:
+def decode_request(r: requests.Request) -> None:
     data_lines = []
     for line in r.iter_lines():
         data_lines.append(line.decode())
@@ -29,7 +28,7 @@ def decode_request(r: Response) -> None:
 
 
 
-def extract_relevant_data(r: Response) -> None:
+def extract_relevant_data(r: requests.Request) -> None:
     header_beggining = False
     data_beggining = False
     dict_header = {}
@@ -52,7 +51,7 @@ def process_data(data):
     pass
 
 
-def write_request_in_tmp_file(r: Response, path: str) -> None:
+def write_request_in_tmp_file(r: requests.Request, path: str) -> None:
     f = open('{}/tmp_data_request.csv'.format(path), 'w')
     for line in r.iter_lines():
         f.write("{}\n".format(line.decode()))
