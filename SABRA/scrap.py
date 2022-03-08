@@ -67,10 +67,7 @@ def manipulate():
                 elif x != "" and x.find('Unité') < 0:
                     for tF in tempFiles:
                         if(os.path.isfile(tF) == False):
-                            print("No file")
                             open(tF, 'w').close()
-                        else:
-                            print("File")
 
 # Clean Folder Script
 def clean():
