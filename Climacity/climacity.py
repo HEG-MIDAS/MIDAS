@@ -53,9 +53,9 @@ def process_data(data):
 
 
 def write_request_in_tmp_file(r: Response, path: str) -> None:
-    f = open('{}/tmp_data_request.csv'.format(path), 'a')
+    f = open('{}/tmp_data_request.csv'.format(path), 'w')
     for line in r.iter_lines():
-        f.write(line.decode())
+        f.write("{}\n".format(line.decode()))
     f.close()
 
 
