@@ -4,6 +4,7 @@ import re
 import os
 from merge_csv_by_date_package import merge_csv_by_date
 
+
 def add_logs() -> None:
     with open("log.txt", "a") as file:
         file.write(time.strftime("%Y-%m-%d %H:%M:%S"))
@@ -51,28 +52,33 @@ def process_data(data):
     pass
 
 
-def write_request_in_tmp_file(r: requests.Request, path: str) -> None:
-    f = open('{}/tmp_data_request.csv'.format(path), 'w')
+def write_request_in_tmp_file(r: requests.Request, path_tmp_file: str) -> None:
+    f = open(path_tmp_file, 'w')
     for line in r.iter_lines():
         f.write("{}\n".format(line.decode()))
     f.close()
 
 
-def write_data_in_folder(data):
-    pass
-
-
 __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
+path_tmp_file = '{}/tmp_data_request.csv'.format(__location__)
+path_original_data_file = '{}/../media/original/Climacity/climacity_original_merged.csv'.format(__location__)
 
 today = time.strftime("%Y-%m-%d %H:%M:%S")
 
-start_date = "2021-01-18"
-end_date = "2021-01-18"
+start_date = "2021-02-18"
+end_date = "2021-02-18"
 
 url = """http://www.climacity.org/Axis/a_data_export.gwt?fdate={}&tdate={}&h_loc=on&
     h_Tsv=on&h_Gh_Avg=on&h_Dh_Avg=on&h_Tamb_Avg=on&h_HRamb_Avg=on&h_Prec_Tot=on&h_Vv_Avg=on&h_Vv_Avg=on&
-    h_Vv_Max=on&h_Dv_Avg=on&h_Baro=on&h_CS125_Vis=on&chB_PM25=on&h_PM10=on&h_Hc=on&h_Az=on""".format(today, today)
+    h_Vv_Max=on&h_Dv_Avg=on&h_Baro=on&h_CS125_Vis=on&chB_PM25=on&h_PM10=on&h_Hc=on&h_Az=on""".format(start_date, end_date)
 
-#merge_csv_by_date.my_function()
-data = write_request_in_tmp_file(download_data(url), __location__)
+# Create a temporary file containing the data requested to climacity (original data)
+write_request_in_tmp_file(download_data(url), path_tmp_file)
+start_time = time.time()
+# Merge temporary file with the file containing all the original data
+merge_csv_by_date(path_original_data_file, path_tmp_file)
+print(time.time()-start_time)
+# Remove the temporary file created
+#os.remove(path_tmp_file)
+
