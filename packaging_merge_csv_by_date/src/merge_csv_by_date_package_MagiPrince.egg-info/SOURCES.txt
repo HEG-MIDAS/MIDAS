@@ -1,0 +1,10 @@
+LICENSE
+README.md
+pyproject.toml
+setup.cfg
+src/merge_csv_by_date_package/__init__.py
+src/merge_csv_by_date_package/merge_csv_by_date.py
+src/merge_csv_by_date_package_MagiPrince.egg-info/PKG-INFO
+src/merge_csv_by_date_package_MagiPrince.egg-info/SOURCES.txt
+src/merge_csv_by_date_package_MagiPrince.egg-info/dependency_links.txt
+src/merge_csv_by_date_package_MagiPrince.egg-info/top_level.txt
