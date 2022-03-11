@@ -25,6 +25,7 @@ def logs():
 
 # Function to manipulate the downloaded files
 def manipulate():
+    headerOrder = {'Date':0,'PM2.5':1,'PM10':2,'NO2':3,"O3":4}
     # Loop through all files in the scraper folder
     for f in os.listdir(scraper_path):
         # If files is a CSV
@@ -34,7 +35,10 @@ def manipulate():
             polluant=""
             typologie=""
             stations=[]
+            finalFiles=[]
             tempFiles = []
+            dataTable = []
+            stationsOrder = {}
             # Open File
             file = open(f)
             # Loop each line of file
@@ -52,17 +56,19 @@ def manipulate():
                     stations = x.strip().split("Date  [GMT+1]")[1].strip().split(";")
                     stations.pop(0)
                     temp = stations
-                    stations = [os.path.join(media_path,'{0}-{1}.csv'.format(element,typologie)) for element in stations]
+                    for i in range(0,len(stations)):
+                        stationsOrder[stations[i]] = i
+                    finalFiles = [os.path.join(media_path,'{0}-{1}.csv'.format(element,typologie)) for element in stations]
                     tempFiles = [os.path.join(scraper_path,'temp-{0}-{1}.csv'.format(element,typologie)) for element in temp]
-                    ## Need to add something to open/create/check file?!
                 # If line has 'Date' => Weekly Datas
                 elif x.find('Date')>-1:
                     stations = x.strip().split("Date")[1].strip().split(";")
                     stations.pop(0)
                     temp = stations
-                    stations = [os.path.join(media_path,'{0}-{1}.csv'.format(element,typologie)) for element in stations]
+                    for i in range(0,len(stations)):
+                        stationsOrder[stations[i]] = i
+                    finalFiles = [os.path.join(media_path,'{0}-{1}.csv'.format(element,typologie)) for element in stations]
                     tempFiles = [os.path.join(scraper_path,'temp-{0}-{1}.csv'.format(element,typologie)) for element in temp]
-                    ## Need to add something to open/create/check file?!
                 # Else if date isn't an empty string
                 elif x != "" and x.find('Unité') < 0:
                     for tF in tempFiles:
@@ -72,9 +78,13 @@ def manipulate():
                             f.close()
                     data = x.strip().strip().split(";")
                     for i in range(1,len(data)):
-                        f = open(tempFiles[i-1], 'a+')
-                        f.write(data[0]+";"+data[i]+"\n")
-                        f.close()
+
+                        # Use Dico of Array
+                        
+                        # dataTable[stationsOrder[stations[i-1]]]
+                        # f = open(tempFiles[i-1], 'a+')
+                        # f.write(data[0]+";"+data[i]+";"+polluant+"\n")
+                        # f.close()
 # Clean Folder Script
 def clean():
     for f in os.listdir(scraper_path):
