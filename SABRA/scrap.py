@@ -67,8 +67,14 @@ def manipulate():
                 elif x != "" and x.find('Unité') < 0:
                     for tF in tempFiles:
                         if(os.path.isfile(tF) == False):
-                            open(tF, 'w').close()
-
+                            f = open(tF, 'w')
+                            f.write("Date [GMT+1];PM2.5;PM10;NO2;03\n")
+                            f.close()
+                    data = x.strip().strip().split(";")
+                    for i in range(1,len(data)):
+                        f = open(tempFiles[i-1], 'a+')
+                        f.write(data[0]+";"+data[i]+"\n")
+                        f.close()
 # Clean Folder Script
 def clean():
     for f in os.listdir(scraper_path):
@@ -133,6 +139,6 @@ print("Starting "+time.strftime("%Y-%m-%d %H:%M:%S"))
 # Manipulating
 manipulate()
 # Clean folder
-clean()
+# clean()
 # Print Debug for End
 print("Done "+time.strftime("%Y-%m-%d %H:%M:%S"))
