@@ -26,6 +26,7 @@ def logs():
 # Function to manipulate the downloaded files
 def manipulate():
     headerOrder = {'Date':0,'PM2.5':1,'PM10':2,'NO2':3,"O3":4}
+    dataTable = {}
     # Loop through all files in the scraper folder
     for f in os.listdir(scraper_path):
         # If files is a CSV
@@ -37,8 +38,8 @@ def manipulate():
             stations=[]
             finalFiles=[]
             tempFiles = []
-            dataTable = []
             stationsOrder = {}
+            duplicate = False
             # Open File
             file = open(f)
             # Loop each line of file
@@ -58,6 +59,8 @@ def manipulate():
                     temp = stations
                     for i in range(0,len(stations)):
                         stationsOrder[stations[i]] = i
+                        if stations[i] not in dataTable:
+                            dataTable[stations[i]] = {}
                     finalFiles = [os.path.join(media_path,'{0}-{1}.csv'.format(element,typologie)) for element in stations]
                     tempFiles = [os.path.join(scraper_path,'temp-{0}-{1}.csv'.format(element,typologie)) for element in temp]
                 # If line has 'Date' => Weekly Datas
@@ -67,8 +70,11 @@ def manipulate():
                     temp = stations
                     for i in range(0,len(stations)):
                         stationsOrder[stations[i]] = i
+                        if stations[i] not in dataTable:
+                            dataTable[stations[i]] = {}
                     finalFiles = [os.path.join(media_path,'{0}-{1}.csv'.format(element,typologie)) for element in stations]
                     tempFiles = [os.path.join(scraper_path,'temp-{0}-{1}.csv'.format(element,typologie)) for element in temp]
+                    duplicate = True
                 # Else if date isn't an empty string
                 elif x != "" and x.find('Unité') < 0:
                     for tF in tempFiles:
@@ -78,13 +84,25 @@ def manipulate():
                             f.close()
                     data = x.strip().strip().split(";")
                     for i in range(1,len(data)):
+                        if(duplicate == False):
+                            if data[0].strip() not in dataTable[stations[i-1]]:
+                                dataTable[stations[i-1]][data[0].strip()] = {}
+                            dataTable[stations[i-1]][data[0].strip()][headerOrder[polluant]] = data[i]
+                        else:
+                            for h in range(0,24):
+                                strH = str(h)
+                                if h < 10:
+                                    strH = '0'+strH
+                                d = data[0]+"  "+strH+":00"
+                                if d not in dataTable[stations[i-1]]:
+                                    dataTable[stations[i-1]][d] = {}
+                                dataTable[stations[i-1]][d][headerOrder[polluant]] = data[i]
 
-                        # Use Dico of Array
-                        
-                        # dataTable[stationsOrder[stations[i-1]]]
-                        # f = open(tempFiles[i-1], 'a+')
-                        # f.write(data[0]+";"+data[i]+";"+polluant+"\n")
-                        # f.close()
+    print(dataTable['Necker'])
+    # Data seems correct, need to sort it and write it on a file
+    # f = open(os.path.join(scraper_path,"erewfe.txt"), 'w')
+    # f.write(str(dataTable))
+    # f.close()
 # Clean Folder Script
 def clean():
     for f in os.listdir(scraper_path):
