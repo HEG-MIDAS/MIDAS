@@ -36,7 +36,6 @@ def dataToFiles(data: dict):
         f = open(os.path.join(scraper_path,"temp-"+k+".csv"), 'a+')
         f.write("Date [GMT+1];PM2.5;PM10;NO2;03\n")
         for e in data[k]:
-            print(data[k][e])
             text = str(e)+";"
             if 1 in data[k][e]:
                 text += data[k][e][1]
@@ -52,6 +51,7 @@ def dataToFiles(data: dict):
             text += "\n"
             f.write(text)
         f.close()
+        print("Writen "+os.path.join(scraper_path,"temp-"+k+".csv"))
         # At the end, use merge to create final file
         #merge_csv_by_date(os.path.join(scraper_path,"temp-{0}.csv".format(k)), os.path.join(media_path,'transformed/SABRA/{0}.csv'.format(k)))
 # Function to manipulate the downloaded files
