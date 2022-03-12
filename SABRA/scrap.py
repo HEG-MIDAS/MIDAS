@@ -6,6 +6,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
 from merge_csv_by_date_package import merge_csv_by_date
+from collections import OrderedDict
 
 # Set Up Paths
 ## Root of Project
@@ -26,13 +27,14 @@ def logs():
 
 # Sort data by date
 def sortByDate(data: dict):
-    return data
+    ordered_data = OrderedDict(sorted(data.items(), key = lambda x:time.strptime(x[0], '%Y-%m-%d %H:%M'), reverse=False))
+    return ordered_data
 
 # Function to write files
 def dataToFiles(data: dict):
     for k in data:
         # Sort the datas by Date (Not correctly sorted by default)
-        k = sortByDate(k)
+        data[k] = sortByDate(data[k])
         f = open(os.path.join(scraper_path,"temp-"+k+".csv"), 'a+')
         f.write("Date [GMT+1];PM2.5;PM10;NO2;03\n")
         for e in data[k]:
