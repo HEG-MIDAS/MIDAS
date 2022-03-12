@@ -23,6 +23,10 @@ def logs():
     with open(os.path.join(scraper_path,'log.txt'), 'a') as file:
         file.write(time.strftime('%Y-%m-%d %H:%M:%S'))
 
+# Function to write files
+def dataToFiles(data):
+    print(data['Necker'])
+
 # Function to manipulate the downloaded files
 def manipulate():
     headerOrder = {'Date':0,'PM2.5':1,'PM10':2,'NO2':3,"O3":4}
@@ -52,20 +56,17 @@ def manipulate():
                 # If line has 'Polluant'
                 elif x.find('Polluant')>-1:
                     polluant = re.search("\((.*?)\)",x.strip().split("Polluant:  ")[1]).group(1)
-                # If line has 'Date [GMT+1]' => Daily Datas
-                elif x.find('Date  [GMT+1]')>-1:
-                    stations = x.strip().split("Date  [GMT+1]")[1].strip().split(";")
-                    stations.pop(0)
-                    temp = stations
-                    for i in range(0,len(stations)):
-                        stationsOrder[stations[i]] = i
-                        if stations[i] not in dataTable:
-                            dataTable[stations[i]] = {}
-                    finalFiles = [os.path.join(media_path,'{0}-{1}.csv'.format(element,typologie)) for element in stations]
-                    tempFiles = [os.path.join(scraper_path,'temp-{0}-{1}.csv'.format(element,typologie)) for element in temp]
-                # If line has 'Date' => Weekly Datas
+                # If line has 'Date'
                 elif x.find('Date')>-1:
-                    stations = x.strip().split("Date")[1].strip().split(";")
+                    # Do it for Hourly
+                    stations = x.strip().split("Date  [GMT+1]")
+                    if(len(stations) == 1):
+                        # Then Daily if Hourly didn't split
+                        stations = x.strip().split("Date")
+                        duplicate = True
+                    # Remove whitespace and split
+                    stations = stations[1].strip().split(";")
+                    # Pop first element which is the date
                     stations.pop(0)
                     temp = stations
                     for i in range(0,len(stations)):
@@ -74,7 +75,6 @@ def manipulate():
                             dataTable[stations[i]] = {}
                     finalFiles = [os.path.join(media_path,'{0}-{1}.csv'.format(element,typologie)) for element in stations]
                     tempFiles = [os.path.join(scraper_path,'temp-{0}-{1}.csv'.format(element,typologie)) for element in temp]
-                    duplicate = True
                 # Else if date isn't an empty string
                 elif x != "" and x.find('Unité') < 0:
                     for tF in tempFiles:
@@ -98,7 +98,7 @@ def manipulate():
                                     dataTable[stations[i-1]][d] = {}
                                 dataTable[stations[i-1]][d][headerOrder[polluant]] = data[i]
 
-    print(dataTable['Necker'])
+    dataToFiles(dataTable)
     # Data seems correct, need to sort it and write it on a file
     # f = open(os.path.join(scraper_path,"erewfe.txt"), 'w')
     # f.write(str(dataTable))
