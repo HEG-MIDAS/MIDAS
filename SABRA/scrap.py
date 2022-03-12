@@ -135,8 +135,9 @@ def manipulate():
                                 if d not in dataTable[stations[i-1]]:
                                     dataTable[stations[i-1]][d] = {}
                                 dataTable[stations[i-1]][d][headerOrder[polluant]] = data[i]
-            #print(os.path.join(scraper_path,f),os.path.join(media_path,'original/SABRA/{0}-{1}.csv'.format(typologie,polluant)))
+            # Write the data in the original files
             #merge_csv_by_date(os.path.join(scraper_path,f), os.path.join(media_path,'original/SABRA/{0}-{1}.csv'.format(typologie,polluant)))
+            #print('Written '+os.path.join(media_path,'original/SABRA/{0}-{1}.csv'.format(typologie,polluant)))
     dataToFiles(dataTable)
 # Clean Folder Script
 def clean():
@@ -195,7 +196,7 @@ def download():
             scraper(URL,u,k,'autre',v)
     # Close Firefox Driver
     driver.close()
-# Debug Start
+# Print Debug for Start
 print("Starting "+time.strftime("%Y-%m-%d %H:%M:%S"))
 # Download Function
 # download()
