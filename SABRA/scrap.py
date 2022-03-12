@@ -26,7 +26,8 @@ def logs():
         file.write(time.strftime('%Y-%m-%d %H:%M:%S'))
 
 # Sort data by date
-def sortByDate(data: dict):
+def sortByDate(data: dict) -> OrderedDict:
+    # Create a sorted list and transform it as an OrderedDict
     ordered_data = OrderedDict(sorted(data.items(), key = lambda x:time.strptime(x[0], '%Y-%m-%d %H:%M'), reverse=False))
     return ordered_data
 
@@ -35,25 +36,40 @@ def dataToFiles(data: dict):
     for k in data:
         # Sort the datas by Date (Not correctly sorted by default)
         data[k] = sortByDate(data[k])
+        # Open temp file
         f = open(os.path.join(scraper_path,"temp-"+k+".csv"), 'a+')
+        # Write header (HardCoded)
         f.write("Date [GMT+1];PM2.5;PM10;NO2;03\n")
+        # Loop datas
         for e in data[k]:
+            # Write Date
             text = str(e)+";"
+            # If value for polluant 1, add it
             if 1 in data[k][e]:
                 text += data[k][e][1]
+            # Always add the  ; to separate
             text += ";"
+            # If value for polluant 2, add it
             if 2 in data[k][e]:
                 text += data[k][e][2]
+            # Always add the  ; to separate
             text += ";"
+            # If value for polluant 3, add it
             if 3 in data[k][e]:
                 text += data[k][e][3]
+            # Always add the  ; to separate
             text += ";"
+            # If value for polluant 4, add it
             if 4 in data[k][e]:
                 text += data[k][e][4]
+            # Add a newline or else everything is on the same line
             text += "\n"
+            # Write the line on the file
             f.write(text)
+        # Close file
         f.close()
-        print("Writen "+os.path.join(scraper_path,"temp-"+k+".csv"))
+        # Logs in terminal
+        print("Written "+os.path.join(scraper_path,"temp-"+k+".csv"))
         # At the end, use merge to create final file
         #merge_csv_by_date(os.path.join(scraper_path,"temp-{0}.csv".format(k)), os.path.join(media_path,'transformed/SABRA/{0}.csv'.format(k)))
 # Function to manipulate the downloaded files
@@ -102,14 +118,19 @@ def manipulate():
                             dataTable[stations[i]] = {}
                 # Else if date isn't an empty string (And we skip the unit one)
                 elif x != "" and x.find('Unité') < 0:
+                    # Split the datas
                     data = x.strip().strip().split(";")
+                    # Loop through them
                     for i in range(1,len(data)):
+                        # If the data are hourly to begin with
                         if(duplicate == False):
                             if data[0].strip() not in dataTable[stations[i-1]]:
                                 dataTable[stations[i-1]][data[0].strip()] = {}
                             dataTable[stations[i-1]][data[0].strip()][headerOrder[polluant]] = data[i]
+                        # Otherwise need to create them by duplication
                         else:
                             for h in range(0,24):
+                                # Ternary condition
                                 d = '{0}  0{1}:00'.format(data[0],h) if h < 10 else '{0}  {1}:00'.format(data[0],h)
                                 if d not in dataTable[stations[i-1]]:
                                     dataTable[stations[i-1]][d] = {}
