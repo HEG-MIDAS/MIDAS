@@ -147,7 +147,7 @@ def clean():
             os.remove(f)
 
 # Scrap website
-def scraper(URL,urbain_input,polluants_input,time_input,timelapse_input):
+def scraper(URL,driver,urbain_input,polluants_input,time_input,timelapse_input):
     # Go to URL
     driver.get(URL)
     # Get submit button and assert its value
@@ -193,7 +193,7 @@ def download():
     # Loop through both array to get all files
     for u in urbanArea:
         for k, v in pollTimeStep.items():
-            scraper(URL,u,k,'autre',v)
+            scraper(URL,driver,u,k,'autre',v)
     # Close Firefox Driver
     driver.close()
 # Print Debug for Start
