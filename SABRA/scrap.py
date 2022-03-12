@@ -5,6 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
+from merge_csv_by_date_package import merge_csv_by_date
 
 # Set Up Paths
 ## Root of Project
@@ -12,7 +13,7 @@ root_path = os.path.dirname(os.getcwd())
 ## Path of Scraper
 scraper_path = os.path.join(root_path,'SABRA')
 ## Path of Media
-media_path = os.path.join(root_path,'media/SABRA')
+media_path = os.path.join(root_path,'media')
 
 # URL to scrap
 URL = "https://www.ropag-data.ch/gechairmo/i_extr.php"
@@ -23,10 +24,36 @@ def logs():
     with open(os.path.join(scraper_path,'log.txt'), 'a') as file:
         file.write(time.strftime('%Y-%m-%d %H:%M:%S'))
 
-# Function to write files
-def dataToFiles(data):
-    print(data['Necker'])
+# Sort data by date
+def sortByDate(data: dict):
+    return data
 
+# Function to write files
+def dataToFiles(data: dict):
+    for k in data:
+        # Sort the datas by Date (Not correctly sorted by default)
+        k = sortByDate(k)
+        f = open(os.path.join(scraper_path,"temp-"+k+".csv"), 'a+')
+        f.write("Date [GMT+1];PM2.5;PM10;NO2;03\n")
+        for e in data[k]:
+            print(data[k][e])
+            text = str(e)+";"
+            if 1 in data[k][e]:
+                text += data[k][e][1]
+            text += ";"
+            if 2 in data[k][e]:
+                text += data[k][e][2]
+            text += ";"
+            if 3 in data[k][e]:
+                text += data[k][e][3]
+            text += ";"
+            if 4 in data[k][e]:
+                text += data[k][e][4]
+            text += "\n"
+            f.write(text)
+        f.close()
+        # At the end, use merge to create final file
+        #merge_csv_by_date(os.path.join(scraper_path,"temp-{0}.csv".format(k)), os.path.join(media_path,'transformed/SABRA/{0}.csv'.format(k)))
 # Function to manipulate the downloaded files
 def manipulate():
     headerOrder = {'Date':0,'PM2.5':1,'PM10':2,'NO2':3,"O3":4}
@@ -40,9 +67,6 @@ def manipulate():
             polluant=""
             typologie=""
             stations=[]
-            finalFiles=[]
-            tempFiles = []
-            stationsOrder = {}
             duplicate = False
             # Open File
             file = open(f)
@@ -60,28 +84,22 @@ def manipulate():
                 elif x.find('Date')>-1:
                     # Do it for Hourly
                     stations = x.strip().split("Date  [GMT+1]")
+                    # Then Daily if Hourly didn't split
                     if(len(stations) == 1):
-                        # Then Daily if Hourly didn't split
                         stations = x.strip().split("Date")
                         duplicate = True
                     # Remove whitespace and split
                     stations = stations[1].strip().split(";")
                     # Pop first element which is the date
                     stations.pop(0)
-                    temp = stations
+                    # Format it with the 'Typologie'
+                    stations = ['{0}-{1}'.format(element,typologie) for element in stations]
+                    # Set the dataTable
                     for i in range(0,len(stations)):
-                        stationsOrder[stations[i]] = i
                         if stations[i] not in dataTable:
                             dataTable[stations[i]] = {}
-                    finalFiles = [os.path.join(media_path,'{0}-{1}.csv'.format(element,typologie)) for element in stations]
-                    tempFiles = [os.path.join(scraper_path,'temp-{0}-{1}.csv'.format(element,typologie)) for element in temp]
-                # Else if date isn't an empty string
+                # Else if date isn't an empty string (And we skip the unit one)
                 elif x != "" and x.find('Unité') < 0:
-                    for tF in tempFiles:
-                        if(os.path.isfile(tF) == False):
-                            f = open(tF, 'w')
-                            f.write("Date [GMT+1];PM2.5;PM10;NO2;03\n")
-                            f.close()
                     data = x.strip().strip().split(";")
                     for i in range(1,len(data)):
                         if(duplicate == False):
@@ -90,19 +108,13 @@ def manipulate():
                             dataTable[stations[i-1]][data[0].strip()][headerOrder[polluant]] = data[i]
                         else:
                             for h in range(0,24):
-                                strH = str(h)
-                                if h < 10:
-                                    strH = '0'+strH
-                                d = data[0]+"  "+strH+":00"
+                                d = '{0}  0{1}:00'.format(data[0],h) if h < 10 else '{0}  {1}:00'.format(data[0],h)
                                 if d not in dataTable[stations[i-1]]:
                                     dataTable[stations[i-1]][d] = {}
                                 dataTable[stations[i-1]][d][headerOrder[polluant]] = data[i]
-
+            #print(os.path.join(scraper_path,f),os.path.join(media_path,'original/SABRA/{0}-{1}.csv'.format(typologie,polluant)))
+            #merge_csv_by_date(os.path.join(scraper_path,f), os.path.join(media_path,'original/SABRA/{0}-{1}.csv'.format(typologie,polluant)))
     dataToFiles(dataTable)
-    # Data seems correct, need to sort it and write it on a file
-    # f = open(os.path.join(scraper_path,"erewfe.txt"), 'w')
-    # f.write(str(dataTable))
-    # f.close()
 # Clean Folder Script
 def clean():
     for f in os.listdir(scraper_path):
@@ -164,6 +176,8 @@ def download():
 print("Starting "+time.strftime("%Y-%m-%d %H:%M:%S"))
 # Download Function
 # download()
+# Pre Cleaning (For Debug)
+clean()
 # Manipulating
 manipulate()
 # Clean folder
