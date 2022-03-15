@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'MIDAS_app.apps.MidasAppConfig',
+    'MIDAS_app',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
