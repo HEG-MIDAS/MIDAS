@@ -455,3 +455,249 @@ console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkErr
 
 1645637872314	Marionette	INFO	Stopped listening on port 36087
 console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+1647339252924	geckodriver	INFO	Listening on 127.0.0.1:39265
+1647339253431	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-headless" "--remote-debugging-port" "59381" "-no-remote" "-profile" "/tmp/rust_mozprofilesOERA4"
+*** You are running in headless mode.
+1647339253708	Marionette	INFO	Marionette enabled
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofilesOERA4/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:59381/devtools/browser/d4336aa5-3f9b-4a49-bbd6-924dc053068d
+1647339254741	Marionette	INFO	Listening on port 37135
+1647339254848	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:20173): GLib-GObject-CRITICAL **: 11:14:17.593: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:20173): GLib-GObject-CRITICAL **: 11:14:20.799: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:20173): GLib-GObject-CRITICAL **: 11:14:25.255: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:20173): GLib-GObject-CRITICAL **: 11:14:29.412: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:20173): GLib-GObject-CRITICAL **: 11:14:32.630: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:20173): GLib-GObject-CRITICAL **: 11:14:35.886: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:20173): GLib-GObject-CRITICAL **: 11:14:41.025: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:20173): GLib-GObject-CRITICAL **: 11:14:45.991: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:20173): GLib-GObject-CRITICAL **: 11:14:49.201: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:20173): GLib-GObject-CRITICAL **: 11:14:52.528: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:20173): GLib-GObject-CRITICAL **: 11:14:56.437: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:20173): GLib-GObject-CRITICAL **: 11:15:00.253: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+1647339302204	Marionette	INFO	Stopped listening on port 37135
+1647354989643	geckodriver	INFO	Listening on 127.0.0.1:51309
+1647354990151	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-headless" "--remote-debugging-port" "56861" "-no-remote" "-profile" "/tmp/rust_mozprofilesnw64b"
+*** You are running in headless mode.
+1647354990460	Marionette	INFO	Marionette enabled
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofilesnw64b/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:56861/devtools/browser/d1afb4a0-cf72-400e-abb7-278d4f496ec4
+1647354991805	Marionette	INFO	Listening on port 33759
+1647354991869	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:36648): GLib-GObject-CRITICAL **: 15:36:33.615: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:36648): GLib-GObject-CRITICAL **: 15:36:36.817: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+1647355262182	geckodriver	INFO	Listening on 127.0.0.1:59263
+1647355262186	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-headless" "--remote-debugging-port" "49893" "-no-remote" "-profile" "/tmp/rust_mozprofileUwjgsi"
+*** You are running in headless mode.
+1647355262413	Marionette	INFO	Marionette enabled
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileUwjgsi/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:49893/devtools/browser/690ab080-454e-4639-9447-42f5c3b71a0d
+1647355263449	Marionette	INFO	Listening on port 32821
+1647355263499	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:37446): GLib-GObject-CRITICAL **: 15:41:05.033: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:37446): GLib-GObject-CRITICAL **: 15:41:08.291: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+1647355311872	geckodriver	INFO	Listening on 127.0.0.1:47613
+1647355311880	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "44065" "-no-remote" "-profile" "/tmp/rust_mozprofileyL4Ihd"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1647355312509	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileyL4Ihd/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:44065/devtools/browser/692c93ed-79e7-4add-b8ca-627cc6ab46ab
+1647355313737	Marionette	INFO	Listening on port 40569
+1647355313794	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+1647355394693	geckodriver	INFO	Listening on 127.0.0.1:42441
+1647355394698	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "43891" "-no-remote" "-profile" "/tmp/rust_mozprofileZ6M8rt"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1647355395273	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileZ6M8rt/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:43891/devtools/browser/afeeebd1-6497-44f4-9439-dfbb262ebc23
+1647355396732	Marionette	INFO	Listening on port 42681
+1647355396819	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+1647355401512	Marionette	INFO	Stopped listening on port 42681
+JavaScript error: chrome://remote/content/marionette/cert.js, line 55: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsICertOverrideService.setDisableAllSecurityChecksAndLetAttackersInterceptMyData]
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
+1647355433716	geckodriver	INFO	Listening on 127.0.0.1:58073
+1647355433721	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "57265" "-no-remote" "-profile" "/tmp/rust_mozprofilezSTqDP"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1647355434184	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofilezSTqDP/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:57265/devtools/browser/c34ad5f4-0c3f-49cd-be25-def57df30f6e
+1647355435306	Marionette	INFO	Listening on port 39809
+1647355435333	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+1647355451547	Marionette	INFO	Stopped listening on port 39809
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
+1647355488294	geckodriver	INFO	Listening on 127.0.0.1:53971
+1647355488299	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-headless" "--remote-debugging-port" "38659" "-no-remote" "-profile" "/tmp/rust_mozprofileqLRGfb"
+*** You are running in headless mode.
+1647355488499	Marionette	INFO	Marionette enabled
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileqLRGfb/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:38659/devtools/browser/cc46edfb-814b-45a6-8ac6-6f142b923fcd
+1647355489656	Marionette	INFO	Listening on port 39129
+1647355489724	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:39298): GLib-GObject-CRITICAL **: 15:44:51.502: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:39298): GLib-GObject-CRITICAL **: 15:44:54.649: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:39298): GLib-GObject-CRITICAL **: 15:44:58.596: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:39298): GLib-GObject-CRITICAL **: 15:45:02.534: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:39298): GLib-GObject-CRITICAL **: 15:45:05.881: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:39298): GLib-GObject-CRITICAL **: 15:45:09.102: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:39298): GLib-GObject-CRITICAL **: 15:45:14.504: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:39298): GLib-GObject-CRITICAL **: 15:45:19.492: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:39298): GLib-GObject-CRITICAL **: 15:45:22.734: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:39298): GLib-GObject-CRITICAL **: 15:45:25.993: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:39298): GLib-GObject-CRITICAL **: 15:45:30.357: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://www.ropag-data.ch"
+JavaScript error: https://www.ropag-data.ch/gechairmo/i_extr.php, line 1: TypeError: document.getElementById(...) is null
+JavaScript error: https://www.ropag-data.ch/gechairmo/highcharts/js/highcharts.src.js, line 701: uncaught exception: Highcharts error #16: www.highcharts.com/errors/16
+
+(firefox:39298): GLib-GObject-CRITICAL **: 15:45:34.396: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+1647355536343	Marionette	INFO	Stopped listening on port 39129

@@ -1,12 +1,15 @@
 import os
 import time
 import re
+import sys
+import getopt
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
 from merge_csv_by_date_package import merge_csv_by_date
 from collections import OrderedDict
+from datetime import datetime, timedelta
 
 # Set Up Paths
 ## Root of Project
@@ -39,7 +42,7 @@ def dataToFiles(data: dict):
         # Open temp file
         f = open(os.path.join(scraper_path,"temp-"+k+".csv"), 'a+')
         # Write header (HardCoded)
-        f.write("Date [GMT+1];PM2.5;PM10;NO2;03\n")
+        f.write("Date [GMT+1];PM2.5;PM10;NO2;O3\n")
         # Loop datas
         for e in data[k]:
             # Write Date
@@ -71,7 +74,8 @@ def dataToFiles(data: dict):
         # Logs in terminal
         print("Written "+os.path.join(scraper_path,"temp-"+k+".csv"))
         # At the end, use merge to create final file
-        #merge_csv_by_date(os.path.join(scraper_path,"temp-{0}.csv".format(k)), os.path.join(media_path,'transformed/SABRA/{0}.csv'.format(k)))
+        merge_csv_by_date.merge_csv_by_date(os.path.join(media_path,'transformed/SABRA/{0}.csv'.format(k)),os.path.join(scraper_path,"temp-{0}.csv".format(k)))
+        print('Written {0}\n'.format(os.path.join(media_path,'transformed/SABRA/{0}.csv'.format(k))))
 # Function to manipulate the downloaded files
 def manipulate():
     headerOrder = {'Date':0,'PM2.5':1,'PM10':2,'NO2':3,"O3":4}
@@ -136,8 +140,9 @@ def manipulate():
                                     dataTable[stations[i-1]][d] = {}
                                 dataTable[stations[i-1]][d][headerOrder[polluant]] = data[i]
             # Write the data in the original files
-            #merge_csv_by_date(os.path.join(scraper_path,f), os.path.join(media_path,'original/SABRA/{0}-{1}.csv'.format(typologie,polluant)))
-            #print('Written '+os.path.join(media_path,'original/SABRA/{0}-{1}.csv'.format(typologie,polluant)))
+            merge_csv_by_date.merge_csv_by_date(os.path.join(media_path,'original/SABRA/{0}-{1}.csv'.format(typologie,polluant)),os.path.join(scraper_path,f))
+            print('Written {0}'.format(os.path.join(media_path,'original/SABRA/{0}-{1}.csv'.format(typologie,polluant))))
+    print('')
     dataToFiles(dataTable)
 # Clean Folder Script
 def clean():
@@ -147,7 +152,7 @@ def clean():
             os.remove(f)
 
 # Scrap website
-def scraper(URL,driver,urbain_input,polluants_input,time_input,timelapse_input):
+def scraper(URL,driver,urbain_input,polluants_input,time_input,start_date,end_date,timelapse_input):
     # Go to URL
     driver.get(URL)
     # Get submit button and assert its value
@@ -158,9 +163,9 @@ def scraper(URL,driver,urbain_input,polluants_input,time_input,timelapse_input):
     driver.find_element(By.CSS_SELECTOR,'table input[value="'+polluants_input+'"]').click()
     driver.find_element(By.CSS_SELECTOR,'table input[value="'+time_input+'"]').click()
     driver.find_element(By.CSS_SELECTOR,'table input[name="date_from"]').clear()
-    driver.find_element(By.CSS_SELECTOR,'table input[name="date_from"]').send_keys("19.01.2021")
+    driver.find_element(By.CSS_SELECTOR,'table input[name="date_from"]').send_keys(start_date)
     driver.find_element(By.CSS_SELECTOR,'table input[name="date_to"]').clear()
-    driver.find_element(By.CSS_SELECTOR,'table input[name="date_to"]').send_keys("22.02.2022")
+    driver.find_element(By.CSS_SELECTOR,'table input[name="date_to"]').send_keys(end_date)
     driver.find_element(By.CSS_SELECTOR,'table input[value="'+timelapse_input+'"]').click()
     # Submit Form
     driver.find_element(By.ID,"submit_button").click()
@@ -172,7 +177,7 @@ def scraper(URL,driver,urbain_input,polluants_input,time_input,timelapse_input):
     time.sleep(2)
 
 # Setup the headless browser (Using Firefox/Gecko)
-def download():
+def download(s,e):
     # Create Firefox Options needed to autodownload
     options = webdriver.FirefoxOptions()
     options.headless = True
@@ -193,18 +198,48 @@ def download():
     # Loop through both array to get all files
     for u in urbanArea:
         for k, v in pollTimeStep.items():
-            scraper(URL,driver,u,k,'autre',v)
+            scraper(URL,driver,u,k,'autre',s,e,v)
     # Close Firefox Driver
     driver.close()
-# Print Debug for Start
-print("Starting "+time.strftime("%Y-%m-%d %H:%M:%S"))
-# Download Function
-# download()
-# Pre Cleaning (For Debug)
-clean()
-# Manipulating
-manipulate()
-# Clean folder
-# clean()
-# Print Debug for End
-print("Done "+time.strftime("%Y-%m-%d %H:%M:%S"))
+
+def main(argv):
+    start_date =  datetime.now().date()
+    end_date = datetime.now().date()
+    try:
+      opts, args = getopt.getopt(argv,"hs:e:",["start_date=","end_date="])
+    except getopt.GetoptError:
+      print('scrap.py -s <start_date> -e <end_date>')
+      sys.exit(2)
+    for opt, arg in opts:
+      if opt == '-h':
+         print('scrap.py -s <start_date> -e <end_date>')
+         sys.exit()
+      elif opt in ("-s", "--start_date"):
+         start_date = datetime.strptime(arg,'%d.%m.%Y').date()
+      elif opt in ("-e", "--end_date"):
+         end_date = datetime.strptime(arg,'%d.%m.%Y').date()
+
+    if(start_date > end_date):
+        print('The end date is inferior to the start date !')
+        exit(1)
+    elif(start_date - end_date < timedelta(days=-400)):
+        print('The time difference can be at maximum 400 days !')
+        exit(1)
+
+    start_date = start_date.strftime('%d.%m.%Y')
+    end_date = end_date.strftime('%d.%m.%Y')
+    # Print Debug for Start
+    print("Starting "+time.strftime("%Y-%m-%d %H:%M:%S"))
+    # Download Function
+    download(start_date,end_date)
+    # Pre Cleaning (For Debug)
+    clean()
+    # Manipulating
+    manipulate()
+    # Clean folder
+    # clean()
+    # Print Debug for End
+    print("Done "+time.strftime("%Y-%m-%d %H:%M:%S"))
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
