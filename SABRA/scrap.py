@@ -12,10 +12,11 @@ from collections import OrderedDict
 from datetime import datetime, timedelta
 
 # Set Up Paths
-## Root of Project
-root_path = os.path.dirname(os.getcwd())
 ## Path of Scraper
-scraper_path = os.path.join(root_path,'SABRA')
+scraper_path = os.path.realpath(
+    os.path.join(os.getcwd(), os.path.dirname(__file__)))
+## Root of Project
+root_path = os.path.join(scraper_path,'..')
 ## Path of Media
 media_path = os.path.join(root_path,'media')
 
@@ -31,7 +32,7 @@ def logs():
 # Sort data by date
 def sortByDate(data: dict) -> OrderedDict:
     # Create a sorted list and transform it as an OrderedDict
-    ordered_data = OrderedDict(sorted(data.items(), key = lambda x:time.strptime(x[0], '%Y-%m-%d %H:%M'), reverse=False))
+    ordered_data = OrderedDict(sorted(data.items(), key = lambda x:time.strptime(x[0], '%Y-%m-%d %H:%M:%S'), reverse=False))
     return ordered_data
 
 # Function to write files
@@ -128,14 +129,15 @@ def manipulate():
                     for i in range(1,len(data)):
                         # If the data are hourly to begin with
                         if(duplicate == False):
-                            if data[0].strip() not in dataTable[stations[i-1]]:
-                                dataTable[stations[i-1]][data[0].strip()] = {}
-                            dataTable[stations[i-1]][data[0].strip()][headerOrder[polluant]] = data[i]
+                            d = '{0}:00'.format(data[0].strip())
+                            if d not in dataTable[stations[i-1]]:
+                                dataTable[stations[i-1]][d] = {}
+                            dataTable[stations[i-1]][d][headerOrder[polluant]] = data[i]
                         # Otherwise need to create them by duplication
                         else:
                             for h in range(0,24):
                                 # Ternary condition
-                                d = '{0}  0{1}:00'.format(data[0],h) if h < 10 else '{0}  {1}:00'.format(data[0],h)
+                                d = '{0}  0{1}:00:00'.format(data[0],h) if h < 10 else '{0}  {1}:00:00'.format(data[0],h)
                                 if d not in dataTable[stations[i-1]]:
                                     dataTable[stations[i-1]][d] = {}
                                 dataTable[stations[i-1]][d][headerOrder[polluant]] = data[i]
@@ -148,7 +150,7 @@ def manipulate():
 def clean():
     for f in os.listdir(scraper_path):
         # If files is a CSV
-        if f.find('.csv') >-1 and f.find('temp') > -1:
+        if f.find('.csv') >-1:
             os.remove(f)
 
 # Scrap website
@@ -215,9 +217,9 @@ def main(argv):
          print('scrap.py -s <start_date> -e <end_date>')
          sys.exit()
       elif opt in ("-s", "--start_date"):
-         start_date = datetime.strptime(arg,'%d.%m.%Y').date()
+         start_date = datetime.strptime(arg,'%Y-%m-%d').date()
       elif opt in ("-e", "--end_date"):
-         end_date = datetime.strptime(arg,'%d.%m.%Y').date()
+         end_date = datetime.strptime(arg,'%Y-%m-%d').date()
 
     if(start_date > end_date):
         print('The end date is inferior to the start date !')
@@ -232,12 +234,10 @@ def main(argv):
     print("Starting "+time.strftime("%Y-%m-%d %H:%M:%S"))
     # Download Function
     download(start_date,end_date)
-    # Pre Cleaning (For Debug)
-    clean()
     # Manipulating
     manipulate()
     # Clean folder
-    # clean()
+    clean()
     # Print Debug for End
     print("Done "+time.strftime("%Y-%m-%d %H:%M:%S"))
 
