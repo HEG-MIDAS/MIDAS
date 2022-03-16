@@ -3,4 +3,4 @@ env/
 .DS_Store
 *.csv
 *.sql*
-*__pycache__/*
+*__pycache__*
