@@ -92,7 +92,7 @@ def manipulate():
             stations=[]
             duplicate = False
             # Open File
-            file = open(f)
+            file = open(os.path.join(scraper_path,f))
             # Loop each line of file
             for x in file:
                 # Strip whitespaces
@@ -151,7 +151,7 @@ def clean():
     for f in os.listdir(scraper_path):
         # If files is a CSV
         if f.find('.csv') >-1:
-            os.remove(f)
+            os.remove(os.path.join(scraper_path,f))
 
 # Scrap website
 def scraper(URL,driver,urbain_input,polluants_input,time_input,start_date,end_date,timelapse_input):
