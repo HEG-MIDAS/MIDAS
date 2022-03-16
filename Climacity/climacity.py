@@ -98,8 +98,8 @@ path_tmp_file = '{}/tmp_data_request.csv'.format(__location__)
 path_original_data_file = '{}/../media/original/Climacity/climacity_original_merged.csv'.format(__location__)
 path_transformed_data_file = '{}/../media/transformed/Climacity/climacity_transformed_merged.csv'.format(__location__)
 
-start_date = "2021-02-18"
-end_date = "2021-02-18"
+start_date = "2021-03-18"
+end_date = "2021-03-18"
 
 url = """http://www.climacity.org/Axis/a_data_export.gwt?fdate={}&tdate={}&h_loc=on&
     h_Tsv=on&h_Gh_Avg=on&h_Dh_Avg=on&h_Tamb_Avg=on&h_HRamb_Avg=on&h_Prec_Tot=on&h_Vv_Avg=on&h_Vv_Avg=on&
