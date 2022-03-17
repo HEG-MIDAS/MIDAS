@@ -47,22 +47,22 @@ def dataToFiles(data: dict):
         # Loop datas
         for e in data[k]:
             # Write Date
-            text = str(e)+";"
+            text = str(e)+","
             # If value for polluant 1, add it
             if 1 in data[k][e]:
                 text += data[k][e][1]
-            # Always add the  ; to separate
-            text += ";"
+            # Always add the  , to separate
+            text += ","
             # If value for polluant 2, add it
             if 2 in data[k][e]:
                 text += data[k][e][2]
-            # Always add the  ; to separate
-            text += ";"
+            # Always add the  , to separate
+            text += ","
             # If value for polluant 3, add it
             if 3 in data[k][e]:
                 text += data[k][e][3]
-            # Always add the  ; to separate
-            text += ";"
+            # Always add the  , to separate
+            text += ","
             # If value for polluant 4, add it
             if 4 in data[k][e]:
                 text += data[k][e][4]
@@ -85,7 +85,6 @@ def manipulate():
     for f in os.listdir(scraper_path):
         # If files is a CSV
         if f.find('.csv') >-1 and f.find('temp') < 0:
-            # Merge Script Here to create original file
             # Set up variables for each files
             polluant=""
             typologie=""
@@ -154,7 +153,7 @@ def clean():
             os.remove(os.path.join(scraper_path,f))
 
 # Scrap website
-def scraper(URL,driver,urbain_input,polluants_input,time_input,start_date,end_date,timelapse_input):
+def scraper(URL:str,driver:webdriver.Firefox,urbain_input:str,polluants_input:str,time_input:str,start_date:str,end_date:str,timelapse_input:str):
     # Go to URL
     driver.get(URL)
     # Get submit button and assert its value
@@ -179,7 +178,7 @@ def scraper(URL,driver,urbain_input,polluants_input,time_input,start_date,end_da
     time.sleep(2)
 
 # Setup the headless browser (Using Firefox/Gecko)
-def download(s,e):
+def download(s:str,e:str):
     # Create Firefox Options needed to autodownload
     options = webdriver.FirefoxOptions()
     options.headless = True
