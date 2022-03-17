@@ -43,7 +43,7 @@ def dataToFiles(data: dict):
         # Open temp file
         f = open(os.path.join(scraper_path,"temp-"+k+".csv"), 'a+')
         # Write header (HardCoded)
-        f.write("Date [GMT+1];PM2.5;PM10;NO2;O3\n")
+        f.write("Date [GMT+1],PM2.5*,PM10*,NO2,O3\n")
         # Loop datas
         for e in data[k]:
             # Write Date
