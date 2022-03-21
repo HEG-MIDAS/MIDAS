@@ -75,7 +75,7 @@ def process_data(array_data: Array) -> Array:
     for i in range(1, len(array_data)):
         line_data = array_data[i].split(',')
         # Check if the line of data is still in the same range of hour or that the data ended
-        if merge_csv_by_date.string_to_date(line_data[0]) >= hour_working_until or i >= len(array_data)-1:
+        if datetime.datetime.strptime(line_data[0], '%Y-%m-%d %H:%M:%S') >= hour_working_until or i >= len(array_data)-1:
             # Ignore the firsts two values (that are dates) and cast the other ones into floats
             # when possible, if not into np.nan
             casted_data = np.array([[float(k) if k != '' else np.nan for k in j[2:]] for j in array_hour_data])
@@ -90,7 +90,7 @@ def process_data(array_data: Array) -> Array:
         # Beginning of a new hour range
         if not time_set:
             # Date with hour of the start of the new hour range
-            hour_working = merge_csv_by_date.string_to_date(line_data[0])
+            hour_working = datetime.datetime.strptime(line_data[0], '%Y-%m-%d %H:%M:%S')
             # End of the new hour range
             hour_working_until = (hour_working+datetime.timedelta(hours=1)).replace(microsecond=0, second=0, minute=0)
             time_set = True
@@ -185,7 +185,7 @@ def main() -> None:
         write_request_in_tmp_file(r, path_tmp_file)
         # Merge temporary file with the file containing all the original data
         print("--------------- Merging new data --------------")
-        merge_csv_by_date.merge_csv_by_date(path_original_data_file, path_tmp_file)
+        merge_csv_by_date.merge_csv_by_date(path_original_data_file, path_tmp_file, '%Y-%m-%d %H:%M:%S')
         # Remove the temporary file created
         os.remove(path_tmp_file)
 
@@ -196,7 +196,7 @@ def main() -> None:
         write_array_in_tmp_file(array_data, path_tmp_file)
 
         print("--------------- Merging processed data ---------------")
-        merge_csv_by_date.merge_csv_by_date(path_transformed_data_file, path_tmp_file)
+        merge_csv_by_date.merge_csv_by_date(path_transformed_data_file, path_tmp_file, '%Y-%m-%d %H:%M:%S')
         os.remove(path_tmp_file)
         print(time.time()-start_time)
 
