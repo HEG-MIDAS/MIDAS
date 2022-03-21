@@ -75,7 +75,7 @@ def dataToFiles(data: dict):
         # Logs in terminal
         print("Written "+os.path.join(scraper_path,"temp-"+k+".csv"))
         # At the end, use merge to create final file
-        merge_csv_by_date.merge_csv_by_date(os.path.join(media_path,'transformed/SABRA/{0}.csv'.format(k)),os.path.join(scraper_path,"temp-{0}.csv".format(k)))
+        merge_csv_by_date.merge_csv_by_date(os.path.join(media_path,'transformed/SABRA/{0}.csv'.format(k)),os.path.join(scraper_path,"temp-{0}.csv".format(k)), '%Y-%m-%d %H:%M:%S')
         print('Written {0}\n'.format(os.path.join(media_path,'transformed/SABRA/{0}.csv'.format(k))))
 # Function to manipulate the downloaded files
 def manipulate():
@@ -140,8 +140,13 @@ def manipulate():
                                 if d not in dataTable[stations[i-1]]:
                                     dataTable[stations[i-1]][d] = {}
                                 dataTable[stations[i-1]][d][headerOrder[polluant]] = data[i]
+            format_date = ' %Y-%m-%d %H:%M '
+            print(polluant)
+            if polluant in ['PM10', 'PM2.5']:
+                format_date = '%Y-%m-%d'
+
             # Write the data in the original files
-            merge_csv_by_date.merge_csv_by_date(os.path.join(media_path,'original/SABRA/{0}-{1}.csv'.format(typologie,polluant)),os.path.join(scraper_path,f))
+            merge_csv_by_date.merge_csv_by_date(os.path.join(media_path,'original/SABRA/{0}-{1}.csv'.format(typologie,polluant)),os.path.join(scraper_path,f), format_date)
             print('Written {0}'.format(os.path.join(media_path,'original/SABRA/{0}-{1}.csv'.format(typologie,polluant))))
     print('')
     dataToFiles(dataTable)
