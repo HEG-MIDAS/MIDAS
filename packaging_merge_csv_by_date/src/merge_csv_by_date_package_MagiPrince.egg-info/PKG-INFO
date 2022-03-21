@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: merge-csv-by-date-package-MagiPrince
-Version: 0.1.0
+Version: 0.2.0
 Summary: A small merge package, that merges two csv files of same by date
 Author: David Nogueiras Blanco
 License: UNKNOWN

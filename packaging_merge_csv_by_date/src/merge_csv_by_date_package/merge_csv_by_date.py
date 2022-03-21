@@ -13,13 +13,15 @@ It will proceed by date and inserting new lines chronoligicaly when the data was
 """
 
 
-def is_string_date(date_string: str) -> bool:
+def is_string_date(date_string: str, format_date: str) -> bool:
     """Test if a string is a date and return a boolean
 
     Parameters
     ----------
     date_string : str
         string to be cast
+    format_date: str
+        The format of the date that will be used
     
     Returns
     -------
@@ -28,54 +30,13 @@ def is_string_date(date_string: str) -> bool:
     """
 
     try:
-        if len(date_string) == 10:
-            datetime.datetime.strptime(date_string, '%Y-%m-%d')
-        elif len(date_string) == 16:
-            datetime.datetime.strptime(date_string, '%Y-%m-%d %H:%M')
-        elif len(date_string) == 19:
-            datetime.datetime.strptime(date_string, '%Y-%m-%d %H:%M:%S')
-        else:
-            raise ValueError
+        datetime.datetime.strptime(date_string, format_date)
     except:
         return False
     return True
 
 
-def string_to_date(date_string: str) -> datetime.datetime:
-    """Convert a string to a datetime object and return it. Raises an error if it can't be casted.
-
-    Parameters
-    ----------
-    date_string : str
-        string to be cast
-
-    Returns
-    -------
-    datetime.datetime
-        the date contained in the string passed in argument
-
-    Raises
-    ------
-    ValueError
-        if the string doesn't match any pattern of date convertion
-    """
-
-    try:
-        if len(date_string) == 10:
-            return datetime.datetime.strptime(date_string, '%Y-%m-%d')
-        elif len(date_string) == 16:
-            return datetime.datetime.strptime(date_string, '%Y-%m-%d %H:%M')
-        elif len(date_string) == 19:
-            return datetime.datetime.strptime(date_string, '%Y-%m-%d %H:%M:%S')
-        
-        raise ValueError
-
-    except ValueError:
-        raise ValueError("Incorrect data format, should be YYYY-MM-DD")
-
-
-
-def merge_csv_by_date(old_data_file_path: str, new_data_file_path: str) -> str:
+def merge_csv_by_date(old_data_file_path: str, new_data_file_path: str, format_date: str) -> str:
     """Merge two csv files by comparing the lines beggining with a date in each file and
     overiding the old data by the new one if the line with the same date are not identical.
     Rewrites comments and header of the new data.
@@ -87,6 +48,8 @@ def merge_csv_by_date(old_data_file_path: str, new_data_file_path: str) -> str:
         The path of the file containing the old data
     new_data_file_path : str
         The path of the file containing the new data
+    format_date: str
+        The format of the date that will be used
 
     Return
     ------
@@ -123,25 +86,25 @@ def merge_csv_by_date(old_data_file_path: str, new_data_file_path: str) -> str:
                 old_splitted_line = [''] if old_stopped else re.split('[,;]', old_data_file_array[pos_old])
                 
                 # Check that the first element of new or old splitted line is a date or that one has stopped and the one is a date
-                if (is_string_date(new_splitted_line[0]) and is_string_date(old_splitted_line[0])) or (is_string_date(new_splitted_line[0]) and old_stopped) or (new_stopped and is_string_date(old_splitted_line[0])):
-                    if (not old_stopped) and ((new_stopped and is_string_date(old_splitted_line[0])) or (string_to_date(new_splitted_line[0]) > string_to_date(old_splitted_line[0]))):
+                if (is_string_date(new_splitted_line[0], format_date) and is_string_date(old_splitted_line[0], format_date)) or (is_string_date(new_splitted_line[0], format_date) and old_stopped) or (new_stopped and is_string_date(old_splitted_line[0], format_date)):
+                    if (not old_stopped) and ((new_stopped and is_string_date(old_splitted_line[0], format_date)) or (datetime.datetime.strptime(new_splitted_line[0], format_date) > datetime.datetime.strptime(old_splitted_line[0], format_date))):
                         merged_data_file_array.append(old_data_file_array[pos_old])
                         pos_old += 1
-                    elif (not new_stopped) and ((is_string_date(new_splitted_line[0]) and old_stopped) or (string_to_date(new_splitted_line[0]) < string_to_date(old_splitted_line[0]))):
+                    elif (not new_stopped) and ((is_string_date(new_splitted_line[0], format_date) and old_stopped) or (datetime.datetime.strptime(new_splitted_line[0], format_date) < datetime.datetime.strptime(old_splitted_line[0], format_date))):
                         merged_data_file_array.append(new_data_file_array[pos_new])
                         pos_new += 1
-                    elif string_to_date(new_splitted_line[0]) == string_to_date(old_splitted_line[0]):
+                    elif datetime.datetime.strptime(new_splitted_line[0], format_date) == datetime.datetime.strptime(new_splitted_line[0], format_date):
                         merged_data_file_array.append(new_data_file_array[pos_new])
                         pos_new += 1
                         pos_old += 1
                 else:
                     # Move indexes until it reaches the first line with a date at position 0
 
-                    if (not is_string_date(new_splitted_line[0])) and not new_stopped:
+                    if (not is_string_date(new_splitted_line[0], format_date)) and not new_stopped:
                         # Write comments and header of the new file
                         merged_data_file_array.append(new_data_file_array[pos_new])
                         pos_new += 1
-                    if (not is_string_date(old_splitted_line[0])) and not old_stopped:
+                    if (not is_string_date(old_splitted_line[0], format_date)) and not old_stopped:
                         pos_old += 1
 
                     
