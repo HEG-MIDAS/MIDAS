@@ -1,6 +1,8 @@
+.python-version
 env/
 .vscode
 .DS_Store
 *.csv
 *.sql*
 *__pycache__*
+geckodriver.log

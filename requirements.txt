@@ -3,5 +3,6 @@ charset-normalizer==2.0.12
 idna==3.3
 ./packaging_merge_csv_by_date/dist/merge_csv_by_date_package_MagiPrince-0.1.0-py3-none-any.whl
 pyparsing==3.0.7
+selenium==4.1.2
 requests==2.27.1
 urllib3==1.26.8
