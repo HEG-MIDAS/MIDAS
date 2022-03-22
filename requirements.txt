@@ -7,3 +7,4 @@ selenium==4.1.2
 requests==2.27.1
 urllib3==1.26.8
 numpy==1.22.3
+Django==4.0.3
