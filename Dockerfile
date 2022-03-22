@@ -5,6 +5,7 @@ RUN apt-get update && apt-get upgrade -y
 
 # Copy essential files to docker env
 COPY Climacity /app/Climacity
+COPY backup /app/backup
 COPY media /app/media
 COPY MIDAS /app/MIDAS
 COPY packaging_merge_csv_by_date /app/packaging_merge_csv_by_date
