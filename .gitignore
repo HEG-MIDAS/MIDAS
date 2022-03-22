@@ -6,3 +6,5 @@ env/
 *.sql*
 *__pycache__*
 geckodriver.log
+*.txt
+!requirements.txt
