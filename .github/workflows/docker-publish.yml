@@ -109,7 +109,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Pull Docker images
-        run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:master
         shell: bash
       - name: Deploy Docker Stack
         run: docker stack deploy --with-registry-auth --resolve-image always -c /home/docker/midas/docker-compose.yml midas
