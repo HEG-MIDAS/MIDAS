@@ -1,6 +1,8 @@
 #!/bin/sh
 
 echo "Starting"
+echo "Install Crontab"
+crontab /app/docker/crontab
 echo "Making migrations"
 python MIDAS/manage.py makemigrations MIDAS_app
 echo "Migrating"
