@@ -1,0 +1,37 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}MIDAS{% endblock %}</title>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta property="og:title" content="MIDAS">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{request.build_absolute_uri}}">
+    <meta property="og:description" content="Project de collecte et d'analyse de données météorologiques">
+    <meta content="#B593C0" data-react-helmet="true" name="theme-color" />
+    {% block css %}
+        <link rel="stylesheet" href="/static/css/main.css">
+        {% block extracss %}
+        {% endblock %}
+    {% endblock %}
+    {% block js%}
+        <script src="https://kit.fontawesome.com/c1eeb33a14.js" crossorigin="anonymous"></script>
+        {% block extrajs%}
+        {% endblock %}
+    {% endblock %}
+</head>
+{% block body %}
+<body>
+    {% block body_header %}
+    {% endblock %}
+    {% block body_content %}
+        <p>Hello there, my name's MIDAS!</p>
+    {% endblock %}
+    {% block body_footer %}
+    {% endblock %}
+</body>
+{% endblock %}
+</html>
