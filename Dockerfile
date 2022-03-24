@@ -3,7 +3,7 @@ FROM python:3.9.11-buster
 # Update all
 RUN apt-get update && apt-get upgrade -y
 # Insrall crontab
-RUN apt-get install cron
+RUN apt-get install cron -y
 
 # Copy essential files to docker env
 COPY docker /app/docker
