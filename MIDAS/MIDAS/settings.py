@@ -50,6 +50,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CSRF_TRUSTED_ORIGINS = ['https://midas.gexplore.ch','http://localhost']
+
 ROOT_URLCONF = 'MIDAS.urls'
 
 TEMPLATES = [
