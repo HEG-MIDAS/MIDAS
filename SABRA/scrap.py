@@ -7,6 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.support import expected_conditions as EC
 from merge_csv_by_date_package import merge_csv_by_date
@@ -171,8 +172,12 @@ def scraper(URL:str,driver:webdriver.Firefox,urbain_input:str,polluants_input:st
     # Typologie
     for el in arr:
         if(el != start_date and el != end_date):
-            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,el))).location_once_scrolled_into_view
-            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,el))).click()
+            try:
+                WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,el))).location_once_scrolled_into_view
+                WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,el))).click()
+            except ElementClickInterceptedException:
+                fnd = driver.find_element(By.CSS_SELECTOR,el)
+                driver.execute_script ("arguments[0].click();",fnd)
         elif ((el == start_date or el == end_date) and start_date == end_date):
             WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,'table input[name="date_from"]'))).location_once_scrolled_into_view
             WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,'table input[name="date_from"]'))).clear()
