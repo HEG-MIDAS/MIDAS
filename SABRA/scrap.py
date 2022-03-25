@@ -202,7 +202,7 @@ def scraper(URL:str,driver:webdriver.Firefox,urbain_input:str,polluants_input:st
 def download(s:str,e:str):
     # Create Firefox Options needed to autodownload
     options = webdriver.FirefoxOptions()
-    options.headless = False
+    options.headless = True
     options.set_preference("browser.download.folderList", 2)
     options.set_preference("browser.download.viewableInternally.enabledTypes", "")
     options.set_preference("browser.download.useDownloadDir", True)
