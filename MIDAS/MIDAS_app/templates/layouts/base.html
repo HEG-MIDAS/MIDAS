@@ -13,22 +13,27 @@
     <meta property="og:description" content="Project de collecte et d'analyse de données météorologiques">
     <meta content="#B593C0" data-react-helmet="true" name="theme-color" />
     {% block css %}
-        <link rel="stylesheet" href="/static/css/main.css">
-        {% block extracss %}
-        {% endblock %}
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/lib/bootstrap/css/bootstrap.min.css">
+    {% block extracss %}
+    {% endblock %}
     {% endblock %}
     {% block js%}
-        <script src="https://kit.fontawesome.com/c1eeb33a14.js" crossorigin="anonymous"></script>
-        {% block extrajs%}
-        {% endblock %}
+    <script src="/static/lib/fontawesome/fontawesome.js" crossorigin="anonymous"></script>
+    <script src="/static/lib/bootstrap/js/bootstrap.bundle.js" crossorigin="anonymous"></script>
+    {% block extrajs%}
+    {% endblock %}
     {% endblock %}
 </head>
 {% block body %}
 <body>
     {% block body_header %}
+        {% include 'includes/navbar.html' %}
     {% endblock %}
     {% block body_content %}
+    <div class="midas-container container-fluid">
         <p>Hello there, my name's MIDAS!</p>
+    </div>
     {% endblock %}
     {% block body_footer %}
     {% endblock %}
