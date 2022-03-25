@@ -6,7 +6,9 @@ import getopt
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.support import expected_conditions as EC
 from merge_csv_by_date_package import merge_csv_by_date
 from collections import OrderedDict
 from datetime import datetime, timedelta
@@ -165,14 +167,28 @@ def scraper(URL:str,driver:webdriver.Firefox,urbain_input:str,polluants_input:st
     submit_button = driver.find_element(By.ID,"submit_button")
     assert submit_button.get_attribute('value') == "Extraire"
     # Set params in Form
-    driver.find_element(By.CSS_SELECTOR,'table input[value="'+urbain_input+'"]').click()
-    driver.find_element(By.CSS_SELECTOR,'table input[value="'+polluants_input+'"]').click()
-    driver.find_element(By.CSS_SELECTOR,'table input[value="'+time_input+'"]').click()
-    driver.find_element(By.CSS_SELECTOR,'table input[name="date_from"]').clear()
-    driver.find_element(By.CSS_SELECTOR,'table input[name="date_from"]').send_keys(start_date)
-    driver.find_element(By.CSS_SELECTOR,'table input[name="date_to"]').clear()
-    driver.find_element(By.CSS_SELECTOR,'table input[name="date_to"]').send_keys(end_date)
-    driver.find_element(By.CSS_SELECTOR,'table input[value="'+timelapse_input+'"]').click()
+    arr = ['table input[value="'+urbain_input+'"]','table input[value="'+polluants_input+'"]','table input[value="'+time_input+'"]',start_date,end_date,'table input[value="'+timelapse_input+'"]']
+    # Typologie
+    for el in arr:
+        if(el != start_date and el != end_date):
+            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,el))).location_once_scrolled_into_view
+            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,el))).click()
+        elif ((el == start_date or el == end_date) and start_date == end_date):
+            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,'table input[name="date_from"]'))).location_once_scrolled_into_view
+            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,'table input[name="date_from"]'))).clear()
+            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,'table input[name="date_from"]'))).send_keys(start_date)
+            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,'table input[name="date_to"]'))).location_once_scrolled_into_view
+            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,'table input[name="date_to"]'))).clear()
+            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,'table input[name="date_to"]'))).send_keys(end_date)
+        elif el == start_date:
+            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,'table input[name="date_from"]'))).location_once_scrolled_into_view
+            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,'table input[name="date_from"]'))).clear()
+            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,'table input[name="date_from"]'))).send_keys(start_date)
+        elif el == end_date:
+            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,'table input[name="date_to"]'))).location_once_scrolled_into_view
+            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,'table input[name="date_to"]'))).clear()
+            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,'table input[name="date_to"]'))).send_keys(end_date)
+
     # Submit Form
     driver.find_element(By.ID,"submit_button").click()
     # Find the Download button and download it
@@ -186,7 +202,7 @@ def scraper(URL:str,driver:webdriver.Firefox,urbain_input:str,polluants_input:st
 def download(s:str,e:str):
     # Create Firefox Options needed to autodownload
     options = webdriver.FirefoxOptions()
-    options.headless = True
+    options.headless = False
     options.set_preference("browser.download.folderList", 2)
     options.set_preference("browser.download.viewableInternally.enabledTypes", "")
     options.set_preference("browser.download.useDownloadDir", True)

@@ -2,8 +2,10 @@ FROM python:3.9.11-buster
 
 # Update all
 RUN apt-get update && apt-get upgrade -y
-# Insrall crontab
+# Install crontab
 RUN apt-get install cron -y
+# Install firefox  for web scraper
+RUN apt-get install firefox-esr -y
 
 # Copy essential files to docker env
 COPY docker /app/docker
