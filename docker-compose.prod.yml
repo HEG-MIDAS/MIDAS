@@ -1,0 +1,18 @@
+version: '3.9'
+services:
+  midas:
+    image: ghcr.io/heg-midas/midas:master
+    restart: unless-stopped
+    volumes:
+      - media:/app/media
+      - backup:/app/backup
+    ports:
+      - "8000:8000"
+    environment:
+      - admin_username=admin
+      - admin_password=pw
+      - admin_email=midas@midas.ch
+
+volumes:
+  media:
+  backup:
