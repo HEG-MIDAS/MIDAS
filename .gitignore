@@ -14,3 +14,7 @@ geckodriver.log
 *.txt
 !requirements.txt
 docker-compose.override.yml
+
+# Ignore static
+static/
+!static/index.html
