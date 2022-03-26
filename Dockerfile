@@ -9,6 +9,7 @@ RUN apt-get install cron firefox-esr -y
 COPY docker /app/docker
 COPY Climacity /app/Climacity
 COPY backup /app/backup
+COPY static /app/static
 COPY media /app/media
 COPY MIDAS /app/MIDAS
 COPY packaging_merge_csv_by_date /app/packaging_merge_csv_by_date
