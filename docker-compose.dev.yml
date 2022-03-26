@@ -4,6 +4,9 @@ services:
     build:
       context: .
       network: host
+      args: [ "DJANGO_SETTINGS_MODULE=MIDAS.settings.base" ]
+    environment:
+      - DJANGO_SETTINGS_MODULE=MIDAS.settings.base
     ports:
       - "8000:8000"
     environment:
