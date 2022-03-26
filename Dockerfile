@@ -16,7 +16,9 @@ COPY SABRA /app/SABRA
 COPY requirements.txt /app/requirements.txt
 COPY MIDAS_docker_launcher.sh /app/MIDAS_docker_launcher.sh
 
+# Env
 WORKDIR /app
+ENV DJANGO_SETTINGS_MODULE=MIDAS.settings.prod
 
 # Install requirements
 RUN pip3 install -r requirements.txt
