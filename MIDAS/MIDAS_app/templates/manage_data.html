@@ -1,0 +1,13 @@
+{% extends 'layouts/base.html' %}
+{% block body_content %}
+<div class="midas-container container-fluid">
+    <div class="alert alert-danger text-center" role="alert">
+        Site en construction !
+    </div>
+    <ul>
+    {% for x in file %}
+        <li>{{x}}</li>
+    {% endfor %}
+    </ul>
+</div>
+{% endblock %}
