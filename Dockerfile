@@ -18,7 +18,8 @@ COPY MIDAS_docker_launcher.sh /app/MIDAS_docker_launcher.sh
 
 # Env
 WORKDIR /app
-ENV DJANGO_SETTINGS_MODULE=MIDAS.settings.prod
+ARG DJANGO_SETTINGS_MODULE=MIDAS.settings.prod
+ENV DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
 
 # Install requirements
 RUN pip3 install -r requirements.txt
