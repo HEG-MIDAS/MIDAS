@@ -3,6 +3,7 @@ import time
 import re
 import sys
 import getopt
+import numpy as np
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -53,22 +54,26 @@ def dataToFiles(data: dict):
             text = str(e)+","
             # If value for polluant 1, add it
             if 1 in data[k][e]:
-                text += data[k][e][1]
+                if(data[k][e] == '')text += np.NaN
+                else text += data[k][e][1]
             # Always add the  , to separate
             text += ","
             # If value for polluant 2, add it
             if 2 in data[k][e]:
-                text += data[k][e][2]
+                if(data[k][e] == '')text += np.NaN
+                else text += data[k][e][2]
             # Always add the  , to separate
             text += ","
             # If value for polluant 3, add it
             if 3 in data[k][e]:
-                text += data[k][e][3]
+                if(data[k][e] == '')text += np.NaN
+                else text += data[k][e][3]
             # Always add the  , to separate
             text += ","
             # If value for polluant 4, add it
             if 4 in data[k][e]:
-                text += data[k][e][4]
+                if(data[k][e] == '')text += np.NaN
+                else text += data[k][e][4]
             # Add a newline or else everything is on the same line
             text += "\n"
             # Write the line on the file
