@@ -243,6 +243,8 @@ def download(s:str,e:str):
     driver.close()
 
 def main(argv):
+    # Print Debug for Start
+    print("Starting "+time.strftime("%Y-%m-%d %H:%M:%S"))
     start_date =  datetime.now().date()
     end_date = datetime.now().date()
     try:
@@ -262,16 +264,29 @@ def main(argv):
     if(start_date > end_date):
         print('The end date is inferior to the start date !')
         exit(1)
-    elif(start_date - end_date < timedelta(days=-400)):
-        print('The time difference can be at maximum 400 days !')
-        exit(1)
 
-    start_date = start_date.strftime('%d.%m.%Y')
-    end_date = end_date.strftime('%d.%m.%Y')
-    # Print Debug for Start
-    print("Starting "+time.strftime("%Y-%m-%d %H:%M:%S"))
-    # Download Function
-    download(start_date,end_date)
+    if(end_date - start_date > timedelta(days=400)):
+        print('The time difference is greater than 400 days !\nSplitting the operation')
+        timeDiff = (end_date - start_date)
+        reducedDiff = np.intc(np.ceil(timeDiff/timedelta(days=400)))
+        tempStartDate = start_date
+        tempEndDate = start_date + timedelta(days=400)
+        for x in range(0,reducedDiff):
+            str_start_date = tempStartDate.strftime('%d.%m.%Y')
+            str_end_date = tempEndDate.strftime('%d.%m.%Y')
+            print(str_start_date,str_end_date)
+            #download(str_start_date,str_end_date)
+            tempStartDate = tempEndDate
+            tempEndDate = tempStartDate + timedelta(days=400)
+            if(end_date < tempEndDate):
+                tempEndDate = end_date
+
+        exit(0)
+    else:
+        start_date = start_date.strftime('%d.%m.%Y')
+        end_date = end_date.strftime('%d.%m.%Y')
+        # Download Function
+        download(start_date,end_date)
     # Manipulating
     manipulate()
     # Clean folder
