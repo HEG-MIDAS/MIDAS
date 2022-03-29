@@ -67,23 +67,36 @@ def process_data(array_data: Array) -> Array:
         an array containing all the relevant data that has been extracted from the lines of the requested data
     """
     array_processed_data = []
-    array_processed_data.append(array_data[0])
+    index_to_find_max = array_data[0][2:].index("Vv_Max")
+    array_processed_data.append([h+'*' for h in array_data[0]])
     array_hour_data = []
     hour_working = datetime.datetime.now()
     hour_working_until = datetime.datetime.now()
     time_set = False
+    # Winter hour gap
+    hour_gap = 1
     for i in range(1, len(array_data)):
         line_data = array_data[i].split(',')
         # Check if the line of data is still in the same range of hour or that the data ended
         if datetime.datetime.strptime(line_data[0], '%Y-%m-%d %H:%M:%S') >= hour_working_until or i >= len(array_data)-1:
+            print(i >= len(array_data)-1)
             # Ignore the firsts two values (that are dates) and cast the other ones into floats
             # when possible, if not into np.nan
             casted_data = np.array([[float(k) if k != '' else np.nan for k in j[2:]] for j in array_hour_data])
             # Create a new array with mean values that starts by the hour GMT and the hour GMT+1 of the mean over the values
-            array_mean_full = [str(hour_working), str(hour_working_until)]
+            array_mean_full = [str(hour_working), str(hour_working+datetime.timedelta(hours=hour_gap))]
+            print(hour_gap)
+            print(datetime.timedelta(hours=hour_gap))
+            print(hour_working+datetime.timedelta(hours=hour_gap))
+            print(array_mean_full)
             # Do the mean over all the columns of the data casted before, if there is no value for a column
             # an empty string is added
-            array_processed_data.append(array_mean_full + ([str(j) if j != np.nan else '' for j in np.nanmean(casted_data, axis=0)]))
+            data_mean = [str(j) if j != np.nan else '' for j in np.nanmean(casted_data, axis=0)]
+
+            # Take the value max of the index that correspond to a header where the value max is used
+            data_mean[index_to_find_max] = str(np.max(casted_data[:, index_to_find_max]))
+
+            array_processed_data.append(array_mean_full + data_mean)
             array_hour_data = []
             time_set = False
 
@@ -91,8 +104,13 @@ def process_data(array_data: Array) -> Array:
         if not time_set:
             # Date with hour of the start of the new hour range
             hour_working = datetime.datetime.strptime(line_data[0], '%Y-%m-%d %H:%M:%S')
+            hour_gap = int((datetime.datetime.strptime(line_data[1], '%Y-%m-%d %H:%M:%S')-hour_working).seconds / 3600)
+            print((datetime.datetime.strptime(line_data[1], '%Y-%m-%d %H:%M:%S')-hour_working).seconds / 3600)
+            print(hour_gap)
+            print(hour_working)
             # End of the new hour range
             hour_working_until = (hour_working+datetime.timedelta(hours=1)).replace(microsecond=0, second=0, minute=0)
+            print(hour_working_until)
             time_set = True
         array_hour_data.append(line_data)
         
@@ -167,9 +185,9 @@ def main() -> None:
     path_original_data_file = '{}/../media/original/Climacity/climacity_original_merged.csv'.format(__location__)
     path_transformed_data_file = '{}/../media/transformed/Climacity/climacity_transformed_merged.csv'.format(__location__)
 
-    url = """http://www.climacity.org/Axis/a_data_export.gwt?fdate={}&tdate={}&h_loc=on&
-        h_Tsv=on&h_Gh_Avg=on&h_Dh_Avg=on&h_Tamb_Avg=on&h_HRamb_Avg=on&h_Prec_Tot=on&h_Vv_Avg=on&h_Vv_Avg=on&
-        h_Vv_Max=on&h_Dv_Avg=on&h_Baro=on&h_CS125_Vis=on&chB_PM25=on&h_PM10=on&h_Hc=on&h_Az=on""".format(start_date, end_date)
+    url = """http://www.climacity.org/Axis/a_data_export.gwt?fdate={}&tdate={}&h_loc=on&""" \
+        """h_Tsv=on&h_Gh_Avg=on&h_Dh_Avg=on&h_Tamb_Avg=on&h_HRamb_Avg=on&h_Prec_Tot=on&h_Vv_Avg=on&h_Vv_Avg=on&""" \
+        """h_Vv_Max=on&h_Dv_Avg=on&h_Baro=on&h_CS125_Vis=on&h_PM25=on&h_PM10=on&h_Hc=on&h_Az=on""".format(start_date, end_date)
 
     today = time.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -204,7 +222,7 @@ def main() -> None:
         print("--------------- Error at request adding logs --------------")
         add_logs()
 
-    print("--------------- Requesting data Climacity ended : {} ---------------".format(today))
+    print("--------------- Requesting data Climacity ended : {} ---------------".format(time.strftime("%Y-%m-%d %H:%M:%S")))
 
 
 if __name__ == '__main__':
