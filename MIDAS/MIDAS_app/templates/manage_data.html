@@ -4,9 +4,43 @@
     <div class="alert alert-danger text-center" role="alert">
         Site en construction !
     </div>
+
+    {% if user.is_superuser %}
+    <div>
+        <form action="" method="post">
+            <button type="submit" class="btn btn-primary">Envoyer</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/manage-data/">Media</a></li>
+            {% if origin != '' %}
+                <li class="breadcrumb-item"><a href="/manage-data/?origin={{ origin }}">{{ origin }}</a></li>
+            {% endif %}
+            {% if source != '' %}
+                <li class="breadcrumb-item">{{ source }}</li>
+            {% endif %}
+        </ol>
+      </nav>
+
     <ul>
-    {% for x in file %}
-        <li>{{x}}</li>
+    {% for key, value in file.items %}
+        {% if value %}
+            <li>
+                <form action="/manage-data/" method="post">
+                    <i class="fas fa-file"></i> {{ key }}
+                    {% csrf_token %}
+                    <input type="hidden" id="filename" name="filename" value="{{ key }}">
+                    <input type="hidden" id="origin" name="origin" value="{{ origin }}">
+                    <input type="hidden" id="source" name="source" value="{{ source }}">
+                    <button class="btn btn-success">Télécharger le fichier</button>
+                </form>
+            </li>
+        {% else %}
+            <a href="{{ path_redirect }}{{ key }}"><li><i class="fas fa-folder"></i> {{ key }}</li></a>
+        {% endif %}
     {% endfor %}
     </ul>
 </div>
