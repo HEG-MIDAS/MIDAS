@@ -1,10 +1,20 @@
+# Python
 .python-version
 env/
+*__pycache__*
+
+# Env
 .vscode
 .DS_Store
+geckodriver.log
+
+# Files
 *.csv
 *.sql*
-*__pycache__*
-geckodriver.log
 *.txt
 !requirements.txt
+docker-compose.override.yml
+
+# Ignore static
+static/*
+!static/index.html

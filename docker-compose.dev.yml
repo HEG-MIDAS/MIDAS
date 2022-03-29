@@ -4,9 +4,11 @@ services:
     build:
       context: .
       network: host
-    ports:
-      - "8000:8000"
+      args: [ "DJANGO_SETTINGS_MODULE=MIDAS.settings.base" ]
     environment:
+      - DJANGO_SETTINGS_MODULE=MIDAS.settings.base
       - admin_username=admin
       - admin_password=pw
       - admin_email=midas@midas.ch
+    ports:
+      - "8000:8000"
