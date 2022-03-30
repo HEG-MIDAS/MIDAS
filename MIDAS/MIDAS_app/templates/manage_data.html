@@ -7,10 +7,23 @@
 
     {% if user.is_superuser %}
     <div>
-        <form action="/harvest-data/" method="post">
+        <form class="row align-items-end g-3 needs-validation" action="/harvest-data/" method="post">
             {% csrf_token %}
-            {{ form }}
-            <button type="submit" class="btn btn-primary">Envoyer</button>
+            {{ form.non_field_errors }}
+            <div class="col-md-4">
+                <label for="{{ form.starting_date.id_for_label }}">{{ form.starting_date.label }} :</label>
+                {{ form.starting_date }}
+            </div>
+            <div class="col-md-4">
+                <label for="{{ form.ending_date.id_for_label }}">{{ form.ending_date.label }} :</label>
+                {{ form.ending_date }}
+            </div>
+            <div class="col-md-4">
+                <button type="submit" onclick="displayRunner(this)" class="btn btn-primary">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
+                    Envoyer
+                </button>
+            </div>
         </form>
     </div>
     {% endif %}
@@ -46,4 +59,16 @@
     {% endfor %}
     </ul>
 </div>
+
+<script>
+    function displayRunner(e) {
+        //console.log(e.firstElementChild)
+        var starting_date = document.getElementById('id_starting_date').value;
+        var ending_date = document.getElementById('id_ending_date').value;
+        if (starting_date != '' && ending_date != ''){
+            e.firstElementChild.hidden = false;
+        }
+    }
+</script>
+
 {% endblock %}

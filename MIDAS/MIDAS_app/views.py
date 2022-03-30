@@ -58,6 +58,6 @@ def manage_data(request):
 @user_passes_test(lambda u: u.is_superuser)
 def harvest_data(request):
     if request.method == 'POST':
-        os.system("python3 {}/climacity.py -s {} -e {}".format(settings.CLIMACITY_ROOT, str(request.POST['starting_date']), str(request.POST['ending_date'])))
-        os.system("python3 {}/scrap.py -s {} -e {}".format(settings.SABRA_ROOT, str(request.POST['starting_date']), str(request.POST['ending_date'])))
+        print("Climacity : {}".format(os.system("python3 {}/climacity.py -s {} -e {}".format(settings.CLIMACITY_ROOT, str(request.POST['starting_date']), str(request.POST['ending_date'])))))
+        print("SABRA : {}".format(os.system("python3 {}/scrap.py -s {} -e {}".format(settings.SABRA_ROOT, str(request.POST['starting_date']), str(request.POST['ending_date'])))))
     return redirect(manage_data)

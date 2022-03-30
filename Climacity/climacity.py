@@ -1,4 +1,5 @@
 from ctypes import Array
+from urllib import request, response
 import requests
 import time
 import datetime
@@ -10,11 +11,11 @@ import numpy as np
 from merge_csv_by_date_package import merge_csv_by_date
 
 
-def add_logs(start_date: datetime.datetime, end_date: datetime.datetime) -> None:
+def add_logs(start_date: datetime.datetime, end_date: datetime.datetime, __location__: str) -> None:
     """Add a log line to a log file in the directory. The log line is only composed of the date
 
     """
-    with open("logs/climacity.txt", "a") as file:
+    with open("{}../logs/climacity.txt".format(__location__), "a") as file:
         file.write("-s {} -e {}".format(start_date, end_date))
 
 
@@ -174,7 +175,7 @@ def main() -> None:
 
     if(start_date > end_date):
         print('The end date is inferior to the start date !')
-        exit(1)
+        sys.exit(1)
 
     start_date = start_date.strftime('%Y-%m-%d')
     end_date = end_date.strftime('%Y-%m-%d')
@@ -195,7 +196,11 @@ def main() -> None:
 
     # Request data to download
     #start_time = time.time()
-    r = requests.get(url)
+    r = None
+    try:
+        r = requests.get(url)
+    except:
+        sys.exit(2)
     #print(time.time()-start_time)
     if r.ok:
         start_time = time.time()
@@ -220,7 +225,8 @@ def main() -> None:
 
     else:
         print("--------------- Error at request adding logs --------------")
-        add_logs(start_date, end_date)
+        add_logs(start_date, end_date, __location__)
+        sys.exit(3)
 
     print("--------------- Requesting data Climacity ended : {} ---------------".format(time.strftime("%Y-%m-%d %H:%M:%S")))
 
