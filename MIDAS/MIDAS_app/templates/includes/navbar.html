@@ -18,6 +18,9 @@
                     <a class="dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user"></i></a>
                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="/manage-data">Gestion des Données</a>
+                        {% if user.is_superuser %}
+                        <a class="dropdown-item" href="/admin">Panneau d'administration</a>
+                        {% endif %}
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" aria-current="page" href="/logout">Déconnexion</a>
                     </div>
