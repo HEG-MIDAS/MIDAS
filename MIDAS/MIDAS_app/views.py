@@ -1,6 +1,7 @@
 import os
 import mimetypes
-from django.http import HttpResponse
+import requests
+from django.http import HttpResponse, Http404
 from django.shortcuts import redirect, render
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -12,11 +13,31 @@ def index(request):
     context = {}
     return render(request, 'index.html',context)
 
+def status(request, source):
+    dic = {'SABRA':'https://www.ropag-data.ch/gechairmo/i_extr.php','ClimaCity':'http://www.climacity.org/Axis/'}
+    for k in dic:
+        if(source.lower() in k.lower()):
+            url = dic[k]
+            context = {'source':k}
+            try:
+                resp = requests.get(url)
+                if resp.status_code == 200:
+                    context['msg'] = 'ok'
+                else:
+                    context['msg'] = 'error'
+                return render(request, 'includes/status_badge.html',context,'image/svg+xml')
+            except:
+                context['msg'] = 'error'
+                return render(request, 'includes/status_badge.html',context,'image/svg+xml')
+
+    else:
+        raise Http404
+
 @login_required
 def manage_data(request):
-    
+
     media_path = join(settings.MEDIA_ROOT, join(request.GET.get('origin', ''), request.GET.get('source', '')))
-    
+
     if request.method == 'POST':
         if request.POST.get('filename', '') != '':
             media_path = join(settings.MEDIA_ROOT, join(request.POST.get('origin', ''), request.POST.get('source', '')))

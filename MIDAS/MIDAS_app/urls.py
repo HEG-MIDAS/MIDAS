@@ -5,4 +5,5 @@ urlpatterns=[
     path('', views.index, name='index'),
     path('manage-data/', views.manage_data, name='manage_data'),
     path('harvest-data/', views.harvest_data, name='harvest_data'),
+    path('status/<slug:source>.svg', views.status, name='status'),
 ]
