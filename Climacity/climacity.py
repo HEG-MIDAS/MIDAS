@@ -10,12 +10,12 @@ import numpy as np
 from merge_csv_by_date_package import merge_csv_by_date
 
 
-def add_logs() -> None:
+def add_logs(start_date: datetime.datetime, end_date: datetime.datetime) -> None:
     """Add a log line to a log file in the directory. The log line is only composed of the date
 
     """
-    with open("log.txt", "a") as file:
-        file.write(time.strftime("%Y-%m-%d %H:%M:%S"))
+    with open("logs/climacity.txt", "a") as file:
+        file.write("-s {} -e {}".format(start_date, end_date))
 
 
 def extract_relevant_data(r: requests.Request) -> Array:
@@ -220,7 +220,7 @@ def main() -> None:
 
     else:
         print("--------------- Error at request adding logs --------------")
-        add_logs()
+        add_logs(start_date, end_date)
 
     print("--------------- Requesting data Climacity ended : {} ---------------".format(time.strftime("%Y-%m-%d %H:%M:%S")))
 
