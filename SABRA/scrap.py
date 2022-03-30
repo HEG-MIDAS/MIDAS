@@ -29,9 +29,12 @@ URL = "https://www.ropag-data.ch/gechairmo/i_extr.php"
 
 # Function to write logs.
 ## Needs to define how
-def logs():
-    with open(os.path.join(scraper_path,'log.txt'), 'a') as file:
-        file.write(time.strftime('%Y-%m-%d %H:%M:%S'))
+def logs(str = ''):
+    with open(os.path.join(root_path,'/logs/sabra.txt'), 'a') as file:
+        if str == '':
+            file.write(time.strftime('%Y-%m-%d %H:%M:%S'))
+        else:
+            file.write(str)
 
 # Sort data by date
 def sortByDate(data: dict) -> OrderedDict:
@@ -242,6 +245,14 @@ def download(s:str,e:str):
     # Close Firefox Driver
     driver.close()
 
+def operation(sD:str,eD:str):
+    # Download for current time diff
+    download(sD,eD)
+    # Manipulating
+    manipulate()
+    # Clean folder
+    clean()
+
 def main(argv):
     # Print Debug for Start
     print("Starting "+time.strftime("%Y-%m-%d %H:%M:%S"))
@@ -265,31 +276,34 @@ def main(argv):
         print('The end date is inferior to the start date !')
         exit(1)
 
-    if(end_date - start_date > timedelta(days=400)):
-        print('The time difference is greater than 400 days !\nSplitting the operation')
+    if(end_date - start_date > timedelta(days=365)):
+        print('The time difference is greater than 365 days !')
         timeDiff = (end_date - start_date)
-        reducedDiff = np.intc(np.ceil(timeDiff/timedelta(days=400)))
+        reducedDiff = np.intc(np.ceil(timeDiff/timedelta(days=365)))
         tempStartDate = start_date
-        tempEndDate = start_date + timedelta(days=400)
+        tempEndDate = start_date + timedelta(days=365)
         for x in range(0,reducedDiff):
             str_start_date = tempStartDate.strftime('%d.%m.%Y')
             str_end_date = tempEndDate.strftime('%d.%m.%Y')
-            print(str_start_date,str_end_date)
-            #download(str_start_date,str_end_date)
+            print('Getting Datas from '+str_start_date+' to '+str_end_date)
+            try:
+                operation(str_start_date,str_end_date)
+            except:
+                print('An error occured for '+str_start_date+'/'+str_end_date)
+                logs('-s '+str_start_date+' -e '+str_end_date+'\n')
             tempStartDate = tempEndDate
-            tempEndDate = tempStartDate + timedelta(days=400)
+            tempEndDate = tempStartDate + timedelta(days=365)
             if(end_date < tempEndDate):
                 tempEndDate = end_date
-
-        exit(0)
     else:
         start_date = start_date.strftime('%d.%m.%Y')
         end_date = end_date.strftime('%d.%m.%Y')
-        # Download Function
-        download(start_date,end_date)
-    # Manipulating
-    manipulate()
-    # Clean folder
+        try:
+            operation(start_date,end_date)
+        except:
+            print('An error occured for '+start_date+'/'+end_date)
+            logs('-s '+start_date+' -e '+end_date+'\n')
+    # Clean folder (in case of)
     clean()
     # Print Debug for End
     print("Done "+time.strftime("%Y-%m-%d %H:%M:%S"))
