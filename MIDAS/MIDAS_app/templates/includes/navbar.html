@@ -14,9 +14,16 @@
                 <img class="mx-2 w-100 h-100" src="/status/sabra.svg" alt="Status SABRA">
                 <img class="mx-2 w-100 h-100" src="/status/climacity.svg" alt="Status ClimaCity">
                 {% if user.is_authenticated %}
-                <a class="btn btn-outline-light" aria-current="page" href="/logout">Logout</a>
+                <div class="dropdown">
+                    <a class="dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user"></i></a>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/manage-data">Gestion des Données</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" aria-current="page" href="/logout">Déconnexion</a>
+                    </div>
+                </div>
                 {% else %}
-                <a class="btn btn-outline-light" aria-current="page" href="/login">Login</a>
+                <a class="btn btn-outline-light" aria-current="page" href="/login">Connexion</a>
                 {% endif %}
             </div>
         </div>
