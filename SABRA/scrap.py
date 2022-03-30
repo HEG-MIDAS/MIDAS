@@ -254,6 +254,7 @@ def operation(sD:str,eD:str):
     clean()
 
 def main(argv):
+    exit_code = 0
     # Print Debug for Start
     print("Starting "+time.strftime("%Y-%m-%d %H:%M:%S"))
     start_date =  datetime.now().date()
@@ -262,11 +263,11 @@ def main(argv):
       opts, args = getopt.getopt(argv,"hs:e:",["start_date=","end_date="])
     except getopt.GetoptError:
       print('scrap.py -s <start_date> -e <end_date>')
-      sys.exit(2)
+      sys.exit(1)
     for opt, arg in opts:
       if opt == '-h':
          print('scrap.py -s <start_date> -e <end_date>')
-         sys.exit()
+         sys.exit(1)
       elif opt in ("-s", "--start_date"):
          start_date = datetime.strptime(arg,'%Y-%m-%d').date()
       elif opt in ("-e", "--end_date"):
@@ -290,6 +291,7 @@ def main(argv):
                 operation(str_start_date,str_end_date)
             except:
                 print('An error occured for '+str_start_date+'/'+str_end_date)
+                exit_code += 1
                 logs('-s '+str_start_date+' -e '+str_end_date+'\n')
             tempStartDate = tempEndDate
             tempEndDate = tempStartDate + timedelta(days=365)
@@ -302,11 +304,13 @@ def main(argv):
             operation(start_date,end_date)
         except:
             print('An error occured for '+start_date+'/'+end_date)
+            exit_code += 1
             logs('-s '+start_date+' -e '+end_date+'\n')
     # Clean folder (in case of)
     clean()
     # Print Debug for End
     print("Done "+time.strftime("%Y-%m-%d %H:%M:%S"))
+    exit(exit_code)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
