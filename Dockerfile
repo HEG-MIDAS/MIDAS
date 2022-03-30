@@ -11,6 +11,7 @@ COPY Climacity /app/Climacity
 COPY backup /app/backup
 COPY static /app/static
 COPY media /app/media
+COPY backup /app/backup
 COPY MIDAS /app/MIDAS
 COPY packaging_merge_csv_by_date /app/packaging_merge_csv_by_date
 COPY SABRA /app/SABRA
