@@ -8,9 +8,10 @@ RUN apt-get install cron firefox-esr -y
 # Copy essential files to docker env
 ## Docker Env
 COPY docker /app/docker
+COPY MIDAS_docker_launcher.sh /app/MIDAS_docker_launcher.sh
 ## Python Env
 COPY requirements.txt /app/requirements.txt
-COPY MIDAS_docker_launcher.sh /app/MIDAS_docker_launcher.sh
+COPY packaging_merge_csv_by_date /app/packaging_merge_csv_by_date
 ## Scraper
 COPY Climacity /app/Climacity
 COPY SABRA /app/SABRA
