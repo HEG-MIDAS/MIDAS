@@ -6,20 +6,23 @@ RUN apt-get update && apt-get upgrade -y
 RUN apt-get install cron firefox-esr -y
 
 # Copy essential files to docker env
+## Docker Env
 COPY docker /app/docker
-COPY Climacity /app/Climacity
-COPY backup /app/backup
-COPY static /app/static
-COPY media /app/media
-COPY backup /app/backup
-COPY MIDAS /app/MIDAS
-COPY packaging_merge_csv_by_date /app/packaging_merge_csv_by_date
-COPY SABRA /app/SABRA
+## Python Env
 COPY requirements.txt /app/requirements.txt
 COPY MIDAS_docker_launcher.sh /app/MIDAS_docker_launcher.sh
+## Scraper
+COPY Climacity /app/Climacity
+COPY SABRA /app/SABRA
+COPY logs /app/logs
+## Django App
+COPY MIDAS /app/MIDAS
+COPY static /app/static
+COPY media /app/media
 
-# Env
+# Root Directory
 WORKDIR /app
+# Env variables
 ARG DJANGO_SETTINGS_MODULE=MIDAS.settings.prod
 ENV DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
 
@@ -30,6 +33,7 @@ RUN pip3 install -r requirements.txt
 RUN rm requirements.txt
 RUN rm -rf packaging_merge_csv_by_date/
 
+# Expose the port for Django
 EXPOSE 8000
 
 CMD ./MIDAS_docker_launcher.sh
