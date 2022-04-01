@@ -4,10 +4,12 @@
     <div class="alert alert-danger text-center" role="alert">
         Site en construction !
     </div>
-
+    <div class="h1">Gestion de Données</div>
     {% if user.is_superuser %}
     <div>
         <form class="row align-items-end g-3 needs-validation" action="/harvest-data/" method="post">
+            <div class="h4">Ajout de données</div>
+            <div class="subtitle fst-italic">Ajoute pour tous les sources actuellement</div>
             {% csrf_token %}
             {{ form.non_field_errors }}
             <div class="col-md-4">
@@ -27,7 +29,8 @@
         </form>
     </div>
     {% endif %}
-
+    <div class="mt-5 h4">Téléchargement de fichiers</div>
+    <div class="subtitle fst-italic">Télécharge le fichier complet actuellement</div>
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/manage-data/">Media</a></li>
