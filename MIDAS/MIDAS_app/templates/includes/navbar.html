@@ -1,6 +1,6 @@
 <nav class="navbar navbar-dark bg-dark navbar-expand-lg">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">MIDAS</a>
+        <a class="navbar-brand" href="/">MIDAS</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -11,6 +11,10 @@
                 </li>
             </ul>
             <div class="d-flex align-items-center">
+                <div class="sources-status">
+                    <i class="fas fa-circle"></i>
+                    <span class="text-source-status">SABRA<span>
+                </div>
                 <img class="mx-2 w-100 h-100" src="/status/sabra.svg" alt="Status SABRA">
                 <img class="mx-2 w-100 h-100" src="/status/climacity.svg" alt="Status ClimaCity">
                 {% if user.is_authenticated %}
