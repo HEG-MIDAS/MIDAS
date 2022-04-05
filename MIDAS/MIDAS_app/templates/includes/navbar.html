@@ -12,14 +12,14 @@
             </ul>
             <div class="d-flex align-items-center">
                 <div class="sources-status">
-                    <i class="fas fa-circle"></i>
+                    <i class="fa-solid fa-circle-check"></i>
                     <span class="text-source-status">SABRA<span>
                 </div>
                 <img class="mx-2 w-100 h-100" src="/status/sabra.svg" alt="Status SABRA">
                 <img class="mx-2 w-100 h-100" src="/status/climacity.svg" alt="Status ClimaCity">
                 {% if user.is_authenticated %}
                 <div class="dropdown">
-                    <a class="dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user"></i></a>
+                    <a class="dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-user"></i></a>
                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="/manage-data">Gestion des Données</a>
                         {% if user.is_superuser %}
