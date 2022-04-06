@@ -5,7 +5,7 @@ from django import template
 register = template.Library()
 
 @register.simple_tag
-def sources():
+def all_status():
     dic = {'SABRA':'https://www.ropag-data.ch/gechairmo/i_extr.php','ClimaCity':'http://www.climacity.org/Axis/'}
     count = 0
     for k in dic:
@@ -16,8 +16,8 @@ def sources():
         except:
             count+=1
     if(count == 0):
-        return '<i class="fa-solid fa-circle-check"></i>'
+        return '<i class="status fa-solid fa-circle-check" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Toutes les sources sont opérationnelles"></i>'
     elif(count != 0 and count < len(dic)):
-        return '<i class="fa-solid fa-circle-exclamation"></i>'
+        return '<i class="status fa-solid fa-circle-exclamation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Certaines sources ne sont pas accessibles"></i>'
     else:
-        return '<i class="fa-solid fa-circle-xmark"></i>'
+        return '<i class="status fa-solid fa-circle-xmark" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Aucune des sources n\'est accessible"></i>'

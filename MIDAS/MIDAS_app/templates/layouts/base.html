@@ -21,6 +21,13 @@
     {% block js%}
     <script src="/static/lib/fontawesome/fontawesome.js" crossorigin="anonymous"></script>
     <script src="/static/lib/bootstrap/js/bootstrap.bundle.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+    window.onload = () => {
+        [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).map(function (tE) {
+            return new bootstrap.Tooltip(tE)
+        })
+    }
+    </script>
     {% block extrajs%}
     {% endblock %}
     {% endblock %}
@@ -28,7 +35,7 @@
 {% block body %}
 <body>
     {% block body_header %}
-        {% include 'includes/navbar.html' %}
+    {% include 'includes/navbar.html' %}
     {% endblock %}
     {% block body_content %}
     <div class="midas-container container-fluid">
