@@ -1,0 +1,32 @@
+{% extends 'layouts/base.html' %}
+{% block body_content %}
+{% load sources %}
+{% autoescape off %}
+<div class="midas-container container-fluid">
+    <div class="alert alert-danger text-center" role="alert">
+        Site en construction !
+    </div>
+    <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Nom</th>
+      <th scope="col">Statut</th>
+      <th scope="col">Badge</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">ClimaCity</th>
+      <td>{% status 'climacity' %}</td>
+      <td><img src="/statut/climacity.svg" alt=""></td>
+    </tr>
+    <tr>
+      <th scope="row">SABRA</th>
+      <td>{% status 'sabra' %}</td>
+      <td><img src="/statut/sabra.svg" alt=""></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+{% endautoescape %}
+{% endblock %}

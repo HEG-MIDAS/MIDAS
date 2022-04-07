@@ -3,10 +3,25 @@ import requests
 from django import template
 
 register = template.Library()
+dic = {'sabra':'https://www.ropag-data.ch/gechairmo/i_extr.php','climacity':'http://www.climacity.org/Axis/'}
+
+@register.simple_tag
+def status(source):
+    message = "<i class='status fa-solid fa-circle-check'></i> La source est accessible"
+    if(source.lower() in dic):
+        url = dic[source]
+        try:
+            resp = requests.get(url)
+            if resp.status_code != 200:
+                message = "<i class='status fa-solid fa-circle-xmark'></i> La source n'est pas accessible"
+        except:
+            message = "<i class='status fa-solid fa-circle-xmark'></i> La source n'est pas accessible"
+    else:
+        message = "<i class='status fa-solid fa-circle-xmark'></i> La source n'est pas accessible"
+    return message
 
 @register.simple_tag
 def all_status():
-    dic = {'SABRA':'https://www.ropag-data.ch/gechairmo/i_extr.php','ClimaCity':'http://www.climacity.org/Axis/'}
     count = 0
     for k in dic:
         try:
