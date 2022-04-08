@@ -25,6 +25,10 @@
                 <li class="dropdown">
                     <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-user"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><p class="dropdown-item text-center"><strong>{{user.first_name}} {{user.last_name}}</strong></p></li>
+                        <li><a class="dropdown-item" href="#">Profil</a></li>
+                        <li><a class="dropdown-item" href="#">Favoris</a></li>
+                        <li><div class="dropdown-divider"></div></li>
                         <li><a class="dropdown-item" href="/manage-data">Gestion des Données</a></li>
                         {% if user.is_superuser %}
                         <li><a class="dropdown-item" href="/admin">Panneau d'administration</a></li>
