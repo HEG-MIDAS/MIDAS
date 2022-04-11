@@ -1,8 +1,13 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, Source, Station, Parameter, StationBySource, ParamatersOfStationBySource
+from .models import User, Source, Station, Parameter, StationBySource, ParamatersOfStationBySource, Favorite
 
 # Register your models here.
+
+class FavoriteInline(admin.TabularInline):
+    model = Favorite
+    extra = 0
+
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
 
@@ -18,6 +23,10 @@ class UserAdmin(BaseUserAdmin):
          'is_superuser', 'groups', 'user_permissions')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
+
+    inlines = [
+        FavoriteInline,
+    ]
 
     list_display = ['username', 'email', 'first_name',
                     'last_name', 'is_active', 'is_staff']
@@ -84,6 +93,22 @@ admin.register(Parameter, ParameterAdmin)
 @admin.register(StationBySource)
 class StationBySourceAdmin(admin.ModelAdmin):
 
-    list_display = ['source', 'station']
+    list_display = ['name', 'source', 'station']
 
 admin.register(StationBySource, StationBySourceAdmin)
+
+
+@admin.register(ParamatersOfStationBySource)
+class ParamatersOfStationBySourceAdmin(admin.ModelAdmin):
+
+    list_display = ['name', 'station_by_source', 'parameter']
+
+admin.register(ParamatersOfStationBySource, ParamatersOfStationBySourceAdmin)
+
+
+@admin.register(Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
+
+    list_display = ['name']
+
+admin.register(Favorite, FavoriteAdmin)

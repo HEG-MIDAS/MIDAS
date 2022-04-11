@@ -8,14 +8,19 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from os import listdir
 from os.path import isfile, join, splitext
 from .forms import DateSelection
+from MIDAS_app.models import Favorite
 
 def index(request):
+    f = Favorite.objects.first()
+    field_object = Favorite._meta.get_field('paramaters_of_station_by_source')
+    field_value = field_object.value_from_object(f)
+    print(field_value)
     context = {}
-    return render(request, 'index.html',context)
+    return render(request, 'index.html', context)
 
 def statut(request):
     context = {}
-    return render(request, 'statut.html',context)
+    return render(request, 'statut.html', context)
 
 def statut_badge(request, source):
     dic = {'SABRA':'https://www.ropag-data.ch/gechairmo/i_extr.php','ClimaCity':'http://www.climacity.org/Axis/'}
@@ -29,10 +34,10 @@ def statut_badge(request, source):
                     context['msg'] = 'ok'
                 else:
                     context['msg'] = 'error'
-                return render(request, 'includes/statut_badge.html',context,'image/svg+xml')
+                return render(request, 'includes/statut_badge.html', context, 'image/svg+xml')
             except:
                 context['msg'] = 'error'
-                return render(request, 'includes/statut_badge.html',context,'image/svg+xml')
+                return render(request, 'includes/statut_badge.html', context, 'image/svg+xml')
 
     else:
         raise Http404
