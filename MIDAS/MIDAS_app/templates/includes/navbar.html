@@ -1,3 +1,4 @@
+{% load sources %}
 <nav class="navbar navbar-dark bg-dark navbar-expand-lg">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">MIDAS</a>
@@ -10,28 +11,36 @@
                     <a class="nav-link" aria-current="page" href="/">Accueil</a>
                 </li>
             </ul>
-            <div class="d-flex align-items-center">
-                <div class="sources-status">
-                    <i class="fa-solid fa-circle-check"></i>
-                    <span class="text-source-status">SABRA<span>
-                </div>
-                <img class="mx-2 w-100 h-100" src="/status/sabra.svg" alt="Status SABRA">
-                <img class="mx-2 w-100 h-100" src="/status/climacity.svg" alt="Status ClimaCity">
+            <div class="d-flex text-light align-items-center">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a href="/statut" class="nav-link">
+                            {% autoescape off %}
+                                {% all_status %}
+                            {% endautoescape %}
+                            <span>Statut des Sources<span>
+                        </a>
+                    </li>
                 {% if user.is_authenticated %}
-                <div class="dropdown">
-                    <a class="dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-user"></i></a>
-                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="/manage-data">Gestion des Données</a>
+                <li class="dropdown">
+                    <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-user"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><p class="dropdown-item text-center"><strong>{{user.first_name}} {{user.last_name}}</strong></p></li>
+                        <li><a class="dropdown-item" href="#">Profil</a></li>
+                        <li><a class="dropdown-item" href="#">Favoris</a></li>
+                        <li><div class="dropdown-divider"></div></li>
+                        <li><a class="dropdown-item" href="/manage-data">Gestion des Données</a></li>
                         {% if user.is_superuser %}
-                        <a class="dropdown-item" href="/admin">Panneau d'administration</a>
+                        <li><a class="dropdown-item" href="/admin">Panneau d'administration</a></li>
                         {% endif %}
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" aria-current="page" href="/logout">Déconnexion</a>
-                    </div>
-                </div>
+                        <li><div class="dropdown-divider"></div></li>
+                        <li><a class="dropdown-item" aria-current="page" href="/logout">Déconnexion</a></li>
+                    </ul>
+                </li>
                 {% else %}
-                <a class="btn btn-outline-light" aria-current="page" href="/login">Connexion</a>
+                <li><a class="btn btn-outline-light" aria-current="page" href="/login">Connexion</a></li>
                 {% endif %}
+                </ul>
             </div>
         </div>
     </div>

@@ -1,39 +1,58 @@
-{% extends 'layouts/base.html' %}
-{% block body_content %}
+{% extends 'layouts/registration.html' %}
 
-<div class="midas-container container-fluid">
-    {% if user.is_authenticated%}
-    <div class="box mt-5">
-        <div class="mb-3 row justify-content-center">
-            <p class="h1 col-sm-3">Connexion</p>
-        </div>
-        <div class="mb-3 row justify-content-center">
-            <p class="col-sm-10 text-center">Vous êtes déjà connecté. Souhaitez-vous vous <a href="/logout">déconnecter</a>?</p>
+{% block registration_title %}Connexion{% endblock %}
+
+{% block registration_alert %}
+{% for field in form %}
+{% if field.help_text %}
+<div class="alert alert-warning" role="alert">
+    {{ field.help_text|safe }}
+</div>
+{% endif %}
+{% endfor %}
+
+{% if form.errors %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {% for field in form %}
+    {% for error in field.errors %}
+    <div>
+        <strong>{{ error|escape }}</strong>
+    </div>
+    {% endfor %}
+    {% endfor %}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+{% endblock%}
+
+{% block registration_content %}
+{% if user.is_authenticated%}
+<div class="mb-3 row justify-content-center">
+    <p class="col-sm-12 text-center">Vous êtes déjà connecté. Souhaitez-vous vous <a href="/logout">déconnecter</a>?</p>
+</div>
+{% else %}
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3 row justify-content-center">
+        <label for="id_username" class="col-sm-5 col-form-label">Nom d'utilisateur</label>
+        <div class="col-sm-7">
+            <input type="text" class="form-control" name="username" id="id_username">
         </div>
     </div>
-    {% else %}
-    <form class="box mt-5" method="post">
-        {% csrf_token %}
-        <div class="mb-3 row justify-content-center">
-            <p class="h1 col-sm-3">Connexion</p>
+    <div class="mb-3 row justify-content-center">
+        <label for="id_password" class="col-sm-5 col-form-label">Mot de passe</label>
+        <div class="col-sm-7">
+            <input type="password" class="form-control" name="password">
         </div>
-        <div class="mb-3 row justify-content-center">
-            <label for="id_username" class="col-sm-2 col-form-label">Nom d'utilisateur</label>
-            <div class="col-sm-3">
-                <input type="text" class="form-control" name="username" id="id_username">
-            </div>
+    </div>
+    <div class="mb-3 row justify-content-center">
+        <div class="col-sm-12">
+            <a href="/reset-password">Mot de passe oublié?</a>
         </div>
-        <div class="mb-3 row justify-content-center">
-            <label for="id_password" class="col-sm-2 col-form-label">Mot de passe</label>
-            <div class="col-sm-3">
-                <input type="password" class="form-control" name="password">
-            </div>
-        </div>
-        <div class="mb-3 row justify-content-center">
-            <button type="submit" class="col-sm-5 btn btn-primary">Submit</button>
-        </div>
-    </form>
-    {% endif %}
-</div>
-
+    </div>
+    <div class="mb-3 row justify-content-center">
+        <button type="submit" class="col-sm-3 btn btn-primary">Connexion</button>
+    </div>
+</form>
+{% endif %}
 {% endblock %}

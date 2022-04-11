@@ -1,0 +1,5 @@
+.registration-body{
+    background-image: url('/static/img/registration_background.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}

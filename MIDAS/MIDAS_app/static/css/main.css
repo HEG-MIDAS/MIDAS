@@ -1,3 +1,7 @@
+html,body{
+    min-height: 100vh;
+}
+
 div.midas-container{
     margin-top: 0.5rem;
 }
@@ -6,16 +10,14 @@ div.midas-container{
     display: none;
 }
 
-.sources-status .text-source-status {
-    color: white;
-}
-
-.sources-status .fa-circle-check {
+.status.fa-circle-check {
     color: rgb(17, 209, 17);
 }
-
-.sources-status {
-    white-space: nowrap
+.status.fa-circle-exclamation {
+    color: rgb(209, 209, 17);
+}
+.status.fa-circle-xmark {
+    color: rgb(209, 17, 17);
 }
 
 .text-centered {

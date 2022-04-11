@@ -1,0 +1,36 @@
+{% extends 'layouts/base.html' %}
+{% block extracss%}
+<link rel="stylesheet" href="/static/css/registration.css">
+{% endblock %}
+{% block js%}
+<script src="/static/lib/fontawesome/fontawesome.js" crossorigin="anonymous"></script>
+<script src="/static/lib/bootstrap/js/bootstrap.bundle.js" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    window.onload = () => {
+        [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).map(function (tE) {
+            return new bootstrap.Tooltip(tE)
+        })
+        if(document.querySelector("div.midas-registration-container") != null)document.querySelector("div.midas-registration-container").style["min-height"] = (window.innerHeight - (document.querySelector("nav.navbar").offsetHeight)-1)+"px"
+        document.querySelector("body").className += "registration-body"
+    }
+</script>
+{% block extrajs%}
+{% endblock %}
+{% endblock %}
+{% block body_content %}
+
+<div class="midas-registration-container container-fluid row align-items-center justify-content-center">
+    <div class="card col-sm-{% block registration_container-size %}4{% endblock%}">
+        <div class="box mt-5">
+            {% block registration_alert %}
+            {% endblock%}
+            <div class="mb-3 row">
+                <p class="h1 col-sm-12 text-center">{% block registration_title %}Connexion{% endblock %}</p>
+            </div>
+            {% block registration_content %}
+            {% endblock%}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

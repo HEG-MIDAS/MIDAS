@@ -13,7 +13,11 @@ def index(request):
     context = {}
     return render(request, 'index.html',context)
 
-def status(request, source):
+def statut(request):
+    context = {}
+    return render(request, 'statut.html',context)
+
+def statut_badge(request, source):
     dic = {'SABRA':'https://www.ropag-data.ch/gechairmo/i_extr.php','ClimaCity':'http://www.climacity.org/Axis/'}
     for k in dic:
         if(source.lower() in k.lower()):
@@ -25,10 +29,10 @@ def status(request, source):
                     context['msg'] = 'ok'
                 else:
                     context['msg'] = 'error'
-                return render(request, 'includes/status_badge.html',context,'image/svg+xml')
+                return render(request, 'includes/statut_badge.html',context,'image/svg+xml')
             except:
                 context['msg'] = 'error'
-                return render(request, 'includes/status_badge.html',context,'image/svg+xml')
+                return render(request, 'includes/statut_badge.html',context,'image/svg+xml')
 
     else:
         raise Http404
