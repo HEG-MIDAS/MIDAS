@@ -11,6 +11,6 @@ def status(request):
 class StatusView(views.APIView):
 
     def get(self, request):
-        data = [{'status': 'Daijôbu'}]
+        data = {'status': 'Daijôbu'}
         result = StatusSerializer(data).data
         return Response(result)
