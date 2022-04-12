@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import views
 from rest_framework.response import Response
 
@@ -9,6 +11,8 @@ def status(request):
     return True
 
 class StatusView(views.APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         data = {'status': 'Daijôbu'}

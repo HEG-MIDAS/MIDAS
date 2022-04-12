@@ -1,5 +1,7 @@
 import os
 import mimetypes
+import django
+from wsgiref import headers
 import requests
 from django.http import HttpResponse, Http404
 from django.shortcuts import redirect, render
@@ -21,6 +23,9 @@ def index(request):
     # field_value = field_object.value_from_object(f)
     # print(field_value)
     context = {}
+    #sk = request.session.session_key
+    csrftoken = django.middleware.csrf.get_token(request)
+    print(requests.get('http://localhost:8000/api/status/', headers={"X-CSRFToken": csrftoken}))
     return render(request, 'index.html', context)
 
 def statut(request):
