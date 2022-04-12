@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('django.contrib.auth.urls')),
     path('', include('MIDAS_app.urls')),
+    path('api/', include('MIDAS_api.urls')),
 ]

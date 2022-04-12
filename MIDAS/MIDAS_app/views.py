@@ -11,10 +11,10 @@ from .forms import DateSelection
 from MIDAS_app.models import Favorite
 
 def index(request):
-    f = Favorite.objects.first()
-    field_object = Favorite._meta.get_field('paramaters_of_station_by_source')
-    field_value = field_object.value_from_object(f)
-    print(field_value)
+    # f = Favorite.objects.first()
+    # field_object = Favorite._meta.get_field('paramaters_of_station_by_source')
+    # field_value = field_object.value_from_object(f)
+    # print(field_value)
     context = {}
     return render(request, 'index.html', context)
 

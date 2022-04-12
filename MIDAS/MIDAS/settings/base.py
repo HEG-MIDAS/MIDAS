@@ -30,6 +30,7 @@ ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     'MIDAS_app',
+    'MIDAS_api',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
