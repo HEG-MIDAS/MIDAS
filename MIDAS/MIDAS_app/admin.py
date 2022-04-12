@@ -1,8 +1,12 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, Source, Station, Parameter, StationBySource, ParamatersOfStationBySource, Favorite
+from .models import User, Source, Station, Parameter, ParamatersOfStation, GroupOfFavorite, Favorite
 
 # Register your models here.
+
+class GroupOfFavoriteInline(admin.TabularInline):
+    model = GroupOfFavorite
+    extra = 0
 
 class FavoriteInline(admin.TabularInline):
     model = Favorite
@@ -25,7 +29,7 @@ class UserAdmin(BaseUserAdmin):
     )
 
     inlines = [
-        FavoriteInline,
+        GroupOfFavoriteInline,
     ]
 
     list_display = ['username', 'email', 'first_name',
@@ -51,7 +55,7 @@ class SourceAdmin(admin.ModelAdmin):
         })
     )
 
-    list_display = ['name', 'url', 'infos']
+    list_display = ['name', 'slug', 'url', 'infos']
 
 admin.register(Source, SourceAdmin)
 
@@ -61,14 +65,14 @@ class StationAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('name',)
+            'fields': ('name', 'source')
         }),
         ('Details', {
             'fields': ('infos', 'latitude', 'longitude', 'height')
         })
     )
 
-    list_display = ['name', 'infos', 'latitude', 'longitude', 'height']
+    list_display = ['name', 'slug', 'infos', 'latitude', 'longitude', 'height']
 
 admin.register(Station, StationAdmin)
 
@@ -85,30 +89,43 @@ class ParameterAdmin(admin.ModelAdmin):
         })
     )
 
-    list_display = ['name', 'infos']
+    list_display = ['name', 'slug', 'infos']
 
 admin.register(Parameter, ParameterAdmin)
 
 
-@admin.register(StationBySource)
-class StationBySourceAdmin(admin.ModelAdmin):
+@admin.register(ParamatersOfStation)
+class ParamatersOfStationAdmin(admin.ModelAdmin):
 
-    list_display = ['name', 'source', 'station']
+    list_display = ['name', 'station', 'parameter']
 
-admin.register(StationBySource, StationBySourceAdmin)
+admin.register(ParamatersOfStation, ParamatersOfStationAdmin)
 
 
-@admin.register(ParamatersOfStationBySource)
-class ParamatersOfStationBySourceAdmin(admin.ModelAdmin):
+@admin.register(GroupOfFavorite)
+class GroupOfFavoriteAdmin(admin.ModelAdmin):
 
-    list_display = ['name', 'station_by_source', 'parameter']
+    fieldsets = (
+        (None, {
+            'fields': ('name',)
+        }),
+        ('Details', {
+            'fields': ('user',)
+        })
+    )
 
-admin.register(ParamatersOfStationBySource, ParamatersOfStationBySourceAdmin)
+    inlines = [
+        FavoriteInline,
+    ]
+
+    list_display = ['name', 'slug', 'user']
+
+admin.register(GroupOfFavorite, GroupOfFavoriteAdmin)
 
 
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
 
-    list_display = ['name']
+    list_display = ['__str__']
 
 admin.register(Favorite, FavoriteAdmin)

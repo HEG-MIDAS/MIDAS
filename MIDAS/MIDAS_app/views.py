@@ -8,11 +8,16 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from os import listdir
 from os.path import isfile, join, splitext
 from .forms import DateSelection
-from MIDAS_app.models import Favorite
+from MIDAS_app.models import Favorite, User
 
 def index(request):
-    # f = Favorite.objects.first()
-    # field_object = Favorite._meta.get_field('paramaters_of_station_by_source')
+    # user = User.objects.first()
+    # groupfav = user.group_of_favorite.all()
+    # print(groupfav)
+    # fav = groupfav[0].favorite.all()
+    # print(fav)
+    # f = fav[0]
+    # field_object = Favorite._meta.get_field('paramaters_of_station')
     # field_value = field_object.value_from_object(f)
     # print(field_value)
     context = {}
