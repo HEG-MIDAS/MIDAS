@@ -51,6 +51,12 @@ MIDDLEWARE = [
 ]
 
 CSRF_TRUSTED_ORIGINS = ['https://midas.gexplore.ch','http://localhost']
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_AGE = None
+CSRF_COOKIE_SAMESITE = 'Strict'
+CSRF_USE_SESSIONS = True
+
+SESSION_COOKIE_SAMESITE = 'Strict'
 
 ROOT_URLCONF = 'MIDAS.urls'
 
