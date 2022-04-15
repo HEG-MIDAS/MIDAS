@@ -3,8 +3,8 @@ from rest_framework.permissions import BasePermission, IsAuthenticated, SAFE_MET
 from rest_framework import views
 from rest_framework.response import Response
 from rest_framework import generics
-from .serializers import StatusSerializer, SourceSerializer, StationSerializer, ParameterSerializer
-from MIDAS_app.models import Source, Station, Parameter
+from .serializers import StatusSerializer, SourceSerializer, StationSerializer, ParameterSerializer, ParametersOfStationSerializer
+from MIDAS_app.models import Source, Station, Parameter, ParametersOfStation
 
 # Create your views here.
 def status(request):
@@ -32,22 +32,37 @@ class FilterView(views.APIView):
     permission_classes = [IsAuthenticated|LocalPerm]
 
     def post(self, request):
-        # if('stations' in request.data):
-        #     return Response({"error":"No b body found"}, status=404)
-        if('sources' in request.data):
+        """
+            Return parameters if stations is given
+            else return stations if sources is given
+        """
+        data = []
+        if('stations' in request.data):
+            stations = request.data['stations']
+            if(type(stations) is list):
+                station = list(Station.objects.filter(slug__in=stations).values_list('id', flat=True))
+            elif(type(stations) is str):
+                station = list(Station.objects.filter(slug=stations).values_list('id', flat=True))
+            query = ParametersOfStation.objects.filter(station__in=station)
+            serializer = ParametersOfStationSerializer(query,many=True)
+            for ser in serializer.data:
+                if(ser['parameter'] not in data):
+                    data.append(ser['parameter'])
+
+        elif('sources' in request.data):
             sources = request.data['sources']
             if(type(sources) is list):
                 source = list(Source.objects.filter(slug__in=sources).values_list('id', flat=True))
             elif(type(sources) is str):
                 source = list(Source.objects.filter(slug=sources).values_list('id', flat=True))
-            data = Station.objects.filter(source__in=source)
-            serializer = StationSerializer(data,many=True)
-            print(serializer.data)
+            query = Station.objects.filter(source__in=source)
+            serializer = StationSerializer(query,many=True)
+            data = serializer.data
         else:
             return Response({"error":"No POST body found"}, status=400)
 
-        if(len(serializer.data)>0):
-            return Response(serializer.data)
+        if(len(data)>0):
+            return Response(data)
         else:
             return Response({"error":"No content found"}, status=400)
 
