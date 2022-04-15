@@ -28,7 +28,7 @@ class Source(models.Model):
 
     def __str__(self):
         return self.name
-    
+
 
 class Station(models.Model):
     name = models.CharField(max_length=255, blank=True, unique=True)
@@ -60,15 +60,15 @@ class Parameter(models.Model):
         return self.name
 
 
-class ParamatersOfStation(models.Model):
-    station = models.ForeignKey(Station, on_delete=models.CASCADE, verbose_name="Related station", related_name='paramaters_of_station')
-    parameter = models.ForeignKey(Parameter, on_delete=models.CASCADE, verbose_name="Related parameter", related_name='paramaters_of_station')
+class ParametersOfStation(models.Model):
+    station = models.ForeignKey(Station, on_delete=models.CASCADE, verbose_name="Related station", related_name='parameters_of_station')
+    parameter = models.ForeignKey(Parameter, on_delete=models.CASCADE, verbose_name="Related parameter", related_name='parameters_of_station')
 
     name = models.CharField(max_length=255, blank=True, unique=True, editable=False)
 
     def save(self, *args, **kwargs):
         self.name = "{}-{}".format(self.station, self.parameter)
-        super(ParamatersOfStation, self).save(*args, **kwargs)
+        super(ParametersOfStation, self).save(*args, **kwargs)
 
     def __str__(self):
         return  "{}-{}".format(self.station, self.parameter)
@@ -90,7 +90,7 @@ class GroupOfFavorite(models.Model):
 class Favorite(models.Model):
     starting_date = models.DateTimeField(auto_now=False, auto_now_add=False)
     ending_date = models.DateTimeField(auto_now=False, auto_now_add=False)
-    paramaters_of_station = models.ManyToManyField(ParamatersOfStation)
+    parameters_of_station = models.ManyToManyField(ParametersOfStation)
     group_of_favorite = models.ForeignKey(GroupOfFavorite, on_delete=models.CASCADE, verbose_name="Related favorite group", related_name='favorite')
 
     def __str__(self):
