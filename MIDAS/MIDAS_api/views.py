@@ -27,6 +27,29 @@ class StatusView(views.APIView):
         result = StatusSerializer(data).data
         return Response(result)
 
+class SearchView(views.APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated|LocalPerm]
+
+    def post(self, request):
+        """
+            Search data in files
+        """
+        if('sources' not in request.data or 'stations' not in request.data or 'parameters' not in request.data):
+            return Response({"error":"Missing POST body"}, status=400)
+
+        sources = request.data["sources"]
+        stations = request.data["sources"]
+        parameters = request.data["parameters"]
+        if(type(sources) is list):
+            for source in sources:
+                print(source)
+
+        return Response({"error":"Missing POST body"}, status=400)
+
+
+
+
 class FilterView(views.APIView):
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
@@ -47,7 +70,9 @@ class FilterView(views.APIView):
             for ser in serializer.data:
                 if(ser['parameter'] not in data):
                     data.append(ser['parameter'])
-
+            query = Parameter.objects.filter(id__in=data)
+            serializer = ParameterSerializer(query,many=True)
+            data = serializer.data
         elif('sources' in request.data):
             sources = request.data['sources']
             if(type(sources) is list):

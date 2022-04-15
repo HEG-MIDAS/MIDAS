@@ -28,7 +28,7 @@ class StationSerializer(serializers.ModelSerializer):
 
 class ParametersOfStationSerializer(serializers.ModelSerializer):
     # Display Namr rather than id
-    parameter = serializers.ReadOnlyField(source='parameter.name')
+    parameter = serializers.ReadOnlyField(source='parameter.id')
     class Meta:
         model = ParametersOfStation
         fields = ['parameter']
