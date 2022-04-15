@@ -39,13 +39,15 @@ class SearchView(views.APIView):
             return Response({"error":"Missing POST body"}, status=400)
 
         sources = request.data["sources"]
-        stations = request.data["sources"]
+        stations = request.data["stations"]
         parameters = request.data["parameters"]
         if(type(sources) is list):
             for source in sources:
-                print(source)
+                if(type(stations) is list):
+                    for station in stations:
+                        print(station)
 
-        return Response({"error":"Missing POST body"}, status=400)
+        return Response({"error":"temporary unavailable"}, status=400)
 
 
 
