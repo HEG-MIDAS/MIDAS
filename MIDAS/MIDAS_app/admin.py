@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, Source, Station, Parameter, ParamatersOfStation, GroupOfFavorite, Favorite
+from .models import User, Source, Station, Parameter, ParametersOfStation, GroupOfFavorite, Favorite
 
 # Register your models here.
 
@@ -94,12 +94,12 @@ class ParameterAdmin(admin.ModelAdmin):
 admin.register(Parameter, ParameterAdmin)
 
 
-@admin.register(ParamatersOfStation)
-class ParamatersOfStationAdmin(admin.ModelAdmin):
+@admin.register(ParametersOfStation)
+class ParametersOfStationAdmin(admin.ModelAdmin):
 
     list_display = ['name', 'station', 'parameter']
 
-admin.register(ParamatersOfStation, ParamatersOfStationAdmin)
+admin.register(ParametersOfStation, ParametersOfStationAdmin)
 
 
 @admin.register(GroupOfFavorite)

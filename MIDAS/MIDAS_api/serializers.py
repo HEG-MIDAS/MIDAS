@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from MIDAS_app.models import Source, Station, Parameter, ParamatersOfStation
+from MIDAS_app.models import Source, Station, Parameter, ParametersOfStation
 
 class StatusSerializer(serializers.Serializer):
     """
@@ -9,7 +9,7 @@ class StatusSerializer(serializers.Serializer):
 
 class SourceSerializer(serializers.ModelSerializer):
     # Retrieve Stations by Name (or any value added in slug_field)
-    # To retrieve by id, use PrimaryKeyRelated
+    # To retrieve by id, use PrimaryKeyRelatedField
     station = serializers.SlugRelatedField(many=True, slug_field='name', queryset=Source.objects.all())
 
     class Meta:
@@ -20,10 +20,18 @@ class SourceSerializer(serializers.ModelSerializer):
 class StationSerializer(serializers.ModelSerializer):
     # Display Namr rather than id
     source = serializers.ReadOnlyField(source='source.name')
-    paramaters_of_station = serializers.SlugRelatedField(many=True, slug_field='name', queryset=ParamatersOfStation.objects.all())
+    paramaters_of_station = serializers.PrimaryKeyRelatedField(many=True, queryset=ParametersOfStation.objects.all())
     class Meta:
         model = Station
         fields = ['name','slug','source','infos','latitude','longitude','height','paramaters_of_station']
+        lookup_field = 'slug'
+
+class ParametersOfStationSerializer(serializers.ModelSerializer):
+    # Display Namr rather than id
+    parameter = serializers.ReadOnlyField(source='parameter.name')
+    class Meta:
+        model = ParametersOfStation
+        fields = ['parameter']
         lookup_field = 'slug'
 
 class ParameterSerializer(serializers.ModelSerializer):
