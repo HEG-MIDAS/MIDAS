@@ -32,9 +32,24 @@ class FilterView(views.APIView):
     permission_classes = [IsAuthenticated|LocalPerm]
 
     def post(self, request):
-        data = {'status': 'Daijôbu'}
-        result = StatusSerializer(data).data
-        return Response(result)
+        # if('stations' in request.data):
+        #     return Response({"error":"No b body found"}, status=404)
+        if('sources' in request.data):
+            sources = request.data['sources']
+            if(type(sources) is list):
+                source = list(Source.objects.filter(slug__in=sources).values_list('id', flat=True))
+            elif(type(sources) is str):
+                source = list(Source.objects.filter(slug=sources).values_list('id', flat=True))
+            data = Station.objects.filter(source__in=source)
+            serializer = StationSerializer(data,many=True)
+            print(serializer.data)
+        else:
+            return Response({"error":"No POST body found"}, status=400)
+
+        if(len(serializer.data)>0):
+            return Response(serializer.data)
+        else:
+            return Response({"error":"No content found"}, status=400)
 
 class SourceList(generics.ListAPIView):
     """

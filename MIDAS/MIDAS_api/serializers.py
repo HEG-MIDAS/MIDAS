@@ -14,7 +14,7 @@ class SourceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Source
-        fields = ['name','slug','url','infos','station']
+        fields = ['id','name','slug','url','infos','station']
         lookup_field = 'slug'
 
 class StationSerializer(serializers.ModelSerializer):
@@ -23,7 +23,7 @@ class StationSerializer(serializers.ModelSerializer):
     parameters_of_station = serializers.PrimaryKeyRelatedField(many=True, queryset=ParametersOfStation.objects.all())
     class Meta:
         model = Station
-        fields = ['name','slug','source','infos','latitude','longitude','height','parameters_of_station']
+        fields = ['id','name','slug','source','infos','latitude','longitude','height','parameters_of_station']
         lookup_field = 'slug'
 
 class ParametersOfStationSerializer(serializers.ModelSerializer):
@@ -37,5 +37,5 @@ class ParametersOfStationSerializer(serializers.ModelSerializer):
 class ParameterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Parameter
-        fields = ['name','slug','infos']
+        fields = ['id','name','slug','infos']
         lookup_field = 'slug'
