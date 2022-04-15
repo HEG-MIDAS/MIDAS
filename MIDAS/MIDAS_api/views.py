@@ -33,8 +33,7 @@ class FilterView(views.APIView):
 
     def post(self, request):
         """
-            Return parameters if stations is given
-            else return stations if sources is given
+            Filter data. If stations, filter params, if sources, filter stations
         """
         data = []
         if('stations' in request.data):
