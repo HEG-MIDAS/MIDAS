@@ -11,6 +11,20 @@ from os import listdir
 from os.path import isfile, join, splitext
 from .forms import DateSelection
 from MIDAS_app.models import Favorite, User
+from django.middleware import csrf
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.http import require_http_methods
+import random
+
+@csrf_protect
+@require_http_methods(["POST"])
+def test(request):
+    data = requests.post('http://localhost:8000/api/filter/')
+    print(request.session.session_key)
+    if(request.user.is_anonymous == False):
+        return HttpResponse(data)
+    else:
+        return HttpResponse('{"data":"error"}')
 
 def index(request):
     # user = User.objects.first()
@@ -22,10 +36,12 @@ def index(request):
     # field_object = Favorite._meta.get_field('paramaters_of_station')
     # field_value = field_object.value_from_object(f)
     # print(field_value)
+    # request.session["TEST"] = random.randint(0,100)
     context = {}
-    #sk = request.session.session_key
-    csrftoken = django.middleware.csrf.get_token(request)
-    print(requests.get('http://localhost:8000/api/status/', headers={"X-CSRFToken": csrftoken}))
+
+    # csrftoken = django.middleware.csrf.get_token(request)
+    # print(csrftoken)
+    # print(requests.post('http://localhost:8000/api/filter/', headers={"X-CSRFToken": csrftoken}))
     return render(request, 'index.html', context)
 
 def statut(request):

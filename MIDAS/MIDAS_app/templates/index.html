@@ -10,34 +10,52 @@
     <div class="d-flex w-100 justify-content-center">
         <div id="main" style="width: 800px;height:800px;"></div>
     </div>
+    {% csrf_token %}
     <script type="text/javascript">
-      // Initialize the echarts instance based on the prepared dom
-      var myChart = echarts.init(document.getElementById('main'));
+        // Initialize the echarts instance based on the prepared dom
+        var myChart = echarts.init(document.getElementById('main'));
 
-      // Specify the configuration items and data for the chart
-      var option = {
-        title: {
-          text: 'ECharts Getting Started Example'
-        },
-        tooltip: {},
-        legend: {
-          data: ['sales']
-        },
-        xAxis: {
-          data: ['Shirts', 'Cardigans', 'Chiffons', 'Pants', 'Heels', 'Socks']
-        },
-        yAxis: {},
-        series: [
-          {
-            name: 'sales',
-            type: 'bar',
-            data: [5, 20, 36, 10, 10, 20]
-          }
-        ]
-      };
+        // Specify the configuration items and data for the chart
+        var option = {
+            title: {
+                text: 'ECharts Getting Started Example'
+            },
+            tooltip: {},
+            legend: {
+                data: ['sales']
+            },
+            xAxis: {
+                data: ['Shirts', 'Cardigans', 'Chiffons', 'Pants', 'Heels', 'Socks']
+            },
+            yAxis: {},
+            series: [
+            {
+                name: 'sales',
+                type: 'bar',
+                data: [5, 20, 36, 10, 10, 20]
+            }
+            ]
+        };
 
-      // Display the chart using the configuration items and data just specified.
-      myChart.setOption(option);
+        // Display the chart using the configuration items and data just specified.
+        myChart.setOption(option);
+    </script>
+    <script type="text/javascript">
+        const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value
+        function test(){
+            fetch('/test/',{
+                method: 'POST',
+                headers: {
+                    "X-CSRFToken":csrf,
+                }
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(myBlob) {
+                console.log(myBlob)
+            });
+        }
     </script>
 </div>
 {% endblock %}
