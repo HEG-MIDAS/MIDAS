@@ -1,8 +1,11 @@
+from os import listdir
+from os.path import isdir,join
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import BasePermission, IsAuthenticated, SAFE_METHODS
 from rest_framework import views
 from rest_framework.response import Response
 from rest_framework import generics
+from django.conf import settings
 from .serializers import StatusSerializer, SourceSerializer, StationSerializer, ParameterSerializer, ParametersOfStationSerializer
 from MIDAS_app.models import Source, Station, Parameter, ParametersOfStation
 
@@ -12,7 +15,6 @@ def status(request):
 
 class LocalPerm(BasePermission):
     def has_permission(self, request, view):
-        print(request.META['REMOTE_ADDR'])
         if(request.META['REMOTE_ADDR'] == '127.0.0.1'):
             return True
 
@@ -33,24 +35,48 @@ class SearchView(views.APIView):
 
     def post(self, request):
         """
-            Search data in files
+            Search datas in files
         """
         if('sources' not in request.data or 'stations' not in request.data or 'parameters' not in request.data):
             return Response({"error":"Missing POST body"}, status=400)
 
+        results = {}
+        transformedFolder = join(settings.MEDIA_ROOT,'transformed')
+        allSources = listdir(transformedFolder)
         sources = request.data["sources"]
         stations = request.data["stations"]
         parameters = request.data["parameters"]
+        parameterQuery = Parameter.objects.filter(slug__in=parameters)
         if(type(sources) is list):
             for source in sources:
-                if(type(stations) is list):
-                    for station in stations:
-                        print(station)
+                try:
+                    sourceQuery = Source.objects.get(slug=source)
+                    sourceSerializer = SourceSerializer(sourceQuery)
+                    sourceData = sourceSerializer.data
+                    stationQuery = Station.objects.filter(slug__in=stations).filter(source=sourceQuery)
+                    stationSerializer = StationSerializer(stationQuery,many=True)
+                    stationData = stationSerializer.data
+                    if(len(stationData) < 1 or len(sourceData) < 1):
+                        raise Exception
+                    if(sourceData["name"] in allSources):
+                        results[sourceData["name"]] = {}
+                        sourceFolder = join(transformedFolder,sourceData["name"])
+                        for station in stationData:
+                            matchingStation = [s for s in listdir(sourceFolder) if station["name"] in s]
+                            if(len(matchingStation) > 0):
+                                results[sourceData["name"]][station["name"]] = {}
+                                stationParam = Station.objects.get(slug=station["slug"])
+                                paramStationQuery = ParametersOfStation.objects.filter(station=stationParam)
+                                paramStationSerializer = ParametersOfStationSerializer(paramStationQuery,many=True)
+                                paramStationData = paramStationSerializer.data
+                                for param in paramStationData:
+                                    results[sourceData["name"]][station["name"]][param["parameter"]] = {}
+                except:
+                    return Response({"error":"An error occured"}, status=500)
 
-        return Response({"error":"temporary unavailable"}, status=400)
-
-
-
+        if(len(results)>0):
+            return Response(results, status=200)
+        return Response({"error":"No Data found"}, status=400)
 
 class FilterView(views.APIView):
     authentication_classes = [SessionAuthentication]
