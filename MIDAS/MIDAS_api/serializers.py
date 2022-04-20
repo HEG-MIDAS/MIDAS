@@ -18,7 +18,6 @@ class SourceSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
 
 class StationSerializer(serializers.ModelSerializer):
-    # Display Namr rather than id
     source = serializers.ReadOnlyField(source='source.name')
     parameters_of_station = serializers.PrimaryKeyRelatedField(many=True, queryset=ParametersOfStation.objects.all())
     class Meta:
@@ -27,7 +26,6 @@ class StationSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
 
 class ParametersOfStationSerializer(serializers.ModelSerializer):
-    # Display Namr rather than id
     parameter = serializers.ReadOnlyField(source='parameter.id')
     class Meta:
         model = ParametersOfStation
