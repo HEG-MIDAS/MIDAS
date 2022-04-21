@@ -30,6 +30,9 @@ URL = "https://www.ropag-data.ch/gechairmo/i_extr.php"
 # Function to write logs.
 ## Needs to define how
 def logs(str = ''):
+    """Add a log line to a log file in the directory. The log line is only composed of the date
+
+    """
     with open(os.path.join(root_path,'/logs/sabra.txt'), 'a') as file:
         if str == '':
             file.write(time.strftime('%Y-%m-%d %H:%M:%S'))
@@ -38,12 +41,31 @@ def logs(str = ''):
 
 # Sort data by date
 def sortByDate(data: dict) -> OrderedDict:
+    """Sort a Dictionary by date
+
+    Parameters
+    ----------
+    data : dict
+        Dictionary to sort
+
+    Returns
+    -------
+    OrderedDict
+        the sorted Dictionary as a OrderedDict
+    """
     # Create a sorted list and transform it as an OrderedDict
     ordered_data = OrderedDict(sorted(data.items(), key = lambda x:time.strptime(x[0], '%Y-%m-%d %H:%M:%S'), reverse=False))
     return ordered_data
 
 # Function to write files
 def dataToFiles(data: dict):
+    """Write a Dictionary into files
+
+    Parameters
+    ----------
+    data : dict
+        Dictionary to write
+    """
     for k in data:
         # Sort the datas by Date (Not correctly sorted by default)
         data[k] = sortByDate(data[k])
@@ -98,6 +120,9 @@ def dataToFiles(data: dict):
         print('Written {0}\n'.format(os.path.join(media_path,'transformed/SABRA/{0}.csv'.format(k))))
 # Function to manipulate the downloaded files
 def manipulate():
+    """Take the downloaded file and apply and sort it into a Dictionary
+
+    """
     headerOrder = {'Date':0,'PM2.5':1,'PM10':2,'NO2':3,"O3":4}
     dataTable = {}
     # Loop through all files in the scraper folder
@@ -171,6 +196,9 @@ def manipulate():
     dataToFiles(dataTable)
 # Clean Folder Script
 def clean():
+    """Clean folders
+
+    """
     for f in os.listdir(scraper_path):
         # If files is a CSV
         if f.find('.csv') >-1:
@@ -178,6 +206,27 @@ def clean():
 
 # Scrap website
 def scraper(URL:str,driver:webdriver.Firefox,urbain_input:str,polluants_input:str,time_input:str,start_date:str,end_date:str,timelapse_input:str):
+    """Download SABRA data with selenium
+
+    Parameters
+    ----------
+    URL : str
+        link to the webpage
+    driver: webdriver.Firefox
+        firefox webbrowser driver options
+    urbain_input:str
+        Value for typologie imput
+    polluants_input:str
+        Value for polluant imput
+    time_input:str
+        Value for time imput
+    start_date:str
+        Starting Date (%d.%m.%Y)
+    end_date:str
+        Ending Date (%d.%m.%Y)
+    timelapse_input:str
+        Value for time interval
+    """
     # Go to URL
     driver.get(URL)
     # Get submit button and assert its value
@@ -221,6 +270,15 @@ def scraper(URL:str,driver:webdriver.Firefox,urbain_input:str,polluants_input:st
 
 # Setup the headless browser (Using Firefox/Gecko)
 def download(s:str,e:str):
+    """Download Wrapper Function
+
+    Parameters
+    ----------
+    s : str
+        Starting Date (%d.%m.%Y)
+    e: str
+        Ending Date (%d.%m.%Y)
+    """
     # Create Firefox Options needed to autodownload
     options = webdriver.FirefoxOptions()
     options.headless = True
@@ -246,6 +304,15 @@ def download(s:str,e:str):
     driver.close()
 
 def operation(sD:str,eD:str):
+    """Wrapper Function
+
+    Parameters
+    ----------
+    sD : str
+        Starting Date (%d.%m.%Y)
+    eD: str
+        Ending Date (%d.%m.%Y)
+    """
     # Download for current time diff
     download(sD,eD)
     # Manipulating
@@ -254,6 +321,13 @@ def operation(sD:str,eD:str):
     clean()
 
 def main(argv):
+    """Main Function
+
+    Parameters
+    ----------
+    argv: sys.argv
+        Parameters given to the script
+    """
     exit_code = 0
     # Print Debug for Start
     print("Starting "+time.strftime("%Y-%m-%d %H:%M:%S"))
