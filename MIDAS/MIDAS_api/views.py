@@ -98,25 +98,29 @@ class SearchView(views.APIView):
                     stationData = stationSerializer.data
                     if(len(stationData) < 1 or len(sourceData) < 1):
                         raise Exception
+                    # Check if source in db has a folder
                     if(sourceData["name"] in allSources):
                         results[sourceData["name"]] = {}
                         sourceFolder = join(transformedFolder,sourceData["name"])
                         for station in stationData:
+                            # Filter the station file
                             matchingStation = [s for s in listdir(sourceFolder) if station["name"] in s]
                             if(len(matchingStation) > 0):
                                 stationFolder = join(sourceFolder,matchingStation[0])
                                 results[sourceData["name"]][station["name"]] = {}
+                                # Retrieve list of params for the station
                                 stationParam = Station.objects.get(slug=station["slug"])
                                 paramStationQuery = ParametersOfStation.objects.filter(station=stationParam).filter(parameter__in=parametersList)
                                 paramStationSerializer = ParametersOfStationSerializer(paramStationQuery,many=True)
                                 paramStationData = paramStationSerializer.data
-                                print(stationFolder)
+                                # Create a list of the parameters we need
                                 paramList = []
                                 for param in paramStationData:
                                     p = list(filter(lambda p: p["id"] == param["parameter"],parameterData))
                                     paramList.append(p[0]["name"])
-                                tmp = []
+                                # FILE MANIPULATION
                                 file = open(stationFolder)
+                                # Filter Header to retrieve the index when we split
                                 header = file.readline().strip().split(",")
                                 headerIndex = []
                                 for i in range(1,len(header)):
@@ -125,10 +129,12 @@ class SearchView(views.APIView):
                                         headerIndex.append(i)
                                 limit = 0
                                 lines = file.readlines()
+                                # Reverse the file
                                 if(order == 'DESC'):
                                     lines = reversed(lines)
                                 for line in lines:
                                     l = line.strip().split(",")
+                                    # Add Timestamp to result
                                     results[sourceData["name"]][station["name"]][l[0]] = {}
                                     for index in headerIndex:
                                         results[sourceData["name"]][station["name"]][l[0]][header[index]] = np.double(l[index]) if(l[index] != "" and l[index] != " ") else l[index]
@@ -136,6 +142,8 @@ class SearchView(views.APIView):
                                     if(limit == limitMax):
                                         break
                                 file.close()
+                            else:
+                                raise Exception
                 except:
                     return Response({"error":"An error occured"}, status=500)
 
@@ -161,6 +169,7 @@ class FilterView(views.APIView):
         -------
         json
             list of stations or parameters for the corresponding parameters in json format
+            source -> station -> timestamp -> parameters
         """
         data = []
         if('stations' in request.data):
