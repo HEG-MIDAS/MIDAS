@@ -11,4 +11,6 @@ urlpatterns=[
     path('stations/<str:slug>/', views.StationDetail.as_view(), name='station_slug'),
     path('parameters/', views.ParameterList.as_view(), name='parameter'),
     path('parameters/<str:slug>/', views.ParameterDetail.as_view(), name='parameter_slug'),
+    path('favorites-group/', views.FavoriteGroupList.as_view(), name='favorite'),
+    path('favorites-group/<str:slug>/', views.FavoriteGroupDetail.as_view(), name='favorite_slug'),
 ]

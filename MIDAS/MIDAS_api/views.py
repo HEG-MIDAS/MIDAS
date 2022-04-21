@@ -8,8 +8,8 @@ from rest_framework import views
 from rest_framework.response import Response
 from rest_framework import generics
 from django.conf import settings
-from .serializers import StatusSerializer, SourceSerializer, StationSerializer, ParameterSerializer, ParametersOfStationSerializer
-from MIDAS_app.models import Source, Station, Parameter, ParametersOfStation
+from .serializers import StatusSerializer, SourceSerializer, StationSerializer, ParameterSerializer, ParametersOfStationSerializer, FavoriteGroupSerializer
+from MIDAS_app.models import Source, Station, Parameter, ParametersOfStation, GroupOfFavorite
 
 # Create your views here.
 def status(request):
@@ -287,4 +287,21 @@ class ParameterDetail(generics.RetrieveAPIView):
     serializer_class = ParameterSerializer
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
+    lookup_field = 'slug'
+
+class FavoriteGroupList(generics.ListAPIView):
+    """List all Parameters
+    """
+    queryset = GroupOfFavorite.objects.all()
+    serializer_class = FavoriteGroupSerializer
+    authentication_classes = [SessionAuthentication,BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+class FavoriteGroupDetail(generics.RetrieveAPIView):
+    """Retrieve a specific Parameter by the slug
+    """
+    queryset = GroupOfFavorite.objects.all()
+    serializer_class = FavoriteGroupSerializer
+    authentication_classes = [SessionAuthentication,BasicAuthentication]
+    permission_classes = [IsAuthenticated]
     lookup_field = 'slug'
