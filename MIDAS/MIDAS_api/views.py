@@ -1,4 +1,5 @@
 import numpy as np
+import datetime
 from os import listdir
 from os.path import isdir,join
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -45,10 +46,18 @@ class SearchView(views.APIView):
             list of stations (required)
         parameters : array
             list of parameters (required)
+        start_date: date
+            Date of to begin retrieving (included)
+            If specified alongside end_date, limit is overriden
+            If specified alone, override order to ASC
+        end_date: date
+            Date of to stop retrieving (included)
+            If specified alongside start_date, limit is overriden
+            If specified alone, override order to DESC
         limit: int
             number of value to display. (default 20, max 100)
         order: str
-            order in which the file is read (default ASC, choice ASC, DESC)
+            order in which the file is read (default ASC, choice [ASC, DESC])
 
         Returns
         -------
@@ -77,6 +86,23 @@ class SearchView(views.APIView):
         limitMax = limitMax if limitMax <= 100 else 100
         order = request.data["order"] if ('order' in request.data) else orderDefault
         order = order if (order in ['ASC','DESC']) else orderDefault
+        # Date
+        try:
+            start_date = datetime.datetime.strptime(request.data["start_date"],"%Y-%m-%d %H:%M:%S") if ('start_date' in request.data) else None
+            end_date = datetime.datetime.strptime(request.data["end_date"],"%Y-%m-%d %H:%M:%S") if ('end_date' in request.data) else None
+            if(start_date != None and end_date != None):
+                # Don't use the limit if both start and end date exists
+                limitMax = None
+                if(end_date-start_date < datetime.timedelta(days=0)):
+                    return Response({"error":"End Date smaller than start Date"}, status=400)
+            # If only end date is giving, get <limit> from the end of the file
+            elif(start_date == None and end_date != None):
+                order = 'DESC'
+            # If only start date is giving, get <limit> from the beginning of the file
+            elif(start_date != None and end_date == None):
+                order = 'ASC'
+        except:
+            return Response({"error":"Incorrect Date"}, status=400)
         # Get a list of all parameters
         parameterQuery = Parameter.objects.filter(slug__in=parameters)
         parameterSerializer = ParameterSerializer(parameterQuery,many=True)
@@ -134,12 +160,14 @@ class SearchView(views.APIView):
                                     lines = reversed(lines)
                                 for line in lines:
                                     l = line.strip().split(",")
-                                    # Add Timestamp to result
+                                    # If the start and end date exist and the line date isn't between them
+                                    if(start_date != None and end_date != None and not start_date <= datetime.datetime.strptime(l[0],"%Y-%m-%d %H:%M:%S") <= end_date):
+                                        continue
                                     results[sourceData["name"]][station["name"]][l[0]] = {}
                                     for index in headerIndex:
                                         results[sourceData["name"]][station["name"]][l[0]][header[index]] = np.double(l[index]) if(l[index] != "" and l[index] != " ") else l[index]
                                     limit += 1
-                                    if(limit == limitMax):
+                                    if(limitMax != None and limit == limitMax):
                                         break
                                 file.close()
                             else:
@@ -216,7 +244,7 @@ class SourceDetail(generics.RetrieveAPIView):
 
     To make it work with both the pk and the slug,
     In urls.py:
-    path('sources/<int:pk>/', views.SourceDetail.as_view(), name='source_slug'),
+    path('sources/<int:pk>/', views.SourceDetail.as_view(), name='source_pk'),
     path('sources/<str:slug>/', views.SourceDetail.as_view(), name='source_slug',lookup_field='slug'),
 
     Remove the lookup_field from this view ! (Needs to do it for all *Detail views)
