@@ -1,3 +1,4 @@
+import numpy as np
 from os import listdir
 from os.path import isdir,join
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -34,22 +35,61 @@ class SearchView(views.APIView):
     permission_classes = [IsAuthenticated|LocalPerm]
 
     def post(self, request):
-        """
-            Search datas in files
+        """Search datas in files
+
+        POST Parameters
+        ----------
+        sources : array
+            list of sources (required)
+        stations : array
+            list of stations (required)
+        parameters : array
+            list of parameters (required)
+        limit: int
+            number of value to display. (default 20, max 100)
+        order: str
+            order in which the file is read (default ASC, choice ASC, DESC)
+
+        Returns
+        -------
+        json
+            list of values for the corresponding parameters in json format
         """
         if('sources' not in request.data or 'stations' not in request.data or 'parameters' not in request.data):
             return Response({"error":"Missing POST body"}, status=400)
 
         results = {}
+        # Get the folder for transformed files
         transformedFolder = join(settings.MEDIA_ROOT,'transformed')
+        # Get all the sources we have
         allSources = listdir(transformedFolder)
+        # Get required params
         sources = request.data["sources"]
         stations = request.data["stations"]
         parameters = request.data["parameters"]
+        # Set default (Might be better to move to settings?)
+        limitDefault = 20
+        orderDefault = 'ASC'
+        # Setting the optional values
+        limitMax = request.data["limit"] if ('limit' in request.data) else limitDefault
+        limitMax = limitMax if (type(limitMax) is int) else limitDefault
+        limitMax = limitMax if limitMax > 0 else 1
+        limitMax = limitMax if limitMax <= 100 else 100
+        order = request.data["order"] if ('order' in request.data) else orderDefault
+        order = order if (order in ['ASC','DESC']) else orderDefault
+        # Get a list of all parameters
         parameterQuery = Parameter.objects.filter(slug__in=parameters)
+        parameterSerializer = ParameterSerializer(parameterQuery,many=True)
+        parameterData = parameterSerializer.data
+        parametersList = []
+        for param in parameterData:
+            parametersList.append(param["id"])
+        # Check if sources is a list (Do we check if it's a single string?)
         if(type(sources) is list):
             for source in sources:
+                # General try, catch, might be worth separating?
                 try:
+                    # Get the source and station corresponding to the parameters
                     sourceQuery = Source.objects.get(slug=source)
                     sourceSerializer = SourceSerializer(sourceQuery)
                     sourceData = sourceSerializer.data
@@ -64,13 +104,38 @@ class SearchView(views.APIView):
                         for station in stationData:
                             matchingStation = [s for s in listdir(sourceFolder) if station["name"] in s]
                             if(len(matchingStation) > 0):
+                                stationFolder = join(sourceFolder,matchingStation[0])
                                 results[sourceData["name"]][station["name"]] = {}
                                 stationParam = Station.objects.get(slug=station["slug"])
-                                paramStationQuery = ParametersOfStation.objects.filter(station=stationParam)
+                                paramStationQuery = ParametersOfStation.objects.filter(station=stationParam).filter(parameter__in=parametersList)
                                 paramStationSerializer = ParametersOfStationSerializer(paramStationQuery,many=True)
                                 paramStationData = paramStationSerializer.data
+                                print(stationFolder)
+                                paramList = []
                                 for param in paramStationData:
-                                    results[sourceData["name"]][station["name"]][param["parameter"]] = {}
+                                    p = list(filter(lambda p: p["id"] == param["parameter"],parameterData))
+                                    paramList.append(p[0]["name"])
+                                tmp = []
+                                file = open(stationFolder)
+                                header = file.readline().strip().split(",")
+                                headerIndex = []
+                                for i in range(1,len(header)):
+                                    p = header[i].strip('*')
+                                    if(p in paramList):
+                                        headerIndex.append(i)
+                                limit = 0
+                                lines = file.readlines()
+                                if(order == 'DESC'):
+                                    lines = reversed(lines)
+                                for line in lines:
+                                    l = line.strip().split(",")
+                                    results[sourceData["name"]][station["name"]][l[0]] = {}
+                                    for index in headerIndex:
+                                        results[sourceData["name"]][station["name"]][l[0]][header[index]] = np.double(l[index]) if(l[index] != "" and l[index] != " ") else l[index]
+                                    limit += 1
+                                    if(limit == limitMax):
+                                        break
+                                file.close()
                 except:
                     return Response({"error":"An error occured"}, status=500)
 
@@ -83,8 +148,19 @@ class FilterView(views.APIView):
     permission_classes = [IsAuthenticated|LocalPerm]
 
     def post(self, request):
-        """
-            Filter data. If stations, filter params, if sources, filter stations
+        """Filter data. If stations, filter params, if sources, filter stations
+
+        POST Parameters
+        ----------
+        sources : array or string
+            list of sources or one source (required)
+        stations : array or string
+            list of stations or one station
+
+        Returns
+        -------
+        json
+            list of stations or parameters for the corresponding parameters in json format
         """
         data = []
         if('stations' in request.data):
@@ -119,8 +195,7 @@ class FilterView(views.APIView):
             return Response({"error":"No content found"}, status=400)
 
 class SourceList(generics.ListAPIView):
-    """
-        List all Sources
+    """List all Sources
     """
     queryset = Source.objects.all()
     serializer_class = SourceSerializer
@@ -128,15 +203,14 @@ class SourceList(generics.ListAPIView):
     permission_classes = [IsAuthenticated|LocalPerm]
 
 class SourceDetail(generics.RetrieveAPIView):
-    """
-        Retrieve a specific Source by the slug
+    """Retrieve a specific Source by the slug
 
-        To make it work with both the pk and the slug,
-        In urls.py:
-        path('sources/<int:pk>/', views.SourceDetail.as_view(), name='source_slug'),
-        path('sources/<str:slug>/', views.SourceDetail.as_view(), name='source_slug',lookup_field='slug'),
+    To make it work with both the pk and the slug,
+    In urls.py:
+    path('sources/<int:pk>/', views.SourceDetail.as_view(), name='source_slug'),
+    path('sources/<str:slug>/', views.SourceDetail.as_view(), name='source_slug',lookup_field='slug'),
 
-        Remove the lookup_field frm this view ! (Needs to do it for all *Detail views)
+    Remove the lookup_field from this view ! (Needs to do it for all *Detail views)
     """
     queryset = Source.objects.all()
     serializer_class = SourceSerializer
@@ -145,8 +219,7 @@ class SourceDetail(generics.RetrieveAPIView):
     lookup_field = 'slug'
 
 class StationList(generics.ListAPIView):
-    """
-        List all Stations
+    """List all Stations
     """
     queryset = Station.objects.all()
     serializer_class = StationSerializer
@@ -154,8 +227,7 @@ class StationList(generics.ListAPIView):
     permission_classes = [IsAuthenticated|LocalPerm]
 
 class StationDetail(generics.RetrieveAPIView):
-    """
-        Retrieve a specific Station by the slug
+    """Retrieve a specific Station by the slug
     """
     queryset = Station.objects.all()
     serializer_class = StationSerializer
@@ -164,8 +236,7 @@ class StationDetail(generics.RetrieveAPIView):
     lookup_field = 'slug'
 
 class ParameterList(generics.ListAPIView):
-    """
-        List all Parameters
+    """List all Parameters
     """
     queryset = Parameter.objects.all()
     serializer_class = ParameterSerializer
@@ -173,8 +244,7 @@ class ParameterList(generics.ListAPIView):
     permission_classes = [IsAuthenticated|LocalPerm]
 
 class ParameterDetail(generics.RetrieveAPIView):
-    """
-        Retrieve a specific Parameter by the slug
+    """Retrieve a specific Parameter by the slug
     """
     queryset = Parameter.objects.all()
     serializer_class = ParameterSerializer
