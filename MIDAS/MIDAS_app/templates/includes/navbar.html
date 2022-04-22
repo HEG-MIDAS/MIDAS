@@ -25,7 +25,21 @@
                 <li class="dropdown">
                     <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-user"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><p class="dropdown-item text-center"><strong>{{user.first_name}} {{user.last_name}}</strong></p></li>
+                        <li><p class="dropdown-item text-center">
+                            <strong>
+                                {% if user.first_name and user.last_name %}
+                                    {{user.first_name}} {{user.last_name}}
+                                {% elif user.first_name %}
+                                    {{user.first_name}}
+                                {% elif user.last_name %}
+                                    {{user.last_name}}
+                                {% elif user.username %}
+                                    {{user.username}}
+                                {% else %}
+                                    {{user.email}}
+                                {% endif %}
+                            </strong>
+                        </p></li>
                         <li><a class="dropdown-item" href="#">Profil</a></li>
                         <li><a class="dropdown-item" href="#">Favoris</a></li>
                         <li><div class="dropdown-divider"></div></li>
