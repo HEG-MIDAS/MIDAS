@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from os import listdir
 from os.path import isfile, join, splitext
 from .forms import DateSelection
+from .models import GroupOfFavorite, Favorite
 from MIDAS_app.models import Favorite, User
 from django.middleware import csrf
 from django.views.decorators.csrf import csrf_protect
@@ -68,6 +69,13 @@ def statut_badge(request, source):
     else:
         raise Http404
 
+@login_required
+def favorite_profile(request):
+    user_favorites_group = GroupOfFavorite.objects.filter(user=request.user.id)
+    context = {
+        'list': user_favorites_group
+    }
+    return render(request, 'favorites.html',context)
 @login_required
 def manage_data(request):
 

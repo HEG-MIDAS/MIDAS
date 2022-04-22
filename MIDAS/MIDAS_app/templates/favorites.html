@@ -1,0 +1,34 @@
+{% extends 'layouts/base.html' %}
+{% block extrajs %}
+<script src="/static/lib/echarts/echarts.js" charset="utf-8"></script>
+{% endblock %}
+{% block body_content %}
+<div class="midas-container container-fluid">
+    <div class="alert alert-danger text-center" role="alert">
+        Site en construction !
+    </div>
+    <div class="d-flex w-100 flex-column align-items-center">
+        {% for element in list  %}
+        <div class="card mb-3 w-50">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ element.name }} ({{ element.slug }})</h5>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    {% for fav in element.favorite.all  %}
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><small class="text-muted">{{fav.starting_date}} - {{fav.ending_date}}</small></li>
+                        {% for param in fav.parameters_of_station.all  %}
+                        <li class="list-group-item">{{ param.station.name }} - {{ param.parameter.name }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
