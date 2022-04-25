@@ -23,7 +23,7 @@ class Source(models.Model):
     infos = models.TextField(max_length=500, blank=True)
 
     def save(self, *args, **kwargs):
-        self.slug = "{}".format(re.sub(r"[^\w\s]", '_', remove_accents((self.name).lower())))
+        self.slug = "{}".format(re.sub(r"[^\w\s]", '_', remove_accents((self.name).lower().replace(' ', '_'))))
         super(Source, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -40,7 +40,7 @@ class Station(models.Model):
     height = models.DecimalField(blank=True, max_digits=10, decimal_places=5, help_text="Height in meters", null=True)
 
     def save(self, *args, **kwargs):
-        self.slug = "{}".format(re.sub(r"[^\w\s]", '_', remove_accents((self.name).lower())))
+        self.slug = "{}".format(re.sub(r"[^\w\s]", '_', remove_accents((self.name).lower().replace(' ', '_'))))
         super(Station, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -53,7 +53,7 @@ class Parameter(models.Model):
     infos = models.TextField(max_length=500, blank=True)
 
     def save(self, *args, **kwargs):
-        self.slug = "{}".format(re.sub(r"[^\w\s]", '_', remove_accents((self.name).lower())))
+        self.slug = "{}".format(re.sub(r"[^\w\s]", '_', remove_accents((self.name).lower().replace(' ', '_'))))
         super(Parameter, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -80,7 +80,7 @@ class GroupOfFavorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Related user", blank=False, related_name='group_of_favorite')
 
     def save(self, *args, **kwargs):
-        self.slug = "{}".format(re.sub(r"[^\w\s]", '_', remove_accents((self.name).lower())))
+        self.slug = "{}".format(re.sub(r"[^\w\s]", '_', remove_accents((self.name).lower().replace(' ', '_'))))
         super(GroupOfFavorite, self).save(*args, **kwargs)
 
     def __str__(self):
