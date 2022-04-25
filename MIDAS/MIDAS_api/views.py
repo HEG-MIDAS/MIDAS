@@ -37,6 +37,8 @@ class StatusView(views.APIView):
 
     def get(self, request):
         data = {}
+        sources = Source.objects.all()
+        urls = [source.url for source in sources]
         dic = {'sabra':'https://www.ropag-data.ch/gechairmo/i_extr.php','climacity':'http://www.climacity.org/Axis/'}
         count = 0
         for k in dic:
