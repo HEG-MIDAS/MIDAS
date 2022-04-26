@@ -69,7 +69,12 @@ def process_data(array_data: Array) -> Array:
     """
     array_processed_data = []
     index_to_find_max = array_data[0][2:].index("Vv_Max")
-    array_processed_data.append([h+'*' for h in array_data[0]])
+    header_to_edit = {
+        'PM25': 'PM2.5',
+        'CS125_Vis': 'Dvis_Avg',
+        'Baro': 'Pa_Avg',
+    }
+    array_processed_data.append([header_to_edit[h]+'*' if h in header_to_edit.keys() else h+'*' for h in array_data[0]])
     array_hour_data = []
     hour_working = datetime.datetime.now()
     hour_working_until = datetime.datetime.now()
