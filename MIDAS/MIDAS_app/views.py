@@ -40,7 +40,6 @@ def index(request):
     # print(field_value)
     # request.session["TEST"] = random.randint(0,100)
     context = {}
-    update_db.update_stations_and_parameters()
 
     # csrftoken = django.middleware.csrf.get_token(request)
     # print(csrftoken)
