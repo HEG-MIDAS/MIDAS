@@ -94,7 +94,6 @@ def favorite_profile(request):
                 'stations':stations,
                 'parameters':params
             })
-    print(list)
     context = {
         'list': list
     }
