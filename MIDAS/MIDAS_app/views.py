@@ -1,6 +1,7 @@
 import os
 import mimetypes
 import django
+import datetime
 from wsgiref import headers
 import requests
 from django.http import HttpResponse, Http404
@@ -72,8 +73,30 @@ def statut_badge(request, source):
 @login_required
 def favorite_profile(request):
     user_favorites_group = GroupOfFavorite.objects.filter(user=request.user.id)
+    list = {}
+    for g in user_favorites_group:
+        list[g.slug] = {
+            'name': g.name,
+            'slug': g.slug,
+            'favorites': []
+        }
+        for f in g.favorite.all():
+            stations = []
+            params = []
+            for p in f.parameters_of_station.all():
+                if p.station.name not in stations:
+                    stations.append(p.station.name)
+                if p.parameter.name not in params:
+                    params.append(p.parameter.name)
+            list[g.slug]['favorites'].append({
+                'starting_date':datetime.datetime.strftime(f.starting_date,'%Y-%m-%d'),
+                'ending_date':datetime.datetime.strftime(f.ending_date,'%Y-%m-%d'),
+                'stations':stations,
+                'parameters':params
+            })
+    print(list)
     context = {
-        'list': user_favorites_group
+        'list': list
     }
     return render(request, 'favorites.html',context)
 @login_required
