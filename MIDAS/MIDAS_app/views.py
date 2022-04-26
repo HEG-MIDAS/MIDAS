@@ -16,6 +16,7 @@ from django.middleware import csrf
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods
 import random
+from . import update_db
 
 @csrf_protect
 @require_http_methods(["POST"])
@@ -39,6 +40,7 @@ def index(request):
     # print(field_value)
     # request.session["TEST"] = random.randint(0,100)
     context = {}
+    update_db.update_stations_and_parameters()
 
     # csrftoken = django.middleware.csrf.get_token(request)
     # print(csrftoken)
