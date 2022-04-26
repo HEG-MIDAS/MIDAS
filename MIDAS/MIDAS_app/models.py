@@ -95,11 +95,3 @@ class Favorite(models.Model):
 
     def __str__(self):
         return 'FavOf:{}'.format(self.group_of_favorite)
-
-
-class Hash(models.Model):
-    name = models.CharField(max_length=255, blank=True, unique=True)
-    hash_value = models.CharField(max_length=255, blank=True)
-
-    def __str__(self):
-        return self.name
