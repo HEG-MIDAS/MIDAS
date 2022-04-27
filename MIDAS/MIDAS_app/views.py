@@ -40,6 +40,9 @@ def index(request):
     # field_value = field_object.value_from_object(f)
     # print(field_value)
     # request.session["TEST"] = random.randint(0,100)
+    # update_db.update_sources()
+    # update_db.update_stations()
+    # update_db.update_parameters()
     context = {}
 
     # csrftoken = django.middleware.csrf.get_token(request)
@@ -75,8 +78,9 @@ def statut_badge(request, source):
 def favorite_profile(request):
     user_favorites_group = GroupOfFavorite.objects.filter(user=request.user.id)
     list = {}
+    i = 0
     for g in user_favorites_group:
-        list[g.slug] = {
+        list[i] = {
             'name': g.name,
             'slug': g.slug,
             'favorites': []
@@ -89,12 +93,14 @@ def favorite_profile(request):
                     stations.append(p.station.name)
                 if p.parameter.name not in params:
                     params.append(p.parameter.name)
-            list[g.slug]['favorites'].append({
+            list[i]['favorites'].append({
+                'id': f.id,
                 'starting_date':datetime.datetime.strftime(f.starting_date,'%Y-%m-%d'),
                 'ending_date':datetime.datetime.strftime(f.ending_date,'%Y-%m-%d'),
                 'stations':stations,
                 'parameters':params
             })
+        i+=1
     context = {
         'list': list
     }

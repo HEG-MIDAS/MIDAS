@@ -1,10 +1,7 @@
 {% extends 'layouts/base.html' %}
 {% block body_content %}
 <div class="midas-container container-fluid">
-    <div class="alert alert-danger text-center" role="alert">
-        Site en construction !
-    </div>
-    <div class="h1">Gestion de Données</div>
+    <p class="h1">Gestion de Données</p>
     {% if user.is_superuser %}
     <div>
         <form class="row align-items-end g-3 needs-validation" action="/harvest-data/" method="post">
