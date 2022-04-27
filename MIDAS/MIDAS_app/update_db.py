@@ -42,18 +42,19 @@ def update_parameters():
         if os.path.isdir(working_path):
             for file in os.listdir(working_path):
                 if file.split('.')[-1] == 'csv':
-                    station = file.split('-')[0]
+                    station = file.split('_')[0]
                     header = ''
                     with open(os.path.join(working_path, file)) as f:
                         header = f.readline()
                     for parameter in header.split(','):
-                        param = parameter.replace('*', '')
-                        if len(Parameter.objects.filter(name=param)) == 0:
-                            p = Parameter(name=param)
-                            p.save()
-                        if len(ParametersOfStation.objects.filter(name="{}-{}".format(station, param))) == 0:
-                            p = ParametersOfStation(station=Station.objects.get(name=station), parameter=Parameter.objects.get(name=param))
-                            p.save()
+                        param = parameter.replace('*', '').replace('\n', '')
+                        if param not in ['gmt', 'localtime']:
+                            if len(Parameter.objects.filter(name=param)) == 0:
+                                p = Parameter(name=param)
+                                p.save()
+                            if len(ParametersOfStation.objects.filter(name="{}-{}".format(station, param))) == 0:
+                                p = ParametersOfStation(station=Station.objects.get(name=station), parameter=Parameter.objects.get(name=param))
+                                p.save()
 
 
 def main():
