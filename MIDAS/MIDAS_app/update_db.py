@@ -54,3 +54,13 @@ def update_parameters():
                         if len(ParametersOfStation.objects.filter(name="{}-{}".format(station, param))) == 0:
                             p = ParametersOfStation(station=Station.objects.get(name=station), parameter=Parameter.objects.get(name=param))
                             p.save()
+
+
+def main():
+    update_sources()
+    update_stations()
+    update_parameters()
+
+
+if __name__ == "__main__":
+    main()
