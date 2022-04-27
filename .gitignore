@@ -11,6 +11,7 @@ geckodriver.log
 
 # Files
 *.csv
+!sources.csv
 *.sql*
 *.txt
 !requirements.txt

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, Source, Station, Parameter, ParametersOfStation, GroupOfFavorite, Favorite
+from .models import Hash, User, Source, Station, Parameter, ParametersOfStation, GroupOfFavorite, Favorite
 
 # Register your models here.
 
@@ -129,3 +129,20 @@ class FavoriteAdmin(admin.ModelAdmin):
     list_display = ['__str__']
 
 admin.register(Favorite, FavoriteAdmin)
+
+
+@admin.register(Hash)
+class HashAdmin(admin.ModelAdmin):
+
+    fieldsets = (
+        (None, {
+            'fields': ('name',)
+        }),
+        ('Details', {
+            'fields': ('hash_value',)
+        })
+    )
+
+    list_display = ['name', 'hash_value']
+
+admin.register(Hash, HashAdmin)

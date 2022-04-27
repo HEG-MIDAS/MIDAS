@@ -17,6 +17,7 @@ from django.middleware import csrf
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods
 import random
+from . import update_db
 
 @csrf_protect
 @require_http_methods(["POST"])

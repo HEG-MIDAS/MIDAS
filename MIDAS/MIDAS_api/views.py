@@ -10,6 +10,7 @@ from rest_framework import generics
 from django.conf import settings
 from .serializers import StatusSerializer, SourceSerializer, StationSerializer, ParameterSerializer, ParametersOfStationSerializer, FavoriteGroupSerializer
 from MIDAS_app.models import Source, Station, Parameter, ParametersOfStation, GroupOfFavorite
+import requests
 
 # Create your views here.
 def status(request):
@@ -22,14 +23,41 @@ class LocalPerm(BasePermission):
 
         return False
 
+
 class StatusView(views.APIView):
+    """
+    Return the status of the website, more precisely, if the sources of the website are all available, some, or none of them.
+
+    Returns
+    -------
+    json -> Response
+    """
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
 
     def get(self, request):
-        data = {'status': 'Daijôbu'}
+        data = {}
+        sources = Source.objects.all()
+        urls = [source.url for source in sources]
+        dic = {'sabra':'https://www.ropag-data.ch/gechairmo/i_extr.php','climacity':'http://www.climacity.org/Axis/'}
+        count = 0
+        for k in dic:
+            try:
+                resp = requests.get(dic[k])
+                if resp.status_code != 200:
+                    count+=1
+            except:
+                count+=1
+        if(count == 0):
+            data['status'] = "Toutes les sources sont opérationnelles"
+        elif(count != 0 and count < len(dic)):
+            data['status'] = "Certaines sources ne sont pas accessibles"
+        else:
+            data['status'] = "Aucune des sources n\'est accessible"
+
         result = StatusSerializer(data).data
         return Response(result)
+
 
 class SearchView(views.APIView):
     authentication_classes = [SessionAuthentication]
@@ -179,6 +207,7 @@ class SearchView(views.APIView):
             return Response(results, status=200)
         return Response({"error":"No Data found"}, status=400)
 
+
 class FilterView(views.APIView):
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
@@ -231,6 +260,7 @@ class FilterView(views.APIView):
         else:
             return Response({"error":"No content found"}, status=400)
 
+
 class SourceList(generics.ListAPIView):
     """List all Sources
     """
@@ -238,6 +268,7 @@ class SourceList(generics.ListAPIView):
     serializer_class = SourceSerializer
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
+
 
 class SourceDetail(generics.RetrieveAPIView):
     """Retrieve a specific Source by the slug
@@ -255,6 +286,7 @@ class SourceDetail(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated|LocalPerm]
     lookup_field = 'slug'
 
+
 class StationList(generics.ListAPIView):
     """List all Stations
     """
@@ -262,6 +294,7 @@ class StationList(generics.ListAPIView):
     serializer_class = StationSerializer
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
+
 
 class StationDetail(generics.RetrieveAPIView):
     """Retrieve a specific Station by the slug
@@ -272,6 +305,7 @@ class StationDetail(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated|LocalPerm]
     lookup_field = 'slug'
 
+
 class ParameterList(generics.ListAPIView):
     """List all Parameters
     """
@@ -279,6 +313,7 @@ class ParameterList(generics.ListAPIView):
     serializer_class = ParameterSerializer
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
+
 
 class ParameterDetail(generics.RetrieveAPIView):
     """Retrieve a specific Parameter by the slug
@@ -289,6 +324,7 @@ class ParameterDetail(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated|LocalPerm]
     lookup_field = 'slug'
 
+
 class FavoriteGroupList(generics.ListAPIView):
     """List all Parameters
     """
@@ -296,6 +332,7 @@ class FavoriteGroupList(generics.ListAPIView):
     serializer_class = FavoriteGroupSerializer
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated]
+
 
 class FavoriteGroupDetail(generics.RetrieveAPIView):
     """Retrieve a specific Parameter by the slug
