@@ -10,7 +10,7 @@ class StatusSerializer(serializers.Serializer):
 class SourceSerializer(serializers.ModelSerializer):
     # Retrieve Stations by Name (or any value added in slug_field)
     # To retrieve by id, use PrimaryKeyRelatedField
-    station = serializers.SlugRelatedField(many=True, slug_field='name', queryset=Source.objects.all())
+    station = serializers.SlugRelatedField(many=True, slug_field='slug', queryset=Source.objects.all())
 
     class Meta:
         model = Source

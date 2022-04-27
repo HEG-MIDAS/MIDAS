@@ -73,7 +73,7 @@ def dataToFiles(data: dict):
         # Open temp file
         f = open(os.path.join(scraper_path,"temp-"+k+".csv"), 'a+')
         # Write header (HardCoded)
-        f.write("Date [GMT+1],PM2.5*,PM10*,NO2,O3\n")
+        f.write("localtime,PM2.5*,PM10*,NO2,O3\n")
         # Loop datas
         for e in data[k]:
             # Write Date
@@ -160,7 +160,7 @@ def manipulate():
                     # Pop first element which is the date
                     stations.pop(0)
                     # Format it with the 'Typologie'
-                    stations = ['{0}-{1}'.format(element,typologie) for element in stations]
+                    stations = ['{0}_{1}'.format(element,typologie) for element in stations]
                     # Set the dataTable
                     for i in range(0,len(stations)):
                         if stations[i] not in dataTable:
@@ -191,8 +191,8 @@ def manipulate():
                 format_date = '%Y-%m-%d'
 
             # Write the data in the original files
-            merge_csv_by_date.merge_csv_by_date(os.path.join(media_path,'original/SABRA/{0}-{1}.csv'.format(typologie,polluant)),os.path.join(scraper_path,f), format_date)
-            print('Written {0}'.format(os.path.join(media_path,'original/SABRA/{0}-{1}.csv'.format(typologie,polluant))))
+            merge_csv_by_date.merge_csv_by_date(os.path.join(media_path,'original/SABRA/{0}_{1}.csv'.format(typologie,polluant)),os.path.join(scraper_path,f), format_date)
+            print('Written {0}'.format(os.path.join(media_path,'original/SABRA/{0}_{1}.csv'.format(typologie,polluant))))
     print('')
     dataToFiles(dataTable)
 # Clean Folder Script
