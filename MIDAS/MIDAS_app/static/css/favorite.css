@@ -1,0 +1,6 @@
+.collapse > .list-group-item,.collapsing > .list-group-item{
+    border-width: 0 0 1px;
+}
+*[data-bs-toggle="collapse"]{
+    cursor: pointer;
+}
