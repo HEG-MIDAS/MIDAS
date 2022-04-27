@@ -284,8 +284,6 @@ class SourceDetail(generics.RetrieveAPIView):
     serializer_class = SourceSerializer
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
-    lookup_field = 'slug'
-
 
 class StationList(generics.ListAPIView):
     """List all Stations
@@ -295,7 +293,6 @@ class StationList(generics.ListAPIView):
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
 
-
 class StationDetail(generics.RetrieveAPIView):
     """Retrieve a specific Station by the slug
     """
@@ -303,8 +300,6 @@ class StationDetail(generics.RetrieveAPIView):
     serializer_class = StationSerializer
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
-    lookup_field = 'slug'
-
 
 class ParameterList(generics.ListAPIView):
     """List all Parameters
@@ -314,7 +309,6 @@ class ParameterList(generics.ListAPIView):
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
 
-
 class ParameterDetail(generics.RetrieveAPIView):
     """Retrieve a specific Parameter by the slug
     """
@@ -322,8 +316,6 @@ class ParameterDetail(generics.RetrieveAPIView):
     serializer_class = ParameterSerializer
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
-    lookup_field = 'slug'
-
 
 class FavoriteGroupList(generics.ListAPIView):
     """List all Parameters
@@ -333,7 +325,6 @@ class FavoriteGroupList(generics.ListAPIView):
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
-
 class FavoriteGroupDetail(generics.RetrieveAPIView):
     """Retrieve a specific Parameter by the slug
     """
@@ -341,4 +332,3 @@ class FavoriteGroupDetail(generics.RetrieveAPIView):
     serializer_class = FavoriteGroupSerializer
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated]
-    lookup_field = 'slug'
