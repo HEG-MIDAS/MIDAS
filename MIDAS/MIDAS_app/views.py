@@ -75,6 +75,12 @@ def statut_badge(request, source):
         raise Http404
 
 @login_required
+@require_http_methods(["POST"])
+def favorite_deletion(request,slug):
+    user_favorites_group = GroupOfFavorite.objects.filter(user=request.user.id).filter(slug=slug).delete()
+    return redirect(favorite_profile)
+
+@login_required
 def favorite_profile(request):
     user_favorites_group = GroupOfFavorite.objects.filter(user=request.user.id)
     list = {}
@@ -105,6 +111,7 @@ def favorite_profile(request):
         'list': list
     }
     return render(request, 'favorites.html',context)
+
 @login_required
 def manage_data(request):
 

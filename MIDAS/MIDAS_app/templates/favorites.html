@@ -11,7 +11,7 @@
             <div class="card-header row g-0 align-items-center justify-content-between">
                 <div class="col-sm-6"><strong>{{ element.name }} ({{ element.slug }})</strong></div>
                 <div class="col-sm-6 text-end">
-                    <i title="Supprimer ce favoris" class="fa-solid fa-circle-xmark text-danger"></i>
+                    <i title="Supprimer ce favoris" class="midas-delete-icon fa-solid fa-circle-xmark text-danger" data-bs-name="{{element.name}}" data-bs-slug="{{element.slug}}" data-bs-toggle="modal" data-bs-target="#modalDeletion"></i>
                     <i class="fa-solid fa-circle-chevron-{%if k == 0%}up{%else%}down{%endif%}" data-bs-toggle="collapse" data-bs-target="#collapseGroup-{{k}}" aria-expanded="false" aria-controls="collapseGroup-{{k}}"></i>
                 </div>
             </div>
@@ -67,6 +67,26 @@
         {% endfor %}
     </div>
 </div>
+<div class="modal fade" id="modalDeletion" tabindex="-1" aria-labelledby="modalDeletion" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Souhaitez-vous supprimer ce favoris?
+            </div>
+            <div class="modal-footer">
+                <form class="modal-form" method="post" action="#">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Retour</button>
+                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 <script type="text/javascript">
     document.querySelectorAll('li[data-bs-toggle="collapse"]').forEach(el=>{
         el.addEventListener('click',()=>{
@@ -76,10 +96,31 @@
     })
     document.querySelectorAll('i[data-bs-toggle="collapse"]').forEach(el=>{
         el.addEventListener('click',()=>{
-            console.log(el.className)
             if(el.className=='fa-solid fa-circle-chevron-up collapsed')el.className='fa-solid fa-circle-chevron-down'
             else el.className='fa-solid fa-circle-chevron-up'
         })
     })
+    // document.querySelectorAll('i.midas-delete-icon').forEach(el=>{
+    //     el.addEventListener('click',()=>{
+    //         el.parentElement.submit()
+    //     })
+    // })
+    let exampleModal = document.getElementById('modalDeletion')
+    exampleModal.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        let button = event.relatedTarget
+        // Extract info from data-bs-* attributes
+        let name = button.getAttribute('data-bs-name')
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        let modalTitle = exampleModal.querySelector('.modal-title')
+        let modalForm = exampleModal.querySelector('.modal-form')
+        modalForm.action=`/account/favorites/delete/${button.getAttribute('data-bs-slug')}`
+        console.log(modalForm.action)
+        modalTitle.textContent = `Supprimer le favoris "${name}"`
+    })
+
 </script>
 {% endblock %}

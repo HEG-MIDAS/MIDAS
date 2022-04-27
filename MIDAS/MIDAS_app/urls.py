@@ -9,6 +9,7 @@ urlpatterns=[
     path('statut/', views.statut, name='statut'),
     path('test/', views.test, name='test'),
     path('account/favorites', views.favorite_profile, name='account_favorites'),
+    path('account/favorites/delete/<str:slug>', views.favorite_deletion, name='account_favorite_deletion'),
     path('statut/<slug:source>.svg', views.statut_badge, name='statut_badge'),
     path('change-password/', PasswordChangeView.as_view(template_name='registration/password_change_form.html'), name='password_change'),
     path('change-password-success/', PasswordChangeDoneView.as_view(template_name='registration/password_change_done.html'), name='password_change_done'),
