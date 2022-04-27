@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import Hash, User, Source, Station, Parameter, ParametersOfStation, GroupOfFavorite, Favorite
+from .models import User, Source, Station, Parameter, ParametersOfStation, GroupOfFavorite, Favorite
 
 # Register your models here.
 
