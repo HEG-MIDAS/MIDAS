@@ -129,11 +129,19 @@ def manage_data(request):
 
     else:
         folder_files = {}
+        folder_flavours = {}
         for e in listdir(media_path):
             if not isfile(join(media_path, e)):
                 folder_files[e] = False
+                if e == 'transformed':
+                    folder_flavours[e] = 'Données transformées'
+                elif e == 'original':
+                    folder_flavours[e] = 'Données originelles'
+                else:
+                    folder_flavours[e] = e
             elif splitext(e)[1] in [".csv", ".txt"]:
                 folder_files[e] = True
+                folder_flavours[e] = e
 
         path_redirect = ''
         if request.GET.get('origin', '') != '':
@@ -144,10 +152,14 @@ def manage_data(request):
         else:
             path_redirect = '?origin='
 
+        originFlavourText = 'Données transformées' if request.GET.get('origin', '') == 'transformed' else 'Données originelles'
         form = DateSelection
+        print(folder_flavours)
         context = {
             'file': folder_files,
+            'file_flavour': folder_flavours,
             'origin': request.GET.get('origin', ''),
+            'origin_flavour': originFlavourText,
             'source': request.GET.get('source', ''),
             'path_redirect': path_redirect,
             'form': form,

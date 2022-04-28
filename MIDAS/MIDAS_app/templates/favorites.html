@@ -100,25 +100,15 @@
             else el.className='fa-solid fa-circle-chevron-up'
         })
     })
-    // document.querySelectorAll('i.midas-delete-icon').forEach(el=>{
-    //     el.addEventListener('click',()=>{
-    //         el.parentElement.submit()
-    //     })
-    // })
+
     let exampleModal = document.getElementById('modalDeletion')
     exampleModal.addEventListener('show.bs.modal', function (event) {
-        // Button that triggered the modal
         let button = event.relatedTarget
-        // Extract info from data-bs-* attributes
         let name = button.getAttribute('data-bs-name')
-        // If necessary, you could initiate an AJAX request here
-        // and then do the updating in a callback.
-        //
-        // Update the modal's content.
         let modalTitle = exampleModal.querySelector('.modal-title')
         let modalForm = exampleModal.querySelector('.modal-form')
+
         modalForm.action=`/account/favorites/delete/${button.getAttribute('data-bs-slug')}`
-        console.log(modalForm.action)
         modalTitle.textContent = `Supprimer le favoris "${name}"`
     })
 

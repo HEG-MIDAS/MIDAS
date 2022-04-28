@@ -1,66 +1,102 @@
 {% extends 'layouts/base.html' %}
+{% load dict %}
+
 {% block body_content %}
 <div class="midas-container container-fluid">
     <p class="h1">Gestion de Données</p>
-    {% if user.is_superuser %}
-    <div>
-        <form class="row align-items-end g-3 needs-validation" action="/harvest-data/" method="post">
-            <div class="h4">Ajout de données</div>
-            <div class="subtitle fst-italic">Ajoute les données pour toutes les sources actuellement</div>
-            {% csrf_token %}
-            {{ form.non_field_errors }}
-            <div class="col-md-4">
-                <label for="{{ form.starting_date.id_for_label }}">{{ form.starting_date.label }} :</label>
-                {{ form.starting_date }}
-            </div>
-            <div class="col-md-4">
-                <label for="{{ form.ending_date.id_for_label }}">{{ form.ending_date.label }} :</label>
-                {{ form.ending_date }}
-            </div>
-            <div class="col-md-4">
-                <button type="submit" onclick="displayRunner(this)" class="btn btn-primary">
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
-                    Envoyer
-                </button>
-            </div>
-        </form>
-    </div>
-    {% endif %}
-    <div class="mt-5 h4">Téléchargement de fichiers</div>
-    <div class="subtitle fst-italic">Télécharge le fichier complet actuellement</div>
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/manage-data/">Media</a></li>
-            {% if origin != '' %}
-                <li class="breadcrumb-item"><a href="/manage-data/?origin={{ origin }}">{{ origin }}</a></li>
-            {% endif %}
-            {% if source != '' %}
-                <li class="breadcrumb-item">{{ source }}</li>
-            {% endif %}
-        </ol>
-      </nav>
 
-    <ul>
-    {% for key, value in file.items %}
-        {% if value %}
-            <li>
-                <form action="/manage-data/" method="post">
-                    <i class="fas fa-file"></i> {{ key }}
+    <div class="d-flex w-100 flex-column align-items-center">
+        {% if user.is_superuser %}
+        <div class="card mb-3 w-50">
+            <div class="card-header row g-0 align-items-center justify-content-between">
+                <div class="col-sm-6"><strong>Ajout de données</strong></div>
+                <div class="col-sm-6 text-end">
+                    <i class="fa-solid fa-circle-chevron-down" data-bs-toggle="collapse" data-bs-target="#collapseAddDatas" aria-expanded="false" aria-controls="collapseAddDatas"></i>
+                </div>
+            </div>
+            <div class="collapse p-3 row g-0 justify-content-center" id="collapseAddDatas">
+                <div class="col-sm-10">
+                    <form class="row align-items-end g-3 needs-validation" action="/harvest-data/" method="post">
+                        {% csrf_token %}
+                        {{ form.non_field_errors }}
+                        <div class="col-md-4">
+                            <label for="{{ form.starting_date.id_for_label }}">{{ form.starting_date.label }} :</label>
+                            {{ form.starting_date }}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="{{ form.ending_date.id_for_label }}">{{ form.ending_date.label }} :</label>
+                            {{ form.ending_date }}
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" onclick="displayRunner(this)" class="btn btn-primary">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
+                                Envoyer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="card mb-3 w-50">
+            <div class="card-header row g-0 align-items-center justify-content-between">
+                <div class="col-sm-6"><strong>Parcourir les fichiers</strong></div>
+            </div>
+
+            <div class="card-body">
+            {% for key, value in file.items %}
+            <div class="row">
+                {% if value %}
+                <div class="col-sm-6 my-1">
+                    <i class=" fas fa-file"></i>
+                    <span>{{ file_flavour|get_items:key }}</span>
+                </div>
+                <form class="col-sm-6 text-end" action="/manage-data/" method="post">
+
                     {% csrf_token %}
                     <input type="hidden" id="filename" name="filename" value="{{ key }}">
                     <input type="hidden" id="origin" name="origin" value="{{ origin }}">
                     <input type="hidden" id="source" name="source" value="{{ source }}">
                     <button class="btn btn-success">Télécharger le fichier</button>
                 </form>
-            </li>
-        {% else %}
-            <a href="{{ path_redirect }}{{ key }}"><li><i class="fas fa-folder"></i> {{ key }}</li></a>
-        {% endif %}
-    {% endfor %}
-    </ul>
+                {% else %}
+                <a class="col my-1" href="{{ path_redirect }}{{ key }}"><i class="fas fa-folder"></i> <span>{{ file_flavour|get_items:key }}</span></a>
+                {% endif %}
+            </div>
+            {% endfor %}
+            </div>
+            <div class="card-footer">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        {% if origin == '' and source == ''%}
+                        <li class="breadcrumb-item">Media</li>
+                        {% else %}
+                        <li class="breadcrumb-item"><a href="/manage-data/">Media</a></li>
+                        {% endif %}
+                        {% if origin != '' and source != ''%}
+                        <li class="breadcrumb-item"><a href="/manage-data/?origin={{ origin }}">{{ origin_flavour }}</a></li>
+                        {% elif origin != '' %}
+                        <li class="breadcrumb-item">{{ origin_flavour }}</li>
+                        {% endif %}
+                        {% if source != '' %}
+                        <li class="breadcrumb-item">{{ source }}</li>
+                        {% endif %}
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
 </div>
 
+
+
 <script>
+    document.querySelectorAll('i[data-bs-toggle="collapse"]').forEach(el=>{
+        el.addEventListener('click',()=>{
+            if(el.className=='fa-solid fa-circle-chevron-up collapsed')el.className='fa-solid fa-circle-chevron-down'
+            else el.className='fa-solid fa-circle-chevron-up'
+        })
+    })
     function displayRunner(e) {
         //console.log(e.firstElementChild)
         var starting_date = document.getElementById('id_starting_date').value;
