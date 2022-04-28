@@ -44,26 +44,26 @@
             </div>
 
             <div class="card-body">
-            {% for key, value in file.items %}
-            <div class="row">
-                {% if value %}
-                <div class="col-sm-6 my-1">
-                    <i class=" fas fa-file"></i>
-                    <span>{{ file_flavour|get_items:key }}</span>
-                </div>
-                <form class="col-sm-6 text-end" action="/manage-data/" method="post">
+                {% for key, value in file.items %}
+                <div class="row">
+                    {% if value %}
+                    <div class="col-sm-6 my-1">
+                        <i class=" fas fa-file"></i>
+                        <span>{{ file_flavour|get_items:key }}</span>
+                    </div>
+                    <form class="col-sm-6 text-end" action="/manage-data/" method="post">
 
-                    {% csrf_token %}
-                    <input type="hidden" id="filename" name="filename" value="{{ key }}">
-                    <input type="hidden" id="origin" name="origin" value="{{ origin }}">
-                    <input type="hidden" id="source" name="source" value="{{ source }}">
-                    <button class="btn btn-success">Télécharger le fichier</button>
-                </form>
-                {% else %}
-                <a class="col my-1" href="{{ path_redirect }}{{ key }}"><i class="fas fa-folder"></i> <span>{{ file_flavour|get_items:key }}</span></a>
-                {% endif %}
-            </div>
-            {% endfor %}
+                        {% csrf_token %}
+                        <input type="hidden" id="filename" name="filename" value="{{ key }}">
+                        <input type="hidden" id="origin" name="origin" value="{{ origin }}">
+                        <input type="hidden" id="source" name="source" value="{{ source }}">
+                        <button class="btn btn-success">Télécharger le fichier</button>
+                    </form>
+                    {% else %}
+                    <a class="col my-1" href="{{ path_redirect }}{{ key }}"><i class="fas fa-folder"></i> <span>{{ file_flavour|get_items:key }}</span></a>
+                    {% endif %}
+                </div>
+                {% endfor %}
             </div>
             <div class="card-footer">
                 <nav aria-label="breadcrumb">
@@ -98,11 +98,11 @@
         })
     })
     function displayRunner(e) {
-        //console.log(e.firstElementChild)
         var starting_date = document.getElementById('id_starting_date').value;
         var ending_date = document.getElementById('id_ending_date').value;
         if (starting_date != '' && ending_date != ''){
             e.firstElementChild.hidden = false;
+            e.disabled = true
         }
     }
 </script>
