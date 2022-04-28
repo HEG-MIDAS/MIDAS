@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from django.views.generic import TemplateView
 
 urlpatterns=[
     path('status/', views.StatusView.as_view(), name='status'),
@@ -17,4 +18,5 @@ urlpatterns=[
     path('favorites-group/', views.FavoriteGroupList.as_view(), name='favorite'),
     path('favorites-group/<int:pk>/', views.FavoriteGroupDetail.as_view(), name='favorite_pk'),
     path('favorites-group/<str:slug>/', views.FavoriteGroupDetail.as_view(lookup_field='slug'), name='favorite_slug'),
+    path('doc/', TemplateView.as_view(template_name='apidoc.html'), name='doc'),
 ]
