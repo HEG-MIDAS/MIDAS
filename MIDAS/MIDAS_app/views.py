@@ -154,7 +154,6 @@ def manage_data(request):
 
         originFlavourText = 'Données transformées' if request.GET.get('origin', '') == 'transformed' else 'Données originelles'
         form = DateSelection
-        print(folder_flavours)
         context = {
             'file': folder_files,
             'file_flavour': folder_flavours,
