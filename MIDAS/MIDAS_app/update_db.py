@@ -3,7 +3,7 @@ from django.conf import settings
 import os
 
 
-def update_sources():
+def insert_sources():
     print("updating sources")
     sources_csv_path = os.path.join(settings.BASE_DIR, '../sources.csv')
     if os.path.isfile(sources_csv_path):
@@ -18,7 +18,7 @@ def update_sources():
         sources_csv.close()
 
 
-def update_stations():
+def insert_stations():
     print("updating stations")
     station_transformed_path = os.path.join(settings.MEDIA_ROOT, 'transformed/')
     sources_dir = [source.name for source in Source.objects.all()]
@@ -27,13 +27,13 @@ def update_stations():
         if os.path.isdir(working_path):
             for file in os.listdir(working_path):
                 if file.split('.')[-1] == 'csv':
-                    station = file.split('-')[0]
+                    station = file.split('_')[0]
                     if len(Station.objects.filter(name=station)) == 0:
                         s = Station(name=station, source=Source.objects.get(name=dir))
                         s.save()
 
 
-def update_parameters():
+def insert_parameters():
     print("updating parameters")
     station_transformed_path = os.path.join(settings.MEDIA_ROOT, 'transformed/')
     sources_dir = [source.name for source in Source.objects.all()]
@@ -53,15 +53,6 @@ def update_parameters():
                                 p = Parameter(name=param)
                                 p.save()
                             if len(ParametersOfStation.objects.filter(name="{}-{}".format(station, param))) == 0:
-                                p = ParametersOfStation(station=Station.objects.get(name=station), parameter=Parameter.objects.get(name=param))
-                                p.save()
-
-
-def main():
-    update_sources()
-    update_stations()
-    update_parameters()
-
-
-if __name__ == "__main__":
-    main()
+                                if len(Station.objects.filter(name=station)) > 0 :
+                                    p = ParametersOfStation(station=Station.objects.get(name=station), parameter=Parameter.objects.get(name=param))
+                                    p.save()
