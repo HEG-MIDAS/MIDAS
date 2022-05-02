@@ -1,15 +1,19 @@
+/* General */
 html,body{
     min-height: 100vh;
 }
 
+/* Container */
 div.midas-container{
     margin-top: 0.5rem;
 }
 
+/* Spinner */
 .spinner-border {
     display: none;
 }
 
+/* Status icon (NavBar) */
 .status.fa-circle-check {
     color: rgb(17, 209, 17);
 }
@@ -20,15 +24,7 @@ div.midas-container{
     color: rgb(209, 17, 17);
 }
 
-.text-centered {
-    text-align: center;
-}
-
-.body-centered {
-    margin-left: 20%;
-    margin-right: 20%;
-}
-
-.midas-delete-icon{
+/* Change mouse to pointer on those elements */
+.midas-delete-icon, *[data-bs-toggle="collapse"]{
     cursor: pointer;
 }
