@@ -10,7 +10,7 @@ djangorestframework==3.13.1
 docutils==0.18.1
 h11==0.13.0
 idna==3.3
-merge-csv-by-date-package-MagiPrince @ file:///home/espritorgue/Git/HEG/MIDAS/packaging_merge_csv_by_date/dist/merge_csv_by_date_package_MagiPrince-0.2.0-py3-none-any.whl
+./packaging_merge_csv_by_date/dist/merge_csv_by_date_package_MagiPrince-0.2.0-py3-none-any.whl
 numpy==1.22.3
 outcome==1.1.0
 pycparser==2.21
