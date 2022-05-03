@@ -37,6 +37,26 @@ class StatusView(views.APIView):
 
     def get(self, request):
         data = {}
+
+        data['status'] = "MIDAS Service running"
+
+        result = StatusSerializer(data).data
+        return Response(result)
+
+
+class StatusThirdPartyView(views.APIView):
+    """
+    Return the status of the website, more precisely, if the sources of the website are all available, some, or none of them.
+
+    Returns
+    -------
+    json -> Response
+    """
+    authentication_classes = [SessionAuthentication,BasicAuthentication]
+    permission_classes = [IsAuthenticated|LocalPerm]
+
+    def get(self, request):
+        data = {}
         sources = Source.objects.all()
         urls = [source.url for source in sources]
         dic = {'sabra':'https://www.ropag-data.ch/gechairmo/i_extr.php','climacity':'http://www.climacity.org/Axis/'}

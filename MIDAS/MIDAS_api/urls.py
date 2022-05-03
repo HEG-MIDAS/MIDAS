@@ -4,6 +4,7 @@ from django.views.generic import TemplateView
 
 urlpatterns=[
     path('status/', views.StatusView.as_view(), name='status'),
+    path('status/third-party/', views.StatusThirdPartyView.as_view(), name='status_third_party'),
     path('filter/', views.FilterView.as_view(), name='filter'),
     path('search/', views.SearchView.as_view(), name='search'),
     path('sources/', views.SourceList.as_view(), name='source'),
