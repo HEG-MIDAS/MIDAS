@@ -56,3 +56,5 @@ def insert_parameters():
                                 if len(Station.objects.filter(name=station)) > 0 :
                                     p = ParametersOfStation(station=Station.objects.get(name=station), parameter=Parameter.objects.get(name=param))
                                     p.save()
+
+# regex detecting 3 or more spaces : \s{3,}
