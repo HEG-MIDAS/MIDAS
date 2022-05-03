@@ -10,6 +10,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.chrome.service import Service as sv
 from selenium.webdriver.support import expected_conditions as EC
 from merge_csv_by_date_package import merge_csv_by_date
 from collections import OrderedDict
@@ -304,8 +305,11 @@ def download(s:str,e:str,b:str):
         # Specify Download folder
         prefs = {"download.default_directory" : scraper_path}
         options.add_experimental_option("prefs",prefs)
+        service = sv(os.path.join(scraper_path,'chromedriver'))
+        print(service)
         # Create Driver
-        driver = webdriver.Chrome(options=options);
+        driver = webdriver.Chrome(options=options,service=service)
+        print("ICI")
     # Array of params
     urbanArea = ['urbain','suburbain','rural']
     pollTimeStep = {'1':'quot','18':'quot','2':'hor','3':'hor'}
