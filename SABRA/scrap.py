@@ -10,6 +10,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.chrome.service import Service as sv
 from selenium.webdriver.support import expected_conditions as EC
 from merge_csv_by_date_package import merge_csv_by_date
 from collections import OrderedDict
@@ -270,7 +271,7 @@ def scraper(URL:str,driver:webdriver.Firefox,urbain_input:str,polluants_input:st
     time.sleep(2)
 
 # Setup the headless browser (Using Firefox/Gecko)
-def download(s:str,e:str):
+def download(s:str,e:str,b:str):
     """Download Wrapper Function
 
     Parameters
@@ -279,21 +280,36 @@ def download(s:str,e:str):
         Starting Date (%d.%m.%Y)
     e: str
         Ending Date (%d.%m.%Y)
+    b: str
+        Browser Value (firefox or chrome)
     """
-    # Create Firefox Options needed to autodownload
-    options = webdriver.FirefoxOptions()
-    options.headless = True
-    options.set_preference("browser.download.folderList", 2)
-    options.set_preference("browser.download.viewableInternally.enabledTypes", "")
-    options.set_preference("browser.download.useDownloadDir", True)
-    options.set_preference("browser.download.dir", scraper_path)
-    options.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/csv,application/octet-stream")
-    options.set_preference("pdfjs.disabled", True)
-    options.set_preference("browser.helperApps.neverAsk.openFile", "text/csv,application/octet-stream")
-    # Create Service for Firefox (Gecko) Driver Location
-    service = Service(os.path.join(scraper_path,'geckodriver'))
-    # Create Driver
-    driver = webdriver.Firefox(options=options,service=service)
+    if b == 'firefox':
+        # Create Firefox Options needed to autodownload
+        options = webdriver.FirefoxOptions()
+        options.headless = True
+        options.set_preference("browser.download.folderList", 2)
+        options.set_preference("browser.download.viewableInternally.enabledTypes", "")
+        options.set_preference("browser.download.useDownloadDir", True)
+        options.set_preference("browser.download.dir", scraper_path)
+        options.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/csv,application/octet-stream")
+        options.set_preference("pdfjs.disabled", True)
+        options.set_preference("browser.helperApps.neverAsk.openFile", "text/csv,application/octet-stream")
+        # Create Service for Firefox (Gecko) Driver Location
+        service = Service(os.path.join(scraper_path,'geckodriver'))
+        # Create Driver
+        driver = webdriver.Firefox(options=options,service=service)
+    elif b == 'chrome':
+        # Create Chrome Options needed to autodownload
+        options = webdriver.ChromeOptions()
+        options.headless = True
+        # Specify Download folder
+        prefs = {"download.default_directory" : scraper_path}
+        options.add_experimental_option("prefs",prefs)
+        service = sv(os.path.join(scraper_path,'chromedriver'))
+        print(service)
+        # Create Driver
+        driver = webdriver.Chrome(options=options,service=service)
+        print("ICI")
     # Array of params
     urbanArea = ['urbain','suburbain','rural']
     pollTimeStep = {'1':'quot','18':'quot','2':'hor','3':'hor'}
@@ -304,7 +320,7 @@ def download(s:str,e:str):
     # Close Firefox Driver
     driver.close()
 
-def operation(sD:str,eD:str):
+def operation(sD:str,eD:str,b:str):
     """Wrapper Function
 
     Parameters
@@ -313,9 +329,11 @@ def operation(sD:str,eD:str):
         Starting Date (%d.%m.%Y)
     eD: str
         Ending Date (%d.%m.%Y)
+    b: str
+        Browser Value (firefox or chrome)
     """
     # Download for current time diff
-    download(sD,eD)
+    download(sD,eD,b)
     # Manipulating
     manipulate()
     # Clean folder
@@ -334,8 +352,9 @@ def main(argv):
     print("Starting "+time.strftime("%Y-%m-%d %H:%M:%S"))
     start_date =  datetime.now().date()
     end_date = datetime.now().date()
+    browser = 'firefox'
     try:
-      opts, args = getopt.getopt(argv,"hs:e:",["start_date=","end_date="])
+      opts, args = getopt.getopt(argv,"chs:e:",["start_date=","end_date=","chrome"])
     except getopt.GetoptError:
       print('scrap.py -s <start_date> -e <end_date>')
       sys.exit(1)
@@ -347,6 +366,8 @@ def main(argv):
          start_date = datetime.strptime(arg,'%Y-%m-%d').date()
       elif opt in ("-e", "--end_date"):
          end_date = datetime.strptime(arg,'%Y-%m-%d').date()
+      elif opt in ("-c","--chrome"):
+         browser = 'chrome'
 
     if(start_date > end_date):
         print('The end date is inferior to the start date !')
@@ -363,7 +384,7 @@ def main(argv):
             str_end_date = tempEndDate.strftime('%d.%m.%Y')
             print('Getting Datas from '+str_start_date+' to '+str_end_date)
             try:
-                operation(str_start_date,str_end_date)
+                operation(str_start_date,str_end_date,browser)
             except:
                 print('An error occured for '+str_start_date+'/'+str_end_date)
                 exit_code += 1
@@ -376,7 +397,7 @@ def main(argv):
         start_date = start_date.strftime('%d.%m.%Y')
         end_date = end_date.strftime('%d.%m.%Y')
         try:
-            operation(start_date,end_date)
+            operation(start_date,end_date,browser)
         except:
             print('An error occured for '+start_date+'/'+end_date)
             exit_code += 1
