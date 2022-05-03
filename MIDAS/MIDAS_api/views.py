@@ -271,21 +271,12 @@ class SourceList(generics.ListAPIView):
 
 
 class SourceDetail(generics.RetrieveAPIView):
-    """Retrieve a specific Source by the slug
-
-    To make it work with both the pk and the slug,
-    In urls.py:
-    path('sources/<int:pk>/', views.SourceDetail.as_view(), name='source_pk'),
-    path('sources/<str:slug>/', views.SourceDetail.as_view(), name='source_slug',lookup_field='slug'),
-
-    Remove the lookup_field from this view ! (Needs to do it for all *Detail views)
+    """Retrieve a specific Source by the slug or the id
     """
     queryset = Source.objects.all()
     serializer_class = SourceSerializer
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
-    lookup_field = 'slug'
-
 
 class StationList(generics.ListAPIView):
     """List all Stations
@@ -295,7 +286,6 @@ class StationList(generics.ListAPIView):
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
 
-
 class StationDetail(generics.RetrieveAPIView):
     """Retrieve a specific Station by the slug
     """
@@ -303,8 +293,6 @@ class StationDetail(generics.RetrieveAPIView):
     serializer_class = StationSerializer
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
-    lookup_field = 'slug'
-
 
 class ParameterList(generics.ListAPIView):
     """List all Parameters
@@ -314,16 +302,13 @@ class ParameterList(generics.ListAPIView):
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
 
-
 class ParameterDetail(generics.RetrieveAPIView):
-    """Retrieve a specific Parameter by the slug
+    """Retrieve a specific Parameter by the slug  or the id
     """
     queryset = Parameter.objects.all()
     serializer_class = ParameterSerializer
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
-    lookup_field = 'slug'
-
 
 class FavoriteGroupList(generics.ListAPIView):
     """List all Parameters
@@ -333,12 +318,10 @@ class FavoriteGroupList(generics.ListAPIView):
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
-
 class FavoriteGroupDetail(generics.RetrieveAPIView):
-    """Retrieve a specific Parameter by the slug
+    """Retrieve a specific Parameter by the slug  or the id
     """
     queryset = GroupOfFavorite.objects.all()
     serializer_class = FavoriteGroupSerializer
     authentication_classes = [SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated]
-    lookup_field = 'slug'

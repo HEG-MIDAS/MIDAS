@@ -1,6 +1,7 @@
 import os
 import mimetypes
 import django
+import datetime
 from wsgiref import headers
 import requests
 from django.http import HttpResponse, Http404
@@ -39,6 +40,9 @@ def index(request):
     # field_value = field_object.value_from_object(f)
     # print(field_value)
     # request.session["TEST"] = random.randint(0,100)
+    # update_db.update_sources()
+    # update_db.update_stations()
+    # update_db.update_parameters()
     context = {}
 
     # csrftoken = django.middleware.csrf.get_token(request)
@@ -71,12 +75,43 @@ def statut_badge(request, source):
         raise Http404
 
 @login_required
+@require_http_methods(["POST"])
+def favorite_deletion(request,slug):
+    user_favorites_group = GroupOfFavorite.objects.filter(user=request.user.id).filter(slug=slug).delete()
+    return redirect(favorite_profile)
+
+@login_required
 def favorite_profile(request):
     user_favorites_group = GroupOfFavorite.objects.filter(user=request.user.id)
+    list = {}
+    i = 0
+    for g in user_favorites_group:
+        list[i] = {
+            'name': g.name,
+            'slug': g.slug,
+            'favorites': []
+        }
+        for f in g.favorite.all():
+            stations = []
+            params = []
+            for p in f.parameters_of_station.all():
+                if p.station.name not in stations:
+                    stations.append(p.station.name)
+                if p.parameter.name not in params:
+                    params.append(p.parameter.name)
+            list[i]['favorites'].append({
+                'id': f.id,
+                'starting_date':datetime.datetime.strftime(f.starting_date,'%Y-%m-%d'),
+                'ending_date':datetime.datetime.strftime(f.ending_date,'%Y-%m-%d'),
+                'stations':stations,
+                'parameters':params
+            })
+        i+=1
     context = {
-        'list': user_favorites_group
+        'list': list
     }
     return render(request, 'favorites.html',context)
+
 @login_required
 def manage_data(request):
 
@@ -94,11 +129,19 @@ def manage_data(request):
 
     else:
         folder_files = {}
+        folder_flavours = {}
         for e in listdir(media_path):
             if not isfile(join(media_path, e)):
                 folder_files[e] = False
+                if e == 'transformed':
+                    folder_flavours[e] = 'Données transformées'
+                elif e == 'original':
+                    folder_flavours[e] = 'Données originelles'
+                else:
+                    folder_flavours[e] = e
             elif splitext(e)[1] in [".csv", ".txt"]:
                 folder_files[e] = True
+                folder_flavours[e] = e
 
         path_redirect = ''
         if request.GET.get('origin', '') != '':
@@ -109,10 +152,13 @@ def manage_data(request):
         else:
             path_redirect = '?origin='
 
+        originFlavourText = 'Données transformées' if request.GET.get('origin', '') == 'transformed' else 'Données originelles'
         form = DateSelection
         context = {
             'file': folder_files,
+            'file_flavour': folder_flavours,
             'origin': request.GET.get('origin', ''),
+            'origin_flavour': originFlavourText,
             'source': request.GET.get('source', ''),
             'path_redirect': path_redirect,
             'form': form,

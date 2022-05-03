@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -37,6 +38,14 @@
 <body>
     {% block body_header %}
     {% include 'includes/navbar.html' %}
+    {% endblock %}
+
+    {% block body_alert %}
+    <div class="container-fluid row justify-content-center mt-2">
+        <div class="col-sm-10 alert alert-danger text-center" role="alert">
+            Site en construction !
+        </div>
+    </div>
     {% endblock %}
     {% block body_content %}
     <div class="midas-container container-fluid">

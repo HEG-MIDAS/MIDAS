@@ -1,0 +1,27 @@
+{% extends 'layouts/base.html' %}
+{% block extracss %}
+<link rel="stylesheet" type="text/css" href="/static/lib/swagger/css/swagger-ui.css" />
+{% endblock %}
+{% block extrajs %}
+<script src="/static/lib/swagger/js/swagger-ui-bundle.js"></script>
+{% endblock %}
+{% block body_content %}
+    <div class="midas-container container-fluid">
+        <div id="swagger-ui">
+
+        </div>
+    </div>
+    <script>
+    const ui = SwaggerUIBundle({
+        url: "/static/openapi-schema.yml",
+        dom_id: '#swagger-ui',
+        presets: [
+          SwaggerUIBundle.presets.apis,
+        ],
+        requestInterceptor: (request) => {
+          request.headers['X-CSRFToken'] = "{{ csrf_token }}"
+          return request;
+        }
+      })
+    </script>
+{% endblock %}

@@ -1,29 +1,65 @@
 {% extends 'layouts/base.html' %}
-{% block extrajs %}
-<script src="/static/lib/echarts/echarts.js" charset="utf-8"></script>
+{% block extracss %}
+<link rel="stylesheet" href="/static/css/favorite.css">
 {% endblock %}
 {% block body_content %}
 <div class="midas-container container-fluid">
-    <div class="alert alert-danger text-center" role="alert">
-        Site en construction !
-    </div>
+    <p class="h1">Favoris</p>
     <div class="d-flex w-100 flex-column align-items-center">
-        {% for element in list  %}
+        {% for k,element in list.items  %}
         <div class="card mb-3 w-50">
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ element.name }} ({{ element.slug }})</h5>
-                    </div>
+            <div class="card-header row g-0 align-items-center justify-content-between">
+                <div class="col-sm-6"><strong>{{ element.name }} ({{ element.slug }})</strong></div>
+                <div class="col-sm-6 text-end">
+                    <i title="Supprimer ce favoris" class="midas-delete-icon fa-solid fa-circle-xmark text-danger" data-bs-name="{{element.name}}" data-bs-slug="{{element.slug}}" data-bs-toggle="modal" data-bs-target="#modalDeletion"></i>
+                    <i class="fa-solid fa-circle-chevron-{%if k == 0%}up{%else%}down{%endif%}" data-bs-toggle="collapse" data-bs-target="#collapseGroup-{{k}}" aria-expanded="false" aria-controls="collapseGroup-{{k}}"></i>
                 </div>
-                <div class="col-md-8">
-                    {% for fav in element.favorite.all  %}
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><small class="text-muted">{{fav.starting_date}} - {{fav.ending_date}}</small></li>
-                        {% for param in fav.parameters_of_station.all  %}
-                        <li class="list-group-item">{{ param.station.name }} - {{ param.parameter.name }}</li>
-                        {% endfor %}
-                    </ul>
+            </div>
+            <div class="collapse {%if k == 0%}show{%endif%} row g-0 justify-content-center" id="collapseGroup-{{k}}">
+                <div class="col-sm-10">
+                    {% for fav in element.favorites  %}
+                    <div class="row justify-content-between">
+                        <ul class="col list-group list-group-flush">
+                            <li class="list-group-item"><strong>De</strong> {{fav.starting_date}} <strong>à</strong> {{fav.ending_date}}</li>
+                        </ul>
+                    </div>
+                    <div class="row justify-content-between">
+                        <ul class="col-sm-5 list-group list-group-flush">
+                            <li class="list-group-item text-center"><strong>Stations</strong> ({{fav.stations|length}})</li>
+                            {% if fav.stations|length > 3 %}
+                            <li class="list-group-item text-center">{{fav.stations.0}}</li>
+                            <li class="list-group-item text-center">{{fav.stations.1}}</li>
+                            <div class="collapse" id="collapseStations-{{fav.id}}">
+                                {% for station in fav.stations|slice:"2:"  %}
+                                <li class="list-group-item text-center">{{station}}</li>
+                                {% endfor %}
+                            </div>
+                            <li class="list-group-item text-center text-primary" data-bs-toggle="collapse" data-bs-target="#collapseStations-{{fav.id}}" aria-expanded="false" aria-controls="collapseStations-{{fav.id}}"><i class="fa-solid fa-plus"></i> Voir plus</li>
+                            {% else %}
+                            {% for station in fav.stations  %}
+                            <li class="list-group-item text-center">{{station}}</li>
+                            {% endfor %}
+                            {% endif %}
+                        </ul>
+                        <ul class="col-sm-5 list-group list-group-flush">
+                            <li class="list-group-item text-center"><strong>Paramètres</strong> ({{fav.parameters|length}})</li>
+                            {% if fav.parameters|length > 3 %}
+                            <li class="list-group-item text-center">{{fav.parameters.0}}</li>
+                            <li class="list-group-item text-center">{{fav.parameters.1}}</li>
+                            <div class="collapse" id="collapseParameters-{{fav.id}}">
+                                {% for parameter in fav.parameters|slice:"2:"  %}
+                                <li class="list-group-item text-center">{{parameter}}</li>
+                                {% endfor %}
+                            </div>
+                            <li class="list-group-item text-center text-primary" data-bs-toggle="collapse" data-bs-target="#collapseParameters-{{fav.id}}" aria-expanded="false" aria-controls="collapseParameters-{{fav.id}}"><i class="fa-solid fa-plus"></i> Voir plus</li>
+                            {% else %}
+                            {% for parameter in fav.parameters  %}
+                            <li class="list-group-item text-center">{{parameter}}</li>
+                            {% endfor %}
+                            {% endif %}
+                        </ul>
+                    </div>
+
                     {% endfor %}
                 </div>
             </div>
@@ -31,4 +67,50 @@
         {% endfor %}
     </div>
 </div>
+<div class="modal fade" id="modalDeletion" tabindex="-1" aria-labelledby="modalDeletion" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Souhaitez-vous supprimer ce favoris?
+            </div>
+            <div class="modal-footer">
+                <form class="modal-form" method="post" action="#">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Retour</button>
+                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    document.querySelectorAll('li[data-bs-toggle="collapse"]').forEach(el=>{
+        el.addEventListener('click',()=>{
+            if(el.innerHTML=='<i class="fa-solid fa-plus"></i> Voir plus')el.innerHTML='<i class="fa-solid fa-minus"></i> Voir moins'
+            else el.innerHTML='<i class="fa-solid fa-plus"></i> Voir plus'
+        })
+    })
+    document.querySelectorAll('i[data-bs-toggle="collapse"]').forEach(el=>{
+        el.addEventListener('click',()=>{
+            if(el.className=='fa-solid fa-circle-chevron-up collapsed')el.className='fa-solid fa-circle-chevron-down'
+            else el.className='fa-solid fa-circle-chevron-up'
+        })
+    })
+
+    let exampleModal = document.getElementById('modalDeletion')
+    exampleModal.addEventListener('show.bs.modal', function (event) {
+        let button = event.relatedTarget
+        let name = button.getAttribute('data-bs-name')
+        let modalTitle = exampleModal.querySelector('.modal-title')
+        let modalForm = exampleModal.querySelector('.modal-form')
+
+        modalForm.action=`/account/favorites/delete/${button.getAttribute('data-bs-slug')}`
+        modalTitle.textContent = `Supprimer le favoris "${name}"`
+    })
+
+</script>
 {% endblock %}

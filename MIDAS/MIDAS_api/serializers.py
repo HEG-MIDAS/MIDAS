@@ -7,15 +7,19 @@ class StatusSerializer(serializers.Serializer):
     """
     status = serializers.CharField(max_length=200)
 
+class StationForSourceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Station
+        fields = ['id','name','slug']
+        lookup_field = 'slug'
 class SourceSerializer(serializers.ModelSerializer):
     # Retrieve Stations by Name (or any value added in slug_field)
     # To retrieve by id, use PrimaryKeyRelatedField
-    station = serializers.SlugRelatedField(many=True, slug_field='name', queryset=Source.objects.all())
+    station = StationForSourceSerializer(many=True)
 
     class Meta:
         model = Source
         fields = ['id','name','slug','url','infos','station']
-        lookup_field = 'slug'
 
 # Stations
 class ParametersForStationSerializer(serializers.ModelSerializer):
@@ -32,7 +36,6 @@ class StationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Station
         fields = ['id','name','slug','source','infos','latitude','longitude','height','parameters_list']
-        lookup_field = 'slug'
 
 # Favorites
 class ParametersOfStationFavoriteSerializer(serializers.ModelSerializer):
@@ -54,7 +57,6 @@ class FavoriteGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupOfFavorite
         fields = ['name','slug','user','favorites_list']
-        lookup_field = 'slug'
 
 # Views Serializer
 class ParametersOfStationSerializer(serializers.ModelSerializer):
@@ -62,10 +64,8 @@ class ParametersOfStationSerializer(serializers.ModelSerializer):
     class Meta:
         model = ParametersOfStation
         fields = ['parameter']
-        lookup_field = 'slug'
 
 class ParameterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Parameter
         fields = ['id','name','slug','infos']
-        lookup_field = 'slug'
