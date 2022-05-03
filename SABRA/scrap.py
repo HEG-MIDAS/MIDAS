@@ -4,6 +4,7 @@ import re
 import sys
 import getopt
 import numpy as np
+from sys import platform
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -207,14 +208,14 @@ def clean():
             os.remove(os.path.join(scraper_path,f))
 
 # Scrap website
-def scraper(URL:str,driver:webdriver.Firefox,urbain_input:str,polluants_input:str,time_input:str,start_date:str,end_date:str,timelapse_input:str):
+def scraper(URL:str,driver,urbain_input:str,polluants_input:str,time_input:str,start_date:str,end_date:str,timelapse_input:str):
     """Download SABRA data with selenium
 
     Parameters
     ----------
     URL : str
         link to the webpage
-    driver: webdriver.Firefox
+    driver: webdriver.Firefox or webdriver.Chrome
         firefox webbrowser driver options
     urbain_input:str
         Value for typologie imput
@@ -270,6 +271,49 @@ def scraper(URL:str,driver:webdriver.Firefox,urbain_input:str,polluants_input:st
     # Need to wait of website can crash
     time.sleep(2)
 
+def firefoxDriver():
+    """Create and return a driver
+       Returns
+       -------
+       webdriver.Firefox
+          the driver using Firefox
+    """
+    # Create Firefox Options needed to autodownload
+    options = webdriver.FirefoxOptions()
+    options.headless = True
+    options.set_preference("browser.download.folderList", 2)
+    options.set_preference("browser.download.viewableInternally.enabledTypes", "")
+    options.set_preference("browser.download.useDownloadDir", True)
+    options.set_preference("browser.download.dir", scraper_path)
+    options.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/csv,application/octet-stream")
+    options.set_preference("pdfjs.disabled", True)
+    options.set_preference("browser.helperApps.neverAsk.openFile", "text/csv,application/octet-stream")
+    # Create Service for Firefox (Gecko) Driver Location
+    if platform == "darwin":
+        service = sv(os.path.join(scraper_path,'geckodriver_osx'))
+    elif platform == "linux" or platform == "linux2":
+        service = Service(os.path.join(scraper_path,'geckodriver_linux'))
+    # Create Driver
+    return webdriver.Firefox(options=options,service=service)
+
+def chromeDriver():
+    """Create and return a driver
+       Returns
+       -------
+       webdriver.Chrome
+          the driver using Chrome
+    """
+    options = webdriver.ChromeOptions()
+    options.headless = True
+    # Specify Download folder
+    prefs = {"download.default_directory" : scraper_path}
+    options.add_experimental_option("prefs",prefs)
+    if platform == "darwin":
+        service = sv(os.path.join(scraper_path,'chromedriver_osx'))
+    elif platform == "linux" or platform == "linux2":
+        service = sv(os.path.join(scraper_path,'chromedriver_linux'))
+    # Create Driver
+    return webdriver.Chrome(options=options,service=service)
 # Setup the headless browser (Using Firefox/Gecko)
 def download(s:str,e:str,b:str):
     """Download Wrapper Function
@@ -284,32 +328,17 @@ def download(s:str,e:str,b:str):
         Browser Value (firefox or chrome)
     """
     if b == 'firefox':
-        # Create Firefox Options needed to autodownload
-        options = webdriver.FirefoxOptions()
-        options.headless = True
-        options.set_preference("browser.download.folderList", 2)
-        options.set_preference("browser.download.viewableInternally.enabledTypes", "")
-        options.set_preference("browser.download.useDownloadDir", True)
-        options.set_preference("browser.download.dir", scraper_path)
-        options.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/csv,application/octet-stream")
-        options.set_preference("pdfjs.disabled", True)
-        options.set_preference("browser.helperApps.neverAsk.openFile", "text/csv,application/octet-stream")
-        # Create Service for Firefox (Gecko) Driver Location
-        service = Service(os.path.join(scraper_path,'geckodriver'))
-        # Create Driver
-        driver = webdriver.Firefox(options=options,service=service)
+        driver = firefoxDriver()
     elif b == 'chrome':
-        # Create Chrome Options needed to autodownload
-        options = webdriver.ChromeOptions()
-        options.headless = True
-        # Specify Download folder
-        prefs = {"download.default_directory" : scraper_path}
-        options.add_experimental_option("prefs",prefs)
-        service = sv(os.path.join(scraper_path,'chromedriver'))
-        print(service)
-        # Create Driver
-        driver = webdriver.Chrome(options=options,service=service)
-        print("ICI")
+        driver = chromeDriver()
+    else:
+        print("No browser defined")
+        try:
+            print("Trying Firefox")
+            driver = firefoxDriver()
+        except:
+            print("Couldn't download with Firefox trying Chrome")
+            driver = chromeDriver()
     # Array of params
     urbanArea = ['urbain','suburbain','rural']
     pollTimeStep = {'1':'quot','18':'quot','2':'hor','3':'hor'}
@@ -352,9 +381,9 @@ def main(argv):
     print("Starting "+time.strftime("%Y-%m-%d %H:%M:%S"))
     start_date =  datetime.now().date()
     end_date = datetime.now().date()
-    browser = 'firefox'
+    browser = None
     try:
-      opts, args = getopt.getopt(argv,"chs:e:",["start_date=","end_date=","chrome"])
+      opts, args = getopt.getopt(argv,"cfhs:e:",["start_date=","end_date=","chrome","firefox"])
     except getopt.GetoptError:
       print('scrap.py -s <start_date> -e <end_date>')
       sys.exit(1)
@@ -368,6 +397,8 @@ def main(argv):
          end_date = datetime.strptime(arg,'%Y-%m-%d').date()
       elif opt in ("-c","--chrome"):
          browser = 'chrome'
+      elif opt in ("-f","--firefox"):
+         browser = 'firefox'
 
     if(start_date > end_date):
         print('The end date is inferior to the start date !')
