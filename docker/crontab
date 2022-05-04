@@ -8,3 +8,6 @@ YDate=$(date -d "yesterday" +'%Y-%m-%d')
 
 # Need to get yesterday value for SABRA or we're gonna skip a lot of datas
 0 1 * * * /usr/local/bin/python /app/SABRA/sabra.py -s $YDate
+
+# Handling logs
+0 2 * * * /usr/local/bin/python /app/logs/logs_handler.py
