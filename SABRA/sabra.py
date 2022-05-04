@@ -411,8 +411,8 @@ def main(argv):
         tempStartDate = start_date
         tempEndDate = start_date + timedelta(days=365)
         for x in range(0,reducedDiff):
-            str_start_date = tempStartDate.strftime('%d.%m.%Y')
-            str_end_date = tempEndDate.strftime('%d.%m.%Y')
+            str_start_date = tempStartDate.strftime('%Y-%m-%d')
+            str_end_date = tempEndDate.strftime('%Y-%m-%d')
             print('Getting Datas from '+str_start_date+' to '+str_end_date)
             try:
                 operation(str_start_date,str_end_date,browser)
