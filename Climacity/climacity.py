@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+#title           :climacity.py
+#description     :Request data to climacity and update existing data on server or add a log if cannot download data
+#author          :David Nogueiras Blanco & Amir Alwash
+#date            :04 May 2022
+#version         :0.1.0
+#usage           :python3 climacity.py -h
+#notes           :none
+#python_version  :3.9.2
+
 from ctypes import Array
 from urllib import request, response
 import requests
@@ -15,7 +25,7 @@ def add_logs(start_date: datetime.datetime, end_date: datetime.datetime, __locat
     """Add a log line to a log file in the directory. The log line is only composed of the date
 
     """
-    with open("{}/../logs/climacity.txt".format(__location__), "a") as file:
+    with open("{}/../logs/Climacity.txt".format(__location__), "a") as file:
         file.write("-s {} -e {}".format(start_date, end_date))
 
 

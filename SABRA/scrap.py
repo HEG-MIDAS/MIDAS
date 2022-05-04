@@ -35,8 +35,8 @@ def logs(str = ''):
     """Add a log line to a log file in the directory. The log line is only composed of the date
 
     """
-    print(os.path.join(root_path,'logs/sabra.txt'))
-    with open(os.path.join(root_path,'logs/sabra.txt'), 'a') as file:
+    print(os.path.join(root_path,'logs/SABRA.txt'))
+    with open(os.path.join(root_path,'logs/SABRA.txt'), 'a') as file:
         if str == '':
             file.write(time.strftime('%Y-%m-%d %H:%M:%S'))
         else:
