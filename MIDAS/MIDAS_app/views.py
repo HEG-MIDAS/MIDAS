@@ -10,7 +10,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from os import listdir
 from os.path import isfile, join, splitext
-from .forms import DateSelection
+from .forms import DateSelection, TokenForm
 from .models import GroupOfFavorite, Favorite
 from MIDAS_app.models import Favorite, User
 from django.middleware import csrf
@@ -111,6 +111,21 @@ def favorite_profile(request):
         'list': list
     }
     return render(request, 'favorites.html',context)
+
+@login_required
+def manage_token(request):
+    context = {}
+    if request.method == 'POST':
+        post_form = TokenForm(request.POST)
+        if post_form.is_valid():
+            tk = post_form.save(request.user)
+            context['token']=tk
+        else:
+            context['error']=post_form.errors.as_data()
+
+    context['form'] = TokenForm
+
+    return render(request, 'add_token.html',context)
 
 @login_required
 def manage_data(request):

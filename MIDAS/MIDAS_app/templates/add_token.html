@@ -1,0 +1,31 @@
+{% extends 'layouts/base.html' %}
+{% block extrajs %}
+<script src="/static/lib/echarts/echarts.js" charset="utf-8"></script>
+{% endblock %}
+{% block body_content %}
+<div class="midas-container container-fluid">
+    <div class="d-flex w-100 justify-content-center">
+        <div class="row">
+            {% if token != None %}<div class="col">Votre token est <strong>{{token}}</strong>.</div>{% endif %}
+        </div>
+        <form class="row align-items-end g-3 needs-validation" action="/account/add-token/" method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="col-md-4">
+                <label for="{{ form.starting_date.id_for_label }}">{{ form.name.label }} :</label>
+                {{ form.name }}
+            </div>
+            <div class="col-md-4">
+                <label for="{{ form.ending_date.id_for_label }}">{{ form.expire.label }} :</label>
+                {{ form.expire }}
+            </div>
+            <div class="col-md-4">
+                <button type="submit" onclick="displayRunner(this)" class="btn btn-primary">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
+                    Envoyer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

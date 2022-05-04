@@ -2,6 +2,7 @@ from tabnanny import verbose
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import unicodedata
+import hashlib
 import re
 
 def remove_accents(input_str):
@@ -14,6 +15,20 @@ class User(AbstractUser):
     email = models.EmailField('Adresse mail', unique=True)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
+
+class Token(models.Model):
+    name = models.CharField(max_length=255, blank=True, unique=True)
+    slug = models.CharField(max_length=255, blank=True, unique=True, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Related user", blank=False, related_name='token')
+    hash = models.CharField(max_length=64, unique=True, editable=False)
+    expire_at = models.DateField(null=True,blank=True)
+    def save(self, *args, **kwargs):
+        self.slug = "{}".format(re.sub(r"[^\w\s]", '_', remove_accents((self.name).lower().replace(' ', '_'))))
+        self.hash = hashlib.sha256(self.hash.encode()).hexdigest()
+        super(Token, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
 
 
 class Source(models.Model):
