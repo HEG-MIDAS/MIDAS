@@ -15,7 +15,7 @@ def add_logs(start_date: datetime.datetime, end_date: datetime.datetime, __locat
     """Add a log line to a log file in the directory. The log line is only composed of the date
 
     """
-    with open("{}../logs/climacity.txt".format(__location__), "a") as file:
+    with open("{}/../logs/climacity.txt".format(__location__), "a") as file:
         file.write("-s {} -e {}".format(start_date, end_date))
 
 
