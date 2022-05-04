@@ -26,7 +26,7 @@ def add_logs(start_date: datetime.datetime, end_date: datetime.datetime, __locat
 
     """
     with open("{}/../logs/Climacity.txt".format(__location__), "a") as file:
-        file.write("-s {} -e {}".format(start_date, end_date))
+        file.write("-s {} -e {}\n".format(start_date, end_date))
 
 
 def extract_relevant_data(r: requests.Request) -> Array:
