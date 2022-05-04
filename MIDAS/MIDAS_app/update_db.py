@@ -97,14 +97,13 @@ def update_infos_parameters():
                             break
                 if dir == 'SABRA':
                     for file in os.listdir(working_path):
-                        if file.split('.')[-1] == 'csv':
+                        if file.split('.')[-1] == 'csv' and file.split('_')[-1].split('.')[0] in parameters:
                             with open(os.path.join(working_path, file)) as f:
                                 for line in f:
                                     if ' Polluant:  ' in line:
                                         polluant = line.rstrip().split(' Polluant:  ')[1]
-                                        if polluant.split('(')[1][:-1] in parameters:
-                                            Parameter.objects.filter(name=polluant.split('(')[1][:-1]).update(infos=polluant.split('(')[0].replace('  ', ' '))
-                                            parameters.remove(polluant.split('(')[1][:-1])
+                                        Parameter.objects.filter(name=polluant.split('(')[1][:-1]).update(infos=polluant.split('(')[0].replace('  ', ' '))
+                                        parameters.remove(polluant.split('(')[1][:-1])
                                     elif line == '\n':
                                         break
                         if len(parameters) <= 0:
