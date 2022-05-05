@@ -27,7 +27,7 @@ root_path = os.path.join(scraper_path,'..')
 media_path = os.path.join(root_path,'media')
 
 # URL to scrap
-URL = "https://www.ropag-data.ch/gechairmo/i_extr.php"
+URL = "https://www.ropag-data.ch/_/i_extr.php"
 
 # Function to write logs.
 ## Needs to define how
@@ -35,8 +35,8 @@ def logs(str = ''):
     """Add a log line to a log file in the directory. The log line is only composed of the date
 
     """
-    print(os.path.join(root_path,'logs/sabra.txt'))
-    with open(os.path.join(root_path,'logs/sabra.txt'), 'a') as file:
+    print(os.path.join(root_path,'logs/SABRA.txt'))
+    with open(os.path.join(root_path,'logs/SABRA.txt'), 'a') as file:
         if str == '':
             file.write(time.strftime('%Y-%m-%d %H:%M:%S'))
         else:
@@ -417,22 +417,22 @@ def main(argv):
             try:
                 operation(str_start_date,str_end_date,browser)
             except:
-                print('An error occured for '+str_start_date+'/'+str_end_date)
+                print('An error occured for '+tempStartDate.strftime('%Y-%m-%d')+'/'+tempEndDate.strftime('%Y-%m-%d'))
                 exit_code += 1
-                logs('-s '+str_start_date+' -e '+str_end_date+'\n')
+                logs('-s '+tempStartDate.strftime('%Y-%m-%d')+' -e '+tempEndDate.strftime('%Y-%m-%d')+'\n')
             tempStartDate = tempEndDate
             tempEndDate = tempStartDate + timedelta(days=365)
             if(end_date < tempEndDate):
                 tempEndDate = end_date
     else:
-        start_date = start_date.strftime('%d.%m.%Y')
-        end_date = end_date.strftime('%d.%m.%Y')
+        start_date_edit = start_date.strftime('%d.%m.%Y')
+        end_date_edit = end_date.strftime('%d.%m.%Y')
         try:
-            operation(start_date,end_date,browser)
+            operation(start_date_edit,end_date_edit,browser)
         except:
-            print('An error occured for '+start_date+'/'+end_date)
+            print('An error occured for '+start_date.strftime('%Y-%m-%d')+'/'+end_date.strftime('%Y-%m-%d'))
             exit_code += 1
-            logs('-s '+start_date+' -e '+end_date+'\n')
+            logs('-s '+start_date.strftime('%Y-%m-%d')+' -e '+end_date.strftime('%Y-%m-%d')+'\n')
     # Clean folder (in case of)
     clean()
     # Print Debug for End

@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+#title           :climacity.py
+#description     :Request data to climacity and update existing data on server or add a log if cannot download data
+#author          :David Nogueiras Blanco & Amir Alwash
+#date            :04 May 2022
+#version         :0.1.0
+#usage           :python3 climacity.py -h
+#notes           :none
+#python_version  :3.9.2
+
 from ctypes import Array
 from urllib import request, response
 import requests
@@ -15,8 +25,8 @@ def add_logs(start_date: datetime.datetime, end_date: datetime.datetime, __locat
     """Add a log line to a log file in the directory. The log line is only composed of the date
 
     """
-    with open("{}../logs/climacity.txt".format(__location__), "a") as file:
-        file.write("-s {} -e {}".format(start_date, end_date))
+    with open("{}/../logs/Climacity.txt".format(__location__), "a") as file:
+        file.write("-s {} -e {}\n".format(start_date, end_date))
 
 
 def extract_relevant_data(r: requests.Request) -> Array:
@@ -85,16 +95,16 @@ def process_data(array_data: Array) -> Array:
         line_data = array_data[i].split(',')
         # Check if the line of data is still in the same range of hour or that the data ended
         if datetime.datetime.strptime(line_data[0], '%Y-%m-%d %H:%M:%S') >= hour_working_until or i >= len(array_data)-1:
-            print(i >= len(array_data)-1)
+            #print(i >= len(array_data)-1)
             # Ignore the firsts two values (that are dates) and cast the other ones into floats
             # when possible, if not into np.nan
             casted_data = np.array([[float(k) if k != '' else np.nan for k in j[2:]] for j in array_hour_data])
             # Create a new array with mean values that starts by the hour GMT and the hour GMT+1 of the mean over the values
             array_mean_full = [str(hour_working), str(hour_working+datetime.timedelta(hours=hour_gap))]
-            print(hour_gap)
-            print(datetime.timedelta(hours=hour_gap))
-            print(hour_working+datetime.timedelta(hours=hour_gap))
-            print(array_mean_full)
+            #print(hour_gap)
+            #print(datetime.timedelta(hours=hour_gap))
+            #print(hour_working+datetime.timedelta(hours=hour_gap))
+            #print(array_mean_full)
             # Do the mean over all the columns of the data casted before, if there is no value for a column
             # an empty string is added
             data_mean = [str(j) if j != np.nan else '' for j in np.nanmean(casted_data, axis=0)]
@@ -111,12 +121,12 @@ def process_data(array_data: Array) -> Array:
             # Date with hour of the start of the new hour range
             hour_working = datetime.datetime.strptime(line_data[0], '%Y-%m-%d %H:%M:%S')
             hour_gap = int((datetime.datetime.strptime(line_data[1], '%Y-%m-%d %H:%M:%S')-hour_working).seconds / 3600)
-            print((datetime.datetime.strptime(line_data[1], '%Y-%m-%d %H:%M:%S')-hour_working).seconds / 3600)
-            print(hour_gap)
-            print(hour_working)
+            # print((datetime.datetime.strptime(line_data[1], '%Y-%m-%d %H:%M:%S')-hour_working).seconds / 3600)
+            # print(hour_gap)
+            # print(hour_working)
             # End of the new hour range
             hour_working_until = (hour_working+datetime.timedelta(hours=1)).replace(microsecond=0, second=0, minute=0)
-            print(hour_working_until)
+            #print(hour_working_until)
             time_set = True
         array_hour_data.append(line_data)
         
@@ -226,7 +236,7 @@ def main() -> None:
         print("--------------- Merging processed data ---------------")
         merge_csv_by_date.merge_csv_by_date(path_transformed_data_file, path_tmp_file, '%Y-%m-%d %H:%M:%S')
         os.remove(path_tmp_file)
-        print(time.time()-start_time)
+        #print(time.time()-start_time)
 
     else:
         print("--------------- Error at request adding logs --------------")
