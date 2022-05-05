@@ -17,6 +17,7 @@ pycparser==2.21
 pyOpenSSL==22.0.0
 pyparsing==3.0.7
 PySocks==1.7.1
+python-dateutil==2.8.2
 pytz==2022.1
 PyYAML==6.0
 requests==2.27.1
