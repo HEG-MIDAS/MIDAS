@@ -1,4 +1,5 @@
 from django import forms
+import django.forms.widgets
 from .models import Token
 import datetime
 import string
@@ -33,13 +34,20 @@ class TokenForm(forms.ModelForm):
         ('N0', 'N\'expire pas'),
     ]
 
-    name = forms.CharField(max_length=255,label='Nom du token')
+    name = forms.CharField(max_length=255,label='Nom du jeton')
     expire = forms.CharField(label='Date d\'expiration',max_length=2,widget=forms.Select(choices=EXPIRATION))
+
+    def __init__(self, *args, **kwargs):
+        super(TokenForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            if(isinstance(visible.field.widget,django.forms.widgets.Select)):
+                visible.field.widget.attrs['class'] = 'form-select'
+            elif(isinstance(visible.field.widget,django.forms.widgets.TextInput)):
+                visible.field.widget.attrs['class'] = 'form-control'
 
     class Meta:
         model = Token
         fields = ('name','expire')
-
     def save(self,user):
         token = super(TokenForm, self).save(commit=False)
         current_date = datetime.datetime.now()

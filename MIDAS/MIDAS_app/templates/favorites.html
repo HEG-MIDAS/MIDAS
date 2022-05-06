@@ -6,6 +6,19 @@
 <div class="midas-container container-fluid">
     <p class="h1">Favoris</p>
     <div class="d-flex w-100 flex-column align-items-center">
+        {% if list|length == 0%}
+        <div class="card mb-3 w-50">
+            <div class="row g-0 justify-content-center">
+                <div class="col-sm-10">
+                    <div class="row justify-content-between">
+                        <ul class="col list-group list-group-flush">
+                            <li class="list-group-item text-center">Aucun favoris crée...</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
         {% for k,element in list.items  %}
         <div class="card mb-3 w-50">
             <div class="card-header row g-0 align-items-center justify-content-between">
@@ -59,7 +72,7 @@
                             {% endif %}
                         </ul>
                     </div>
-
+                    <hr>
                     {% endfor %}
                 </div>
             </div>
@@ -108,7 +121,7 @@
         let modalTitle = exampleModal.querySelector('.modal-title')
         let modalForm = exampleModal.querySelector('.modal-form')
 
-        modalForm.action=`/account/favorites/delete/${button.getAttribute('data-bs-slug')}`
+        modalForm.action=`/delete-favorite/${button.getAttribute('data-bs-slug')}`
         modalTitle.textContent = `Supprimer le favoris "${name}"`
     })
 
