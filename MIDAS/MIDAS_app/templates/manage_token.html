@@ -3,10 +3,12 @@
 <script src="/static/lib/echarts/echarts.js" charset="utf-8"></script>
 {% endblock %}
 {% block body_content %}
+<div id="additionnalAlertContainer" class="container-fluid row justify-content-center mt-2">
+</div>
 <div class="container-fluid row justify-content-center mt-2">
     {% if token != None %}
         <div class="col-sm-10 alert alert-success d-flex justify-content-between" role="alert">
-            <div>Votre token est <strong>{{token}}</strong>.</div>
+            <div>Votre token est <strong id="midasToken">{{token}}</strong> <i class="midas-icon midas-copy-icon fa-regular fa-copy" title="Copier le jeton" data-midas-copy="#midasToken"></i></div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 
@@ -110,6 +112,16 @@
         modalForm.action=`/delete-token/${button.getAttribute('data-bs-slug')}`
         modalTitle.textContent = `Supprimer le jeton "${name}"`
     })
-
+    document.querySelectorAll('.midas-copy-icon').forEach((e)=>{
+        let copyElem = e.dataset.midasCopy
+        e.addEventListener("click",_=>{
+            navigator.clipboard.writeText(document.querySelector(copyElem).innerHTML);
+            let ct = document.querySelector("#additionnalAlertContainer")
+            let div = document.createElement('div')
+            div.className = "col-sm-10 alert alert-primary d-flex justify-content-between fade show"
+            div.innerHTML = `<div>Jeton copié</div><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`
+            ct.appendChild(div)
+        })
+    })
 </script>
 {% endblock %}

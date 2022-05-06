@@ -4,7 +4,7 @@ import requests
 from hashlib import sha256
 from os import listdir
 from os.path import isdir,join
-from rest_framework.authentication import SessionAuthentication, MidasTokenAuthentication
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import BasePermission, IsAuthenticated, SAFE_METHODS
 from rest_framework import views
 from rest_framework.response import Response
