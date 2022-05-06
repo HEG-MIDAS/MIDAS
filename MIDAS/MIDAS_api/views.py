@@ -1,20 +1,44 @@
 import numpy as np
 import datetime
+import requests
+from hashlib import sha256
 from os import listdir
 from os.path import isdir,join
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import SessionAuthentication, MidasTokenAuthentication
 from rest_framework.permissions import BasePermission, IsAuthenticated, SAFE_METHODS
 from rest_framework import views
 from rest_framework.response import Response
+from rest_framework import authentication
 from rest_framework import generics
 from django.conf import settings
 from .serializers import StatusSerializer, SourceSerializer, StationSerializer, ParameterSerializer, ParametersOfStationSerializer, FavoriteGroupSerializer
-from MIDAS_app.models import Source, Station, Parameter, ParametersOfStation, GroupOfFavorite
-import requests
+from MIDAS_app.models import Source, Station, Parameter, ParametersOfStation, GroupOfFavorite, Token
+from rest_framework import exceptions
 
 # Create your views here.
 def status(request):
     return True
+
+class MidasTokenAuthentication(authentication.BaseAuthentication):
+    def authenticate(self, request):
+        auth = request.headers.get("Authorization")
+        if not auth:
+            return None
+        list_auth = auth.split()
+        if len(list_auth) != 3 or list_auth[0] != "Midas":
+            return None
+        username = list_auth[1]
+        token = list_auth[2]
+        try:
+            hash = sha256(token.encode()).hexdigest()
+            token = Token.objects.get(hash=hash)
+            user = token.user
+            if user.username != username:
+                return None
+        except Token.DoesNotExist:
+            raise exceptions.AuthenticationFailed('No such token')
+
+        return (user, None)
 
 class LocalPerm(BasePermission):
     def has_permission(self, request, view):
@@ -32,7 +56,7 @@ class StatusView(views.APIView):
     -------
     json -> Response
     """
-    authentication_classes = [SessionAuthentication,BasicAuthentication]
+    authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
 
     def get(self, request):
@@ -52,7 +76,7 @@ class StatusThirdPartyView(views.APIView):
     -------
     json -> Response
     """
-    authentication_classes = [SessionAuthentication,BasicAuthentication]
+    authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
 
     def get(self, request):
@@ -80,7 +104,7 @@ class StatusThirdPartyView(views.APIView):
 
 
 class SearchView(views.APIView):
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
 
     def post(self, request):
@@ -229,7 +253,7 @@ class SearchView(views.APIView):
 
 
 class FilterView(views.APIView):
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
 
     def post(self, request):
@@ -286,7 +310,7 @@ class SourceList(generics.ListAPIView):
     """
     queryset = Source.objects.all()
     serializer_class = SourceSerializer
-    authentication_classes = [SessionAuthentication,BasicAuthentication]
+    authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
 
 
@@ -295,7 +319,7 @@ class SourceDetail(generics.RetrieveAPIView):
     """
     queryset = Source.objects.all()
     serializer_class = SourceSerializer
-    authentication_classes = [SessionAuthentication,BasicAuthentication]
+    authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
 
 class StationList(generics.ListAPIView):
@@ -303,7 +327,7 @@ class StationList(generics.ListAPIView):
     """
     queryset = Station.objects.all()
     serializer_class = StationSerializer
-    authentication_classes = [SessionAuthentication,BasicAuthentication]
+    authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
 
 class StationDetail(generics.RetrieveAPIView):
@@ -311,7 +335,7 @@ class StationDetail(generics.RetrieveAPIView):
     """
     queryset = Station.objects.all()
     serializer_class = StationSerializer
-    authentication_classes = [SessionAuthentication,BasicAuthentication]
+    authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
 
 class ParameterList(generics.ListAPIView):
@@ -319,7 +343,7 @@ class ParameterList(generics.ListAPIView):
     """
     queryset = Parameter.objects.all()
     serializer_class = ParameterSerializer
-    authentication_classes = [SessionAuthentication,BasicAuthentication]
+    authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
 
 class ParameterDetail(generics.RetrieveAPIView):
@@ -327,7 +351,7 @@ class ParameterDetail(generics.RetrieveAPIView):
     """
     queryset = Parameter.objects.all()
     serializer_class = ParameterSerializer
-    authentication_classes = [SessionAuthentication,BasicAuthentication]
+    authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
     permission_classes = [IsAuthenticated|LocalPerm]
 
 class FavoriteGroupList(generics.ListAPIView):
@@ -335,7 +359,7 @@ class FavoriteGroupList(generics.ListAPIView):
     """
     queryset = GroupOfFavorite.objects.all()
     serializer_class = FavoriteGroupSerializer
-    authentication_classes = [SessionAuthentication,BasicAuthentication]
+    authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
     permission_classes = [IsAuthenticated]
 
 class FavoriteGroupDetail(generics.RetrieveAPIView):
@@ -343,5 +367,5 @@ class FavoriteGroupDetail(generics.RetrieveAPIView):
     """
     queryset = GroupOfFavorite.objects.all()
     serializer_class = FavoriteGroupSerializer
-    authentication_classes = [SessionAuthentication,BasicAuthentication]
+    authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
     permission_classes = [IsAuthenticated]
