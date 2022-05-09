@@ -289,8 +289,9 @@ def firefoxDriver():
     options.set_preference("pdfjs.disabled", True)
     options.set_preference("browser.helperApps.neverAsk.openFile", "text/csv,application/octet-stream")
     # Create Service for Firefox (Gecko) Driver Location
+    service = sv()
     if platform == "darwin":
-        service = sv(os.path.join(scraper_path,'geckodriver_osx'))
+        service = Service(os.path.join(scraper_path,'geckodriver_osx'))
     elif platform == "linux" or platform == "linux2":
         service = Service(os.path.join(scraper_path,'geckodriver_linux'))
     # Create Driver
@@ -308,6 +309,7 @@ def chromeDriver():
     # Specify Download folder
     prefs = {"download.default_directory" : scraper_path}
     options.add_experimental_option("prefs",prefs)
+    service = sv()
     if platform == "darwin":
         service = sv(os.path.join(scraper_path,'chromedriver_osx'))
     elif platform == "linux" or platform == "linux2":
