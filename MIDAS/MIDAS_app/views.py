@@ -10,8 +10,8 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from os import listdir
 from os.path import isfile, join, splitext
-from .forms import DateSelection
-from .models import GroupOfFavorite, Favorite
+from .forms import DateSelection, TokenForm
+from .models import GroupOfFavorite, Favorite, Token
 from MIDAS_app.models import Favorite, User
 from django.middleware import csrf
 from django.views.decorators.csrf import csrf_protect
@@ -78,10 +78,10 @@ def statut_badge(request, source):
 @require_http_methods(["POST"])
 def favorite_deletion(request,slug):
     user_favorites_group = GroupOfFavorite.objects.filter(user=request.user.id).filter(slug=slug).delete()
-    return redirect(favorite_profile)
+    return redirect(manage_favorite)
 
 @login_required
-def favorite_profile(request):
+def manage_favorite(request):
     user_favorites_group = GroupOfFavorite.objects.filter(user=request.user.id)
     list = {}
     i = 0
@@ -111,6 +111,30 @@ def favorite_profile(request):
         'list': list
     }
     return render(request, 'favorites.html',context)
+
+
+@login_required
+@require_http_methods(["POST"])
+def token_deletion(request,slug):
+    user_favorites_group = Token.objects.filter(user=request.user.id).filter(slug=slug).delete()
+    return redirect(manage_token)
+
+@login_required
+def manage_token(request):
+    tokens = Token.objects.filter(user=request.user.id)
+    context = {
+        'form': TokenForm,
+        'list': tokens
+    }
+    if request.method == 'POST':
+        post_form = TokenForm(request.POST)
+        if post_form.is_valid():
+            tk = post_form.save(request.user)
+            context['token']=tk
+        else:
+            context['form']=post_form
+
+    return render(request, 'manage_token.html',context)
 
 @login_required
 def manage_data(request):

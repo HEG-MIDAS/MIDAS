@@ -2,29 +2,6 @@
 
 {% block registration_title %}Connexion{% endblock %}
 
-{% block registration_alert %}
-{% for field in form %}
-{% if field.help_text %}
-<div class="alert alert-warning" role="alert">
-    {{ field.help_text|safe }}
-</div>
-{% endif %}
-{% endfor %}
-
-{% if form.errors %}
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-    {% for field in form %}
-    {% for error in field.errors %}
-    <div>
-        <strong>{{ error|escape }}</strong>
-    </div>
-    {% endfor %}
-    {% endfor %}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-{% endif %}
-{% endblock%}
-
 {% block registration_content %}
 {% if user.is_authenticated%}
 <div class="mb-3 row justify-content-center">

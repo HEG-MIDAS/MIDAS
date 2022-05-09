@@ -25,6 +25,6 @@ div.midas-container{
 }
 
 /* Change mouse to pointer on those elements */
-.midas-delete-icon, *[data-bs-toggle="collapse"]{
+.midas-icon,.midas-delete-icon, *[data-bs-toggle="collapse"]{
     cursor: pointer;
 }

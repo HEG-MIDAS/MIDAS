@@ -1,0 +1,127 @@
+{% extends 'layouts/base.html' %}
+{% block extrajs %}
+<script src="/static/lib/echarts/echarts.js" charset="utf-8"></script>
+{% endblock %}
+{% block body_content %}
+<div id="additionnalAlertContainer" class="container-fluid row justify-content-center mt-2">
+</div>
+<div class="container-fluid row justify-content-center mt-2">
+    {% if token != None %}
+        <div class="col-sm-10 alert alert-success d-flex justify-content-between" role="alert">
+            <div>Votre token est <strong id="midasToken">{{token}}</strong> <i class="midas-icon midas-copy-icon fa-regular fa-copy" title="Copier le jeton" data-midas-copy="#midasToken"></i></div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+    {% endif %}
+    {% if form.help_text %}
+    <div class="col-sm-10 alert alert-warning d-flex justify-content-between" role="alert">
+        {{form.help_text|safe }}
+    </div>
+    {% endif %}
+
+    {% if form.errors %}
+    {% for field,errors in form.errors.items %}
+        {% for v in errors %}
+        <div class="col-sm-10 alert alert-danger d-flex justify-content-between" role="alert">
+            <div>{{ v }}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    {% endfor %}
+    {% endif %}
+</div>
+<div class="midas-container container-fluid">
+    <p class="h1">Jetons APIs</p>
+    <div class="d-flex w-100 flex-column align-items-center">
+        <div class="card" style="width: 20rem;">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Vos jetons</span>
+                <i class="midas-icon fa-solid fa-circle-plus" title="Ajouter un jeton" data-bs-toggle="modal" data-bs-target="#modalAddition"></i>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% if list|length > 0 %}
+                {% for element in list  %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="col-sm-5"><strong>{{ element.name }}</strong></div>
+                    <div class="col-sm-5 text-muted">{% if element.expire_at == None%}Pas d'expiration{% else %}{{ element.expire_at }}{% endif %}</div>
+                    <div class="col-sm-2 text-end"><i title="Supprimer ce jeton" class="midas-delete-icon fa-solid fa-circle-xmark text-danger" data-bs-name="{{element.name}}" data-bs-slug="{{element.slug}}" data-bs-toggle="modal" data-bs-target="#modalDeletion"></i></div>
+                </li>
+                {% endfor %}
+                {% else %}
+                <li class="list-group-item">Aucun jeton crée</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalDeletion" tabindex="-1" aria-labelledby="modalDeletion" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Souhaitez-vous supprimer ce jeton?
+            </div>
+            <div class="modal-footer">
+                <form class="modal-form" method="post" action="#">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Retour</button>
+                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalAddition" tabindex="-1" aria-labelledby="modalAddition" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ajouter un jeton</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="modal-form" method="post" action="/manage-token/">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <label for="{{ form.starting_date.id_for_label }}">{{ form.name.label }} :</label>
+                    {{ form.name }}
+                    <br>
+                    <label for="{{ form.ending_date.id_for_label }}">{{ form.expire.label }} :</label>
+                    {{ form.expire }}
+                    <br>
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Retour</button>
+                    <button type="submit" class="btn btn-primary">Supprimer</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    let exampleModal = document.getElementById('modalDeletion')
+    exampleModal.addEventListener('show.bs.modal', function (event) {
+        let button = event.relatedTarget
+        let name = button.getAttribute('data-bs-name')
+        let modalTitle = exampleModal.querySelector('.modal-title')
+        let modalForm = exampleModal.querySelector('.modal-form')
+
+        modalForm.action=`/delete-token/${button.getAttribute('data-bs-slug')}`
+        modalTitle.textContent = `Supprimer le jeton "${name}"`
+    })
+    document.querySelectorAll('.midas-copy-icon').forEach((e)=>{
+        let copyElem = e.dataset.midasCopy
+        e.addEventListener("click",_=>{
+            navigator.clipboard.writeText(document.querySelector(copyElem).innerHTML);
+            let ct = document.querySelector("#additionnalAlertContainer")
+            let div = document.createElement('div')
+            div.className = "col-sm-10 alert alert-primary d-flex justify-content-between fade show"
+            div.innerHTML = `<div>Jeton copié</div><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`
+            ct.appendChild(div)
+        })
+    })
+</script>
+{% endblock %}

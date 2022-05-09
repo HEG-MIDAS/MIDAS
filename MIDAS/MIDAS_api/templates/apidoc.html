@@ -7,6 +7,13 @@
 {% endblock %}
 {% block body_content %}
     <div class="midas-container container-fluid">
+        <div class="container-fluid">
+            <div class="m-3">
+                <h3>Autentification</h3>
+                Pour vous authentifier sur l'api, vous devez générer un jeton API via <a href="/manage-token/">cette page</a> que vous utiliserez ensuite dans le header de votree requête sous la forme:
+                <code>Authorization: Midas &lt;nom d&apos;utilisateur&gt; &lt;jeton&gt;</code>
+            </div>
+        </div>
         <div id="swagger-ui">
 
         </div>
@@ -15,12 +22,18 @@
     const ui = SwaggerUIBundle({
         url: "/static/openapi-schema.yml",
         dom_id: '#swagger-ui',
+        deepLinking: true,
+        defaultModelsExpandDepth: -1,
         presets: [
           SwaggerUIBundle.presets.apis,
         ],
         requestInterceptor: (request) => {
           request.headers['X-CSRFToken'] = "{{ csrf_token }}"
           return request;
+        },
+        onComplete: _=>{
+            let e = document.querySelector(".information-container.wrapper")
+            e.parentElement.removeChild(e);
         }
       })
     </script>
