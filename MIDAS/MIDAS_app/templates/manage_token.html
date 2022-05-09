@@ -117,10 +117,15 @@
         e.addEventListener("click",_=>{
             navigator.clipboard.writeText(document.querySelector(copyElem).innerHTML);
             let ct = document.querySelector("#additionnalAlertContainer")
-            let div = document.createElement('div')
-            div.className = "col-sm-10 alert alert-primary d-flex justify-content-between fade show"
-            div.innerHTML = `<div>Jeton copié</div><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`
-            ct.appendChild(div)
+            
+            if (ct.getElementsByTagName('div').length == 0){
+                let div = document.createElement('div')
+                div.className = "col-sm-10 alert alert-primary d-flex justify-content-between fade show"
+                div.innerHTML = `<div>Jeton copié</div><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`
+
+                ct.appendChild(div)
+            }
+            
         })
     })
 </script>
