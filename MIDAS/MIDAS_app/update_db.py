@@ -1,4 +1,3 @@
-from turtle import update
 from .models import Source, Station, Parameter, ParametersOfStation
 from django.conf import settings
 import os
