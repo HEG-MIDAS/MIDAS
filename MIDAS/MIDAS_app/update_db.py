@@ -56,7 +56,7 @@ def insert_parameters():
                         header = f.readline()
                     for parameter in header.split(','):
                         param = parameter.replace('*', '').replace('\n', '')
-                        if param not in ['gmt', 'localtime']:
+                        if param not in ['gmt', 'localtime', 'Date [GMT+1]']:
                             if len(Parameter.objects.filter(name=param)) == 0:
                                 p = Parameter(name=param)
                                 p.save()
