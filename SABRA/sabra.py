@@ -27,7 +27,7 @@ root_path = os.path.join(scraper_path,'..')
 media_path = os.path.join(root_path,'media')
 
 # URL to scrap
-URL = "https://www.ropag-data.ch/_/i_extr.php"
+URL = "https://www.ropag-data.ch/gechairmo/i_extr.php"
 
 # Function to write logs.
 ## Needs to define how
@@ -289,7 +289,7 @@ def firefoxDriver():
     options.set_preference("pdfjs.disabled", True)
     options.set_preference("browser.helperApps.neverAsk.openFile", "text/csv,application/octet-stream")
     # Create Service for Firefox (Gecko) Driver Location
-    service = sv()
+    service = None
     if platform == "darwin":
         service = Service(os.path.join(scraper_path,'geckodriver_osx'))
     elif platform == "linux" or platform == "linux2":
@@ -309,7 +309,7 @@ def chromeDriver():
     # Specify Download folder
     prefs = {"download.default_directory" : scraper_path}
     options.add_experimental_option("prefs",prefs)
-    service = sv()
+    service = None
     if platform == "darwin":
         service = sv(os.path.join(scraper_path,'chromedriver_osx'))
     elif platform == "linux" or platform == "linux2":
