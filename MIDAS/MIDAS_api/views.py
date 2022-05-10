@@ -33,7 +33,7 @@ class MidasTokenAuthentication(authentication.BaseAuthentication):
             hash = sha256(token.encode()).hexdigest()
             token = Token.objects.get(hash=hash)
             user = token.user
-            if user.username != username:
+            if user.username != username or (token.expire_at != None and token.expire_at < datetime.datetime.now().date()) :
                 return None
         except Token.DoesNotExist:
             raise exceptions.AuthenticationFailed('No such token')
@@ -138,7 +138,7 @@ class SearchView(views.APIView):
         """
         if('sources' not in request.data or 'stations' not in request.data or 'parameters' not in request.data):
             return Response({"error":"Missing POST body"}, status=400)
-        elif(request.data['sources'] is not list or request.data['stations'] is not list or request.data['parameters'] is not list):
+        elif(type(request.data['sources']) is not list or type(request.data['stations']) is not list or type(request.data['parameters']) is not list):
             return Response({"error":"stations, sources and parameters needs to be array"}, status=400)
         results = {}
         # Get the folder for transformed files

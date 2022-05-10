@@ -23,8 +23,9 @@ class Token(models.Model):
     hash = models.CharField(max_length=64, unique=True, editable=False)
     expire_at = models.DateField(null=True,blank=True)
     def save(self, *args, **kwargs):
-        self.slug = "{}".format(re.sub(r"[^\w\s]", '_', remove_accents((self.name).lower().replace(' ', '_'))))
-        self.hash = hashlib.sha256(self.hash.encode()).hexdigest()
+        if self.slug == '':
+            self.slug = "{}".format(re.sub(r"[^\w\s]", '_', remove_accents((self.name).lower().replace(' ', '_'))))
+            self.hash = hashlib.sha256(self.hash.encode()).hexdigest()
         super(Token, self).save(*args, **kwargs)
 
     def __str__(self):

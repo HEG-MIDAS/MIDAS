@@ -1,10 +1,11 @@
+import json
 import os
 import mimetypes
 import django
 import datetime
 from wsgiref import headers
 import requests
-from django.http import HttpResponse, Http404
+from django.http import HttpRequest, HttpResponse, Http404
 from django.shortcuts import redirect, render
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -17,6 +18,7 @@ from django.middleware import csrf
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods
 import random
+from MIDAS_api.views import StatusView, SearchView
 from . import update_db
 
 @csrf_protect
@@ -44,6 +46,26 @@ def index(request):
     # update_db.update_stations()
     # update_db.update_parameters()
     context = {}
+
+    # request.GET._mutable = True
+    # request.GET['format'] = 'json'
+    # request.GET._mutable = False
+    # print(StatusView.as_view()(request).rendered_content.decode())
+
+    # new_request = HttpRequest()
+    # new_request.method = 'POST'
+    # new_request.POST = json.dumps({
+    #     "sources": ["climacity"],
+    #     "stations": ["prairie"],
+    #     "parameters": ["tamb_avg"],
+    #     "start_date": "2022-05-08 00:00:00",
+    #     "end_date": "2022-05-08 23:59:59"
+    # })
+    # new_request.POST['sources'] = ['climacity']
+
+    # new_request.user = request.user
+
+    # print(SearchView().post(new_request))
 
     # csrftoken = django.middleware.csrf.get_token(request)
     # print(csrftoken)

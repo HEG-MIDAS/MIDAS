@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, Source, Station, Parameter, ParametersOfStation, GroupOfFavorite, Favorite
+from .models import User, Source, Station, Parameter, ParametersOfStation, GroupOfFavorite, Favorite, Token
 
 # Register your models here.
 
@@ -129,3 +129,11 @@ class FavoriteAdmin(admin.ModelAdmin):
     list_display = ['__str__']
 
 admin.register(Favorite, FavoriteAdmin)
+
+
+@admin.register(Token)
+class TokenAdmin(admin.ModelAdmin):
+
+    list_display = ['__str__']
+
+admin.register(Token, TokenAdmin)
