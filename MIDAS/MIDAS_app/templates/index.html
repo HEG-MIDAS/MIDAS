@@ -9,6 +9,22 @@
     </div>
     {% csrf_token %}
     <script type="text/javascript">
+
+        
+
+        var result = []
+        {% comment %} xhr.onload = function() {
+            //console.log(JSON.parse(xhr.response));
+            values_post = JSON.parse(xhr.response)['Climacity']['Prairie'];
+            for (var i in values_post) {
+                result.push([i, values_post[i]['Tamb_Avg*']]);
+            }
+        } {% endcomment %}
+
+        {% comment %} console.log(result[1]);
+        const arrayColumn = (arr, n) => arr.map(x => x[n]);
+        console.log(arrayColumn(result, 1)); {% endcomment %}
+
         // Initialize the echarts instance based on the prepared dom
         var myChart = echarts.init(document.getElementById('main'));
 
@@ -85,19 +101,19 @@
             series: [
                 {
                 name: 'PM2.5 (Climacity)',
-                type: 'scatter',
+                type: 'line',
                 xAxisIndex: 1,
                 smooth: true,
                 emphasis: {
                     focus: 'series'
                 },
                 data: [
-                    2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3
+                    2.6, 5.9, 9.0, 0, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3
                 ]
                 },
                 {
                 name: 'PM2.5 (SABRA)',
-                type: 'scatter',
+                type: 'line',
                 smooth: true,
                 emphasis: {
                     focus: 'series'
@@ -114,13 +130,29 @@
         myChart.setOption(option);
     </script>
     <script type="text/javascript">
+
+        var sources = ['climacity'];
+        var stations = ['prairie'];
+        var parameters = ['tamb_avg'];
+        var start_date = '2022-05-08 00:00:00';
+        var end_date = '2022-05-08 23:59:59';
+
         const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value
         function test(){
-            fetch('/test/',{
+            fetch('/api/search/',{
                 method: 'POST',
                 headers: {
-                    "X-CSRFToken":csrf,
-                }
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrf,
+                    'Authorization': "Midas admin :1[YLC!DL]}id<Ip*@Pc"
+                },
+                body: JSON.stringify({
+                    'sources': sources,
+                    'stations': stations,
+                    'parameters': parameters,
+                    'start_date': start_date,
+                    'end_date': end_date
+                })
             })
             .then(function(response) {
                 return response.json();
@@ -129,6 +161,7 @@
                 console.log(myBlob)
             });
         }
+        test();
     </script>
 </div>
 {% endblock %}
