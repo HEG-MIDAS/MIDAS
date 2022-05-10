@@ -20,6 +20,8 @@ COPY logs /app/logs
 COPY MIDAS /app/MIDAS
 COPY static /app/static
 COPY media /app/media
+## DB Update Default value
+COPY sources.csv /app/sources.csv
 
 # Root Directory
 WORKDIR /app
