@@ -138,7 +138,8 @@ class SearchView(views.APIView):
         """
         if('sources' not in request.data or 'stations' not in request.data or 'parameters' not in request.data):
             return Response({"error":"Missing POST body"}, status=400)
-
+        elif(request.data['sources'] is not list or request.data['stations'] is not list or request.data['parameters'] is not list):
+            return Response({"error":"stations, sources and parameters needs to be array"}, status=400)
         results = {}
         # Get the folder for transformed files
         transformedFolder = join(settings.MEDIA_ROOT,'transformed')
@@ -182,73 +183,73 @@ class SearchView(views.APIView):
         parametersList = []
         for param in parameterData:
             parametersList.append(param["id"])
-        # Check if sources is a list (Do we check if it's a single string?)
-        if(type(sources) is list):
-            for source in sources:
-                # General try, catch, might be worth separating?
-                try:
-                    # Get the source and station corresponding to the parameters
-                    sourceQuery = Source.objects.get(slug=source)
-                    sourceSerializer = SourceSerializer(sourceQuery)
-                    sourceData = sourceSerializer.data
-                    stationQuery = Station.objects.filter(slug__in=stations).filter(source=sourceQuery)
-                    stationSerializer = StationSerializer(stationQuery,many=True)
-                    stationData = stationSerializer.data
-                    if(len(stationData) < 1 or len(sourceData) < 1):
-                        raise Exception
-                    # Check if source in db has a folder
-                    if(sourceData["name"] in allSources):
-                        results[sourceData["name"]] = {}
-                        sourceFolder = join(transformedFolder,sourceData["name"])
-                        for station in stationData:
-                            # Filter the station file
-                            matchingStation = [s for s in listdir(sourceFolder) if station["name"] in s]
-                            if(len(matchingStation) > 0):
-                                stationFolder = join(sourceFolder,matchingStation[0])
-                                results[sourceData["name"]][station["name"]] = {}
-                                # Retrieve list of params for the station
-                                stationParam = Station.objects.get(slug=station["slug"])
-                                paramStationQuery = ParametersOfStation.objects.filter(station=stationParam).filter(parameter__in=parametersList)
-                                paramStationSerializer = ParametersOfStationSerializer(paramStationQuery,many=True)
-                                paramStationData = paramStationSerializer.data
-                                # Create a list of the parameters we need
-                                paramList = []
-                                for param in paramStationData:
-                                    p = list(filter(lambda p: p["id"] == param["parameter"],parameterData))
-                                    paramList.append(p[0]["name"])
-                                # FILE MANIPULATION
-                                file = open(stationFolder)
-                                # Filter Header to retrieve the index when we split
-                                header = file.readline().strip().split(",")
-                                headerIndex = []
-                                for i in range(1,len(header)):
-                                    p = header[i].strip('*')
-                                    if(p in paramList):
-                                        headerIndex.append(i)
-                                limit = 0
-                                lines = file.readlines()
-                                # Reverse the file
-                                if(order == 'DESC'):
-                                    lines = reversed(lines)
-                                for line in lines:
-                                    l = line.strip().split(",")
-                                    # If the start and end date exist and the line date isn't between them
-                                    if(start_date != None and end_date != None and not start_date <= datetime.datetime.strptime(l[0],"%Y-%m-%d %H:%M:%S") <= end_date):
-                                        continue
-                                    results[sourceData["name"]][station["name"]][l[0]] = {}
-                                    for index in headerIndex:
-                                        results[sourceData["name"]][station["name"]][l[0]][header[index]] = np.double(l[index]) if(l[index] != "" and l[index] != " ") else l[index]
-                                    limit += 1
-                                    if(limitMax != None and limit == limitMax):
-                                        break
-                                file.close()
-                            else:
-                                raise Exception
-                except:
-                    return Response({"error":"An error occured"}, status=500)
+
+        for source in sources:
+            # General try, catch, might be worth separating?
+            try:
+                # Get the source and station corresponding to the parameters
+                sourceQuery = Source.objects.get(slug=source)
+                sourceSerializer = SourceSerializer(sourceQuery)
+                sourceData = sourceSerializer.data
+                stationQuery = Station.objects.filter(slug__in=stations).filter(source=sourceQuery)
+                stationSerializer = StationSerializer(stationQuery,many=True)
+                stationData = stationSerializer.data
+                if(len(stationData) < 1 or len(sourceData) < 1):
+                    raise Exception
+                # Check if source in db has a folder
+                if(sourceData["name"] in allSources):
+                    results[sourceData["name"]] = {}
+                    sourceFolder = join(transformedFolder,sourceData["name"])
+                    for station in stationData:
+                        # Filter the station file
+                        matchingStation = [s for s in listdir(sourceFolder) if station["name"] in s]
+                        if(len(matchingStation) > 0):
+                            stationFolder = join(sourceFolder,matchingStation[0])
+                            results[sourceData["name"]][station["name"]] = {}
+                            # Retrieve list of params for the station
+                            stationParam = Station.objects.get(slug=station["slug"])
+                            paramStationQuery = ParametersOfStation.objects.filter(station=stationParam).filter(parameter__in=parametersList)
+                            paramStationSerializer = ParametersOfStationSerializer(paramStationQuery,many=True)
+                            paramStationData = paramStationSerializer.data
+                            # Create a list of the parameters we need
+                            paramList = []
+                            for param in paramStationData:
+                                p = list(filter(lambda p: p["id"] == param["parameter"],parameterData))
+                                paramList.append(p[0]["name"])
+                            # FILE MANIPULATION
+                            file = open(stationFolder)
+                            # Filter Header to retrieve the index when we split
+                            header = file.readline().strip().split(",")
+                            headerIndex = []
+                            for i in range(1,len(header)):
+                                p = header[i].strip('*')
+                                if(p in paramList):
+                                    headerIndex.append(i)
+                            limit = 0
+                            lines = file.readlines()
+                            # Reverse the file
+                            if(order == 'DESC'):
+                                lines = reversed(lines)
+                            for line in lines:
+                                l = line.strip().split(",")
+                                # If the start and end date exist and the line date isn't between them
+                                if(start_date != None and end_date != None and not start_date <= datetime.datetime.strptime(l[0],"%Y-%m-%d %H:%M:%S") <= end_date):
+                                    continue
+                                results[sourceData["name"]][station["name"]][l[0]] = {}
+                                for index in headerIndex:
+                                    results[sourceData["name"]][station["name"]][l[0]][header[index]] = np.double(l[index]) if(l[index] != "" and l[index] != " ") else l[index]
+                                limit += 1
+                                if(limitMax != None and limit == limitMax):
+                                    break
+                            file.close()
+                        else:
+                            return Response({"error":"No matching station found"}, status=400)
+            except:
+                return Response({"error":"An error occured"}, status=500)
 
         if(len(results)>0):
             return Response(results, status=200)
+
         return Response({"error":"No Data found"}, status=400)
 
 
