@@ -144,7 +144,6 @@ def token_deletion(request,slug):
 
 @login_required
 def manage_token(request):
-    print(request.method)
     tokens = Token.objects.filter(user=request.user.id)
     context = {
         'form': TokenForm,
@@ -166,13 +165,15 @@ def manage_token(request):
                 return redirect('account_token')
             else:
                 # assign
-                messages.info(request,post_form,extra_tags="form")
+                messages.info(request,post_form.errors,extra_tags="form")
                 return redirect('account_token')
 
     storage = messages.get_messages(request)
     for message in storage:
-        print(message.extra_tags)
-        context[message.extra_tags] = message
+        if message.extra_tags == "form":
+            context['form'].errors = message
+        else:
+            context[message.extra_tags] = message
     return render(request, 'manage_token.html',context)
 
 @login_required

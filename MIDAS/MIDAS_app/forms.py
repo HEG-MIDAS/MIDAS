@@ -6,6 +6,7 @@ import string
 import random
 from dateutil.relativedelta import relativedelta
 
+
 def get_token(length:int)->str:
     # choose from all lowercase letter
     characters = string.ascii_letters + string.digits + string.punctuation
@@ -60,6 +61,10 @@ class TokenForm(forms.ModelForm):
             expire_date = current_date + relativedelta(months=6)
         elif self.cleaned_data['expire'] == 'A1':
             expire_date = current_date + relativedelta(years=1)
+        elif self.cleaned_data['expire'] == 'N0':
+            expire_at = None
+        else:
+            return None
 
         token.expire_at = expire_date
         tk = get_token(20)
