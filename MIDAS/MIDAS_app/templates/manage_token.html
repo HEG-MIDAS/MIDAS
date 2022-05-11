@@ -1,8 +1,10 @@
 {% extends 'layouts/base.html' %}
+{% load date %}
 {% block extrajs %}
 <script src="/static/lib/echarts/echarts.js" charset="utf-8"></script>
 {% endblock %}
 {% block body_content %}
+{% now "Y-m-d" as currdate %}
 <div id="additionnalAlertContainer" class="container-fluid row justify-content-center mt-2">
 </div>
 <div class="container-fluid row justify-content-center mt-2">
@@ -11,7 +13,12 @@
             <div>Votre token est <strong id="midasToken">{{token|safe}}</strong> <i class="midas-icon midas-copy-icon fa-regular fa-copy" title="Copier le jeton" data-midas-copy="#midasToken"></i></div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-
+    {% endif %}
+    {% if message != None %}
+        <div class="col-sm-10 alert alert-success d-flex justify-content-between" role="alert">
+            <div>{{message}}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     {% endif %}
     {% if form.help_text %}
     <div class="col-sm-10 alert alert-warning d-flex justify-content-between" role="alert">
@@ -43,7 +50,8 @@
                 {% for element in list  %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <div class="col-sm-5"><strong>{{ element.name }}</strong></div>
-                    <div class="col-sm-5 text-muted">{% if element.expire_at == None%}Pas d'expiration{% else %}{{ element.expire_at }}{% endif %}</div>
+                    {% compare element.expire_at currdate as compareResult %}
+                    <div class="col-sm-5 text-muted">{% if element.expire_at == None%}Pas d'expiration{% elif compareResult%}<span class="badge rounded-pill bg-danger">Expiré <i title="Actualiser le jeton" data-bs-name="{{element.name}}" class="midas-icon fa-solid fa-arrows-rotate" data-bs-toggle="modal" data-bs-target="#modalEdition"></i></span>{% else %}{{ element.expire_at }}{% endif %}</div>
                     <div class="col-sm-2 text-end"><i title="Supprimer ce jeton" class="midas-delete-icon fa-solid fa-circle-xmark text-danger" data-bs-name="{{element.name}}" data-bs-slug="{{element.slug}}" data-bs-toggle="modal" data-bs-target="#modalDeletion"></i></div>
                 </li>
                 {% endfor %}
@@ -101,16 +109,54 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="modalEdition" tabindex="-1" aria-labelledby="modalEdition" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Actualiser un jeton</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="modal-form" method="post" action="/manage-token/">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <label for="{{ form.starting_date.id_for_label }}">{{ form.name.label }} :</label>
+                    {{ form.name }}
+                    <br>
+                    <label for="{{ form.ending_date.id_for_label }}">{{ form.expire.label }} :</label>
+                    {{ form.expire }}
+                    <br>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Retour</button>
+                    <button type="submit" class="btn btn-primary">Actualiser</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
 <script type="text/javascript">
-    let exampleModal = document.getElementById('modalDeletion')
-    exampleModal.addEventListener('show.bs.modal', function (event) {
+    let deleteModal = document.getElementById('modalDeletion')
+    deleteModal.addEventListener('show.bs.modal', function (event) {
         let button = event.relatedTarget
         let name = button.getAttribute('data-bs-name')
-        let modalTitle = exampleModal.querySelector('.modal-title')
-        let modalForm = exampleModal.querySelector('.modal-form')
+
+        let modalTitle = deleteModal.querySelector('.modal-title')
+        let modalForm = deleteModal.querySelector('.modal-form')
 
         modalForm.action=`/delete-token/${button.getAttribute('data-bs-slug')}`
         modalTitle.textContent = `Supprimer le jeton "${name}"`
+    })
+    let editModal = document.getElementById('modalEdition')
+    editModal.addEventListener('show.bs.modal', function (event) {
+        let button = event.relatedTarget
+        let name = button.getAttribute('data-bs-name')
+
+        let modalTitle = editModal.querySelector('.modal-title')
+        let modalNameInput = editModal.querySelector('#id_name')
+        modalTitle.textContent = `Actualiser le jeton "${name}"`
+        modalNameInput.value = name
+        modalNameInput.readOnly=true
     })
     document.querySelectorAll('.midas-copy-icon').forEach((e)=>{
         let copyElem = e.dataset.midasCopy
@@ -118,13 +164,21 @@
             navigator.clipboard.writeText(document.querySelector(copyElem).innerText);
             let ct = document.querySelector("#additionnalAlertContainer")
 
-            if (ct.querySelectorAll('div#createdTokenAlert').length == 0){
+            let createdTokenalerts = ct.querySelectorAll('div#createdTokenAlert')
+            if (createdTokenalerts.length == 0){
                 let div = document.createElement('div')
                 div.id = "createdTokenAlert"
                 div.className = "col-sm-10 alert alert-primary d-flex justify-content-between fade show"
-                div.innerHTML = `<div>Jeton copié</div><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`
+                div.innerHTML = `<div><span id="createdTokenBadge" class="badge bg-primary rounded-pill d-none">1</span> Jeton copié</div> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`
 
                 ct.appendChild(div)
+            }else{
+                createdTokenalerts.forEach((item) => {
+                    let createdTokenBadge = item.querySelector('span#createdTokenBadge')
+                    createdTokenBadge.className="badge bg-primary rounded-pill"
+                    createdTokenBadge.innerHTML = parseInt(createdTokenBadge.innerHTML) + 1
+                });
+
             }
 
         })

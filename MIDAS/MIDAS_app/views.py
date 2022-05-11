@@ -149,12 +149,19 @@ def manage_token(request):
         'list': tokens
     }
     if request.method == 'POST':
-        post_form = TokenForm(request.POST)
-        if post_form.is_valid():
-            tk = post_form.save(request.user)
-            context['token']=tk
-        else:
-            context['form']=post_form
+        try:
+            tk = Token.objects.get(name=request.POST["name"])
+            post_form = TokenForm(request.POST,instance=tk)
+            if post_form.is_valid():
+                tk = post_form.save(request.user)
+                context['message'] = "Le token a bien été actualisé"
+        except:
+            post_form = TokenForm(request.POST)
+            if post_form.is_valid():
+                tk = post_form.save(request.user)
+                context['token']=tk
+            else:
+                context['form']=post_form
 
     return render(request, 'manage_token.html',context)
 
