@@ -19,6 +19,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods
 import random
 from MIDAS_api.views import StatusView, SearchView
+from django.contrib import messages
 from . import update_db
 
 @csrf_protect
@@ -143,6 +144,7 @@ def token_deletion(request,slug):
 
 @login_required
 def manage_token(request):
+    print(request.method)
     tokens = Token.objects.filter(user=request.user.id)
     context = {
         'form': TokenForm,
@@ -154,15 +156,23 @@ def manage_token(request):
             post_form = TokenForm(request.POST,instance=tk)
             if post_form.is_valid():
                 tk = post_form.save(request.user)
-                context['message'] = "Le token a bien été actualisé"
+                messages.info(request,"Le token a bien été actualisé",extra_tags="message")
+                return redirect('account_token')
         except:
             post_form = TokenForm(request.POST)
             if post_form.is_valid():
                 tk = post_form.save(request.user)
-                context['token']=tk
+                messages.info(request,tk,extra_tags="token")
+                return redirect('account_token')
             else:
-                context['form']=post_form
+                # assign
+                messages.info(request,post_form,extra_tags="form")
+                return redirect('account_token')
 
+    storage = messages.get_messages(request)
+    for message in storage:
+        print(message.extra_tags)
+        context[message.extra_tags] = message
     return render(request, 'manage_token.html',context)
 
 @login_required
