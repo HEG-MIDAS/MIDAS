@@ -13,6 +13,7 @@ from urllib import request, response
 import requests
 import time
 import datetime
+from dateutil.relativedelta import relativedelta
 import re
 import os
 import getopt
@@ -201,50 +202,66 @@ def main() -> None:
     path_original_data_file = '{}/../media/original/Climacity/climacity_original_merged.csv'.format(__location__)
     path_transformed_data_file = '{}/../media/transformed/Climacity/Prairie_Urbain.csv'.format(__location__)
 
-    url = """http://www.climacity.org/Axis/a_data_export.gwt?fdate={}&tdate={}&h_loc=on&""" \
-        """h_Tsv=on&h_Gh_Avg=on&h_Dh_Avg=on&h_Tamb_Avg=on&h_HRamb_Avg=on&h_Prec_Tot=on&h_Vv_Avg=on&h_Vv_Avg=on&""" \
-        """h_Vv_Max=on&h_Dv_Avg=on&h_Baro=on&h_CS125_Vis=on&h_PM25=on&h_PM10=on&h_Hc=on&h_Az=on""".format(start_date, end_date)
-
     today = time.strftime("%Y-%m-%d %H:%M:%S")
+    # Indicates the interval of years for a request
+    gap_years = 5
 
-    print("--------------- Requesting data Climacity : {} ---------------".format(today))
+    print("--------------- Starting requests to Climacity : {} ---------------".format(today))
 
-    # Request data to download
-    #start_time = time.time()
-    r = None
-    try:
-        r = requests.get(url)
-    except:
-        sys.exit(2)
-    #print(time.time()-start_time)
-    if r.ok:
-        start_time = time.time()
-        # Create a temporary file containing the data requested to climacity (original data)
-        write_request_in_tmp_file(r, path_tmp_file)
-        # Merge temporary file with the file containing all the original data
-        print("--------------- Merging new data --------------")
-        merge_csv_by_date.merge_csv_by_date(path_original_data_file, path_tmp_file, '%Y-%m-%d %H:%M:%S')
-        # Remove the temporary file created
-        os.remove(path_tmp_file)
+    while start_date <= end_date:
+        tmp_end_date = datetime.datetime.strftime(datetime.datetime.strptime(start_date, '%Y-%m-%d').date() + relativedelta(years=gap_years), '%Y-%m-%d')
+        if tmp_end_date > end_date:
+            tmp_end_date = end_date
 
-        print("--------------- Processing data ---------------")
+        url = """http://www.climacity.org/Axis/a_data_export.gwt?fdate={}&tdate={}&h_loc=on&""" \
+            """h_Tsv=on&h_Gh_Avg=on&h_Dh_Avg=on&h_Tamb_Avg=on&h_HRamb_Avg=on&h_Prec_Tot=on&h_Vv_Avg=on&h_Vv_Avg=on&""" \
+            """h_Vv_Max=on&h_Dv_Avg=on&h_Baro=on&h_CS125_Vis=on&h_PM25=on&h_PM10=on&h_Hc=on&h_Az=on""".format(start_date, tmp_end_date)
 
-        array_data = extract_relevant_data(r)
-        array_data = process_data(array_data)
-        write_array_in_tmp_file(array_data, path_tmp_file)
 
-        print("--------------- Merging processed data ---------------")
-        merge_csv_by_date.merge_csv_by_date(path_transformed_data_file, path_tmp_file, '%Y-%m-%d %H:%M:%S')
-        os.remove(path_tmp_file)
+        print("--------------- Requesting data Climacity : from {} to {} ---------------".format(start_date, tmp_end_date))
+
+        # Request data to download
+        #start_time = time.time()
+        r = None
+        try:
+            r = requests.get(url)
+        except:
+            sys.exit(2)
         #print(time.time()-start_time)
+        if r.ok:
+            start_time = time.time()
+            # Create a temporary file containing the data requested to climacity (original data)
+            write_request_in_tmp_file(r, path_tmp_file)
+            # Merge temporary file with the file containing all the original data
+            print("--------------- Merging new data --------------")
+            merge_csv_by_date.merge_csv_by_date(path_original_data_file, path_tmp_file, '%Y-%m-%d %H:%M:%S')
+            # Remove the temporary file created
+            os.remove(path_tmp_file)
 
-    else:
-        print("--------------- Error at request adding logs --------------")
-        add_logs(start_date, end_date, __location__)
-        sys.exit(3)
+            print("--------------- Processing data ---------------")
 
-    print("--------------- Requesting data Climacity ended : {} ---------------".format(time.strftime("%Y-%m-%d %H:%M:%S")))
+            array_data = extract_relevant_data(r)
+            array_data = process_data(array_data)
+            write_array_in_tmp_file(array_data, path_tmp_file)
 
+            print("--------------- Merging processed data ---------------")
+            merge_csv_by_date.merge_csv_by_date(path_transformed_data_file, path_tmp_file, '%Y-%m-%d %H:%M:%S')
+            os.remove(path_tmp_file)
+            #print(time.time()-start_time)
+
+        else:
+            print("--------------- Error at request adding logs --------------")
+            add_logs(start_date, tmp_end_date, __location__)
+            sys.exit(3)
+
+        print("--------------- Requesting data Climacity ended : {} ---------------".format(time.strftime("%Y-%m-%d %H:%M:%S")))
+
+        start_date = tmp_end_date
+
+        if start_date == end_date:
+            break
+
+    print("--------------- Ending requests to Climacity : {} ---------------".format(today))
 
 if __name__ == '__main__':
     main()

@@ -19,7 +19,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods
 import random
 from MIDAS_api.views import StatusView, SearchView
-from . import update_db
+from rest_framework.request import Request 
 
 @csrf_protect
 @require_http_methods(["POST"])
@@ -47,25 +47,24 @@ def index(request):
     # update_db.update_parameters()
     context = {}
 
-    # request.GET._mutable = True
-    # request.GET['format'] = 'json'
-    # request.GET._mutable = False
-    # print(StatusView.as_view()(request).rendered_content.decode())
+    new_request = Request(request)
+    new_request.method = 'GET'
+    request.GET._mutable = True
+    new_request.query_params['format'] = 'json'
+    request.GET._mutable = False
+    print(StatusView().get(new_request).data)
 
-    # new_request = HttpRequest()
-    # new_request.method = 'POST'
-    # new_request.POST = json.dumps({
-    #     "sources": ["climacity"],
-    #     "stations": ["prairie"],
-    #     "parameters": ["tamb_avg"],
-    #     "start_date": "2022-05-08 00:00:00",
-    #     "end_date": "2022-05-08 23:59:59"
-    # })
-    # new_request.POST['sources'] = ['climacity']
+    new_request = Request(request)
+    new_request.method = 'POST'
+    new_request.data['sources'] = ['climacity']
+    new_request.data['stations'] = ['prairie']
+    new_request.data['parameters'] = ['tamb_avg']
+    new_request.data['start_date'] = '2022-05-08 00:00:00'
+    new_request.data['end_date'] = '2022-05-08 23:59:59'
 
-    # new_request.user = request.user
+    new_request.user = request.user
 
-    # print(SearchView().post(new_request))
+    print(SearchView().post(new_request).data)
 
     # csrftoken = django.middleware.csrf.get_token(request)
     # print(csrftoken)
