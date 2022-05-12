@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from os import listdir
 from os.path import isfile, join, splitext
 from .forms import DateSelection, TokenForm
-from .models import GroupOfFavorite, Favorite, Token
+from .models import GroupOfFavorite, Favorite, Token, Source
 from MIDAS_app.models import Favorite, User
 from django.middleware import csrf
 from django.views.decorators.csrf import csrf_protect
@@ -20,6 +20,8 @@ from django.views.decorators.http import require_http_methods
 import random
 from MIDAS_api.views import StatusView, SearchView
 from rest_framework.request import Request 
+from django.contrib import messages
+from . import update_db
 
 @csrf_protect
 @require_http_methods(["POST"])
@@ -148,20 +150,37 @@ def manage_token(request):
         'list': tokens
     }
     if request.method == 'POST':
-        post_form = TokenForm(request.POST)
-        if post_form.is_valid():
-            tk = post_form.save(request.user)
-            context['token']=tk
-        else:
-            context['form']=post_form
+        try:
+            tk = Token.objects.get(name=request.POST["name"])
+            post_form = TokenForm(request.POST,instance=tk)
+            if post_form.is_valid():
+                tk = post_form.save(request.user)
+                messages.info(request,"Le token a bien été actualisé",extra_tags="message")
+                return redirect('account_token')
+        except:
+            post_form = TokenForm(request.POST)
+            if post_form.is_valid():
+                tk = post_form.save(request.user)
+                messages.info(request,tk,extra_tags="token")
+                return redirect('account_token')
+            else:
+                # assign
+                messages.info(request,post_form.errors,extra_tags="form")
+                return redirect('account_token')
 
+    storage = messages.get_messages(request)
+    for message in storage:
+        if message.extra_tags == "form":
+            context['form'].errors = message
+        else:
+            context[message.extra_tags] = message
     return render(request, 'manage_token.html',context)
 
 @login_required
 def manage_data(request):
 
     media_path = join(settings.MEDIA_ROOT, join(request.GET.get('origin', ''), request.GET.get('source', '')))
-
+    sources_input = Source.objects.all()
     if request.method == 'POST':
         if request.POST.get('filename', '') != '':
             media_path = join(settings.MEDIA_ROOT, join(request.POST.get('origin', ''), request.POST.get('source', '')))
@@ -200,6 +219,7 @@ def manage_data(request):
         originFlavourText = 'Données transformées' if request.GET.get('origin', '') == 'transformed' else 'Données originelles'
         form = DateSelection
         context = {
+            'sources_input':sources_input,
             'file': folder_files,
             'file_flavour': folder_flavours,
             'origin': request.GET.get('origin', ''),
@@ -212,10 +232,18 @@ def manage_data(request):
 
 
 @user_passes_test(lambda u: u.is_superuser)
+@require_http_methods(["POST"])
 def harvest_data(request):
-    if request.method == 'POST':
-        print("LAUNCHED")
-        print("Climacity : {}".format(os.system("python3 {}/climacity.py -s {} -e {}".format(settings.CLIMACITY_ROOT, str(request.POST['starting_date']), str(request.POST['ending_date'])))))
-        print("CLIMACITY DONE")
-        print("SABRA : {}".format(os.system("python3 {}/sabra.py -s {} -e {}".format(settings.SABRA_ROOT, str(request.POST['starting_date']), str(request.POST['ending_date'])))))
+    print(request.POST)
+    if 'starting_date' in request.POST and 'ending_date' in request.POST:
+        source_dict = {
+            "climacity": "python3 {}/climacity.py -s {} -e {}".format(settings.CLIMACITY_ROOT, str(request.POST['starting_date']), str(request.POST['ending_date'])),
+            "sabra" : "python3 {}/sabra.py -s {} -e {}".format(settings.SABRA_ROOT, str(request.POST['starting_date']), str(request.POST['ending_date']))
+        }
+        if 'source_list' in request.POST:
+            for s in request.POST.getlist('source_list'):
+                if s in source_dict:
+                    print("Launching {}".format(s))
+                    print("{}".format(os.system(source_dict[s])))
+
     return redirect(manage_data)

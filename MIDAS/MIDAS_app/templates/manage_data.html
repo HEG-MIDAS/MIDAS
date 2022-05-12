@@ -30,21 +30,33 @@
             {% endif %}
             <div class="collapse p-3 row g-0 justify-content-center" id="collapseAddDatas">
                 <div class="col-sm-10">
-                    <form class="row align-items-end g-3 needs-validation" id="harvestDataForm" action="/harvest-data/" method="post">
+                    <form id="harvestDataForm" action="/harvest-data/" method="post">
                         {% csrf_token %}
-                        <div class="col-md-4">
-                            <label for="{{ form.starting_date.id_for_label }}">{{ form.starting_date.label }} :</label>
-                            {{ form.starting_date }}
+                        <div class="row align-items-end justify-content-center needs-validation my-2">
+                            {% for source in sources_input %}
+                                <div class="form-check col-md-3">
+                                    <input class="form-check-input" name="source_list" id="{{ source.slug }}Input" type="checkbox" value="{{ source.slug }}" checked>
+                                    <label class="form-check-label" for="{{ source.slug }}Input">{{ source.name }}</label>
+                                </div>
+                            {% endfor%}
                         </div>
-                        <div class="col-md-4">
-                            <label for="{{ form.ending_date.id_for_label }}">{{ form.ending_date.label }} :</label>
-                            {{ form.ending_date }}
+                        <div class="row align-items-end needs-validation my-2">
+                            <div class="col-md-6">
+                                <label for="{{ form.starting_date.id_for_label }}">{{ form.starting_date.label }} :</label>
+                                {{ form.starting_date }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.ending_date.id_for_label }}">{{ form.ending_date.label }} :</label>
+                                {{ form.ending_date }}
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <button type="submit" class="btn btn-primary">
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
-                                Envoyer
-                            </button>
+                        <div class="row align-items-end justify-content-end needs-validation my-2">
+                            <div class="col-md-4 text-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
+                                    Envoyer
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
