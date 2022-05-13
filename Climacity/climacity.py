@@ -20,6 +20,8 @@ import getopt
 import sys
 import numpy as np
 from merge_csv_by_date_package import merge_csv_by_date
+from pathlib import Path
+import shutil
 
 
 def add_logs(start_date: datetime.datetime, end_date: datetime.datetime, __location__: str) -> None:
@@ -134,6 +136,40 @@ def process_data(array_data: Array) -> Array:
     return array_processed_data
 
 
+def edit_original_header(path_original_data_file: str, path_tmp_file: str) -> None:
+    header_original = ''
+    with open(path_original_data_file, "r") as file:
+        header_original = file.readline()
+
+    header_original_splitted = header_original.split()
+
+    header_tmp = ''
+    with open(path_tmp_file, "r") as file:
+        header_tmp = file.readline()
+
+    header_tmp_splitted = header_tmp.split()
+
+    if datetime.datetime.strptime(header_original_splitted[5],'%Y-%m-%d').date() > datetime.datetime.strptime(header_tmp_splitted[5],'%Y-%m-%d').date():
+        header_original_splitted[5] = header_tmp_splitted[5]
+        header_original_splitted[8] = header_tmp_splitted[8]
+    if datetime.datetime.strptime(header_original_splitted[10],'%Y-%m-%d').date() < datetime.datetime.strptime(header_tmp_splitted[10],'%Y-%m-%d').date():
+        header_original_splitted[10] = header_tmp_splitted[10]
+        header_original_splitted[13] = header_tmp_splitted[13]
+
+    header_to_write = ' '.join(header_original_splitted) + '\n'
+
+    lines = []
+    with open(path_original_data_file, "r") as file:
+        for line in file:
+            lines.append(line)
+
+    lines[0] = header_to_write
+
+    with open(path_original_data_file, "w") as file:
+        for line in lines:
+            file.write(line)
+
+
 def write_array_in_tmp_file(array_data: Array, path_tmp_file: str) -> None:
     """Write the data contained in an array into a file which has a given path
 
@@ -204,7 +240,7 @@ def main() -> None:
 
     today = time.strftime("%Y-%m-%d %H:%M:%S")
     # Indicates the interval of years for a request
-    gap_years = 5
+    gap_years = 1
 
     print("--------------- Starting requests to Climacity : {} ---------------".format(today))
 
@@ -235,6 +271,8 @@ def main() -> None:
             # Merge temporary file with the file containing all the original data
             print("--------------- Merging new data --------------")
             merge_csv_by_date.merge_csv_by_date(path_original_data_file, path_tmp_file, '%Y-%m-%d %H:%M:%S')
+            if Path(path_original_data_file).is_file():
+                edit_original_header(path_original_data_file, path_tmp_file)
             # Remove the temporary file created
             os.remove(path_tmp_file)
 
