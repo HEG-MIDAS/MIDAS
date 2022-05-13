@@ -19,7 +19,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods
 import random
 from MIDAS_api.views import StatusView, SearchView
-from rest_framework.request import Request 
+from rest_framework.request import Request
 from django.contrib import messages
 from . import update_db
 
@@ -235,15 +235,22 @@ def manage_data(request):
 @require_http_methods(["POST"])
 def harvest_data(request):
     print(request.POST)
-    if 'starting_date' in request.POST and 'ending_date' in request.POST:
-        source_dict = {
-            "climacity": "python3 {}/climacity.py -s {} -e {}".format(settings.CLIMACITY_ROOT, str(request.POST['starting_date']), str(request.POST['ending_date'])),
-            "sabra" : "python3 {}/sabra.py -s {} -e {}".format(settings.SABRA_ROOT, str(request.POST['starting_date']), str(request.POST['ending_date']))
-        }
-        if 'source_list' in request.POST:
-            for s in request.POST.getlist('source_list'):
-                if s in source_dict:
-                    print("Launching {}".format(s))
-                    print("{}".format(os.system(source_dict[s])))
+    if 'updateOperation' in request.POST and request.POST['updateOperation'] == 'files':
+        if 'starting_date' in request.POST and 'ending_date' in request.POST and request.POST['starting_date'] != "" and request.POST['ending_date'] != "":
+            source_dict = {
+                "climacity": "python3 {}/climacity.py -s {} -e {}".format(settings.CLIMACITY_ROOT, str(request.POST['starting_date']), str(request.POST['ending_date'])),
+                "sabra" : "python3 {}/sabra.py -s {} -e {}".format(settings.SABRA_ROOT, str(request.POST['starting_date']), str(request.POST['ending_date']))
+            }
+            if 'source_list' in request.POST:
+                for s in request.POST.getlist('source_list'):
+                    if s in source_dict:
+                        print("Launching {}".format(s))
+                        print("{}".format(os.system(source_dict[s])))
+    elif request.POST['updateOperation'] == 'db':
+        print("Updating Database...")
+        print("{}".format(os.system("python3 MIDAS/manage.py insert_ssp_db")))
+    elif request.POST['updateOperation'] == 'dbInfos':
+        print("Updating Databse Informations...")
+        print("{}".format(os.system("python3 MIDAS/manage.py update_db_params_infos")))
 
     return redirect(manage_data)

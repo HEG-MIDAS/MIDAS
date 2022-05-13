@@ -31,6 +31,7 @@
             <div class="collapse p-3 row g-0 justify-content-center" id="collapseAddDatas">
                 <div class="col-sm-10">
                     <form id="harvestDataForm" action="/harvest-data/" method="post">
+                        <input type="hidden" name="updateOperation" value="files">
                         {% csrf_token %}
                         <div class="row align-items-end justify-content-center needs-validation my-2">
                             {% for source in sources_input %}
@@ -51,8 +52,16 @@
                             </div>
                         </div>
                         <div class="row align-items-end justify-content-end needs-validation my-2">
-                            <div class="col-md-4 text-end">
-                                <button type="submit" class="btn btn-primary">
+                            <div class="col-md-12 text-end">
+                                <button type="button" data-midas-action="db" class="midasDataButton btn btn-warning" title="Mise à jour de la base de données">
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
+                                    MàJ BDD
+                                </button>
+                                <button type="button" data-midas-action="dbInfos" class="midasDataButton btn btn-danger" title="Mise à jour des informations des données dans la base de données">
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
+                                    MàJ informations données
+                                </button>
+                                <button type="submit" data-midas-action="files" class="midasDataButton btn btn-primary">
                                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
                                     Envoyer
                                 </button>
@@ -122,11 +131,31 @@
         })
     })
     const harvestDataForm = document.querySelector('#harvestDataForm')
-    harvestDataForm.addEventListener('submit', _ =>{
-        const button = harvestDataForm.querySelector('button[type="submit"]')
-        button.firstElementChild.hidden = false;
-        button.disabled = true
+    const formButtons = harvestDataForm.querySelectorAll('.midasDataButton')
+    formButtons.forEach((b)=>{
+        b.addEventListener('click',_=>{
+            let hiddenInput = harvestDataForm.querySelector('input[name="updateOperation"]')
+            hiddenInput.value = b.dataset.midasAction
+            if(b.dataset.midasAction == "files"){
+                if (!harvestDataForm.checkValidity()) {
+                  event.preventDefault()
+                  event.stopPropagation()
+              }else{
+                  b.firstElementChild.hidden = false
+                  formButtons.forEach(e=>e.disabled=true)
+              }
+            }else{
+                b.firstElementChild.hidden = false
+                formButtons.forEach(e=>e.disabled=true)
+                harvestDataForm.submit()
+            }
+        })
     })
+    // harvestDataForm.addEventListener('submit', _ =>{
+    //     const button = harvestDataForm.querySelector('button[type="submit"]')
+    //     button.firstElementChild.hidden = false;
+    //     button.disabled = true
+    // })
 </script>
 
 {% endblock %}
