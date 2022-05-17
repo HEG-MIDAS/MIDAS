@@ -5,7 +5,7 @@ import django
 import datetime
 from wsgiref import headers
 import requests
-from django.http import HttpRequest, HttpResponse, Http404
+from django.http import HttpRequest, HttpResponse, Http404, JsonResponse
 from django.shortcuts import redirect, render
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -56,25 +56,48 @@ def index(request):
     # request.GET._mutable = False
     # print(StatusView().get(new_request).data)
 
-    # new_request = Request(request)
-    # new_request.method = 'POST'
-    # new_request.data['sources'] = ['climacity']
-    # new_request.data['stations'] = ['prairie']
-    # new_request.data['parameters'] = ['tamb_avg']
-    # new_request.data['start_date'] = '2022-05-08 00:00:00'
-    # new_request.data['end_date'] = '2022-05-08 23:59:59'
+    new_request = Request(request)
+    new_request.method = 'POST'
+    new_request.data['sources'] = ['climacity']
+    new_request.data['stations'] = ['prairie']
+    new_request.data['parameters'] = ['tamb_avg']
+    new_request.data['start_date'] = '2022-05-08 00:00:00'
+    new_request.data['end_date'] = '2022-05-08 23:59:59'
 
-    # new_request.user = request.user
+    new_request.user = request.user
 
-    # print(SearchView().post(new_request).data)
+    print(SearchView().post(new_request).data)
 
-    context['sources'] = [source['name'] for source in json.loads(requests.get('http://localhost:8000/api/sources/').content.decode())]
+    context['sources'] = [{'name': source['name'], 'slug': source['slug']} for source in json.loads(requests.get('http://localhost:8000/api/sources/').content.decode())]
     
 
     # csrftoken = django.middleware.csrf.get_token(request)
     # print(csrftoken)
     # print(requests.post('http://localhost:8000/api/filter/', headers={"X-CSRFToken": csrftoken}))
     return render(request, 'index.html', context)
+
+
+@require_http_methods(["POST"])
+def stations_dashboard(request):
+    data = []
+
+    jsonData = json.loads(request.body)
+    sources = jsonData.get('sources')
+
+    request_user = request.user
+
+    request = HttpRequest()
+    new_request = Request(request)
+    new_request.method = 'POST'
+    new_request.data['sources'] = sources
+
+    new_request.user = request_user
+
+    data_stations_response = json.loads(json.dumps(FilterView().post(new_request).data))
+    for station in data_stations_response:
+        data.append({'source': station['source'], 'name': station['name'], 'slug': station['slug']})
+
+    return JsonResponse(json.dumps(data), safe=False)
 
 def statut(request):
     context = {}

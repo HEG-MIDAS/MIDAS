@@ -8,21 +8,28 @@
 {% endblock %}
 
 {% block body_content %}
+
+{% csrf_token %}
+
 <div class="midas-container container-fluid">
     <div class="accordion" id="accordionDashboard">
         <div class="accordion-item">
             <h2 class="accordion-header" id="headingOne">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSources" aria-expanded="true" aria-controls="collapseSources">
                     Sources
+                    <input class="" type="checkbox" value="" id="fixedSources" onclick="fixedAccordeon(this)">
+                    <label class="" for="fixedSources">
+                        Bloquer l'affichage des sources
+                    </label>
                 </button>
             </h2>
             <div id="collapseSources" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionDashboard">
                 <div class="accordion-body sources">
                     {% for source in sources %}
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheck{{ source }}" onclick="select_source(this)">
-                            <label class="form-check-label" for="flexCheck{{ source }}">
-                                {{ source }}
+                            <input class="form-check-input" type="checkbox" value="{{ source.slug }}" id="flexCheck{{ source.name }}" onclick="select_source(this)">
+                            <label class="form-check-label" for="flexCheck{{ source.name }}">
+                                {{ source.name }}
                             </label>
                         </div>
                     {% endfor %}
@@ -36,8 +43,8 @@
                 </button>
             </h2>
             <div id="collapseStations" class="accordion-collapse collapse" aria-labelledby="headingStation" data-bs-parent="#accordionDashboard">
-                <div class="accordion-body">
-                    A venir...
+                <div class="accordion-body stations" id="accordionStations">
+                    
                 </div>
             </div>
         </div>
@@ -46,29 +53,91 @@
         <div id="main" style="width: 800px;height:800px;"></div>
     </div>
     <script type="text/javascript">
+        var sources = []; 
+
         function select_source(e){
             stationsAccordeon = document.getElementById('headingStation').getElementsByTagName('button')[0];
             if (e.checked){
                 stationsAccordeon.disabled = false;
-                console.log("request stations");
+                // Collapse Sources when one is selected
+                var cs = document.getElementById('collapseSources');
+                var bcs = new bootstrap.Collapse(cs, {
+                    toggle: true
+                });
+                sources.push(e.value);
+                requestStations(sources)
+                // Display Stations
+                cs = document.getElementById('collapseStations');
+                bcs = new bootstrap.Collapse(cs, {
+                    toggle: true
+                });
             }
             else {
                 input_sources_array = document.getElementById('collapseSources').getElementsByTagName('input');
                 count_sources_off = 0
+                sources = []; 
                 for (var i = 0; i < input_sources_array.length; ++i) {
-                    if (!input_sources_array[i].checked) {
+                    if (input_sources_array[i].checked) {
+                        sources.push(input_sources_array[i].value);
+                    }
+                    else {
                         count_sources_off++;
                     }
                 }
                 if (count_sources_off == input_sources_array.length) {
                     stationsAccordeon.disabled = true;
                 }
+                else{
+                    requestStations(sources)
+                    var cs = document.getElementById('collapseStations');
+                    var bcs = new bootstrap.Collapse(cs, {
+                        toggle: true
+                    });
+                }
             }
+        }
 
+        const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value ;
+        function requestStations(sources){
+            fetch('/stations-dashboard/',{
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrf,
+                },
+                body: JSON.stringify({
+                    'sources': sources,
+                })
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(responseJSONData) {
+                jsonData = JSON.parse(responseJSONData);
+                var accordionStations = document.getElementById("accordionStations");
+                while (accordionStations.firstChild) {
+                    accordionStations.removeChild(accordionStations.firstChild);
+                }
+                for (var i = 0; i < jsonData.length; i++) {
+                    const accDiv = document.createElement("div");
+                    accDiv.className = "form-check form-check-inline";
+                    const accInp = document.createElement("input");
+                    accInp.className = "form-check-input";
+                    accInp.type = "checkbox";
+                    accInp.value = jsonData[i]['source']['slug'].concat(" ", jsonData[i]['slug']);
+                    accInp.id = "flexCheck" + jsonData[i]['name'];
+                    const accLab = document.createElement("label");
+                    accLab.className = "form-check-label";
+                    accLab.for = "flexCheck" + jsonData[i]['name'];
+                    accLab.innerText = jsonData[i]['name'];
+                    accDiv.appendChild(accInp);
+                    accDiv.appendChild(accLab);
+                    accordionStations.appendChild(accDiv);
+                }
+
+            });
         }
     </script>
 
-    {% csrf_token %}
     <script type="text/javascript">
 
         
@@ -192,13 +261,13 @@
     </script>
     <script type="text/javascript">
 
-        var sources = ['climacity'];
+        {% comment %} var sources = ['climacity'];
         var stations = ['prairie'];
         var parameters = ['tamb_avg'];
         var start_date = '2022-05-08 00:00:00';
-        var end_date = '2022-05-08 23:59:59';
+        var end_date = '2022-05-08 23:59:59'; {% endcomment %}
 
-        const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value
+        // const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value
         function test(){
             fetch('/api/search/',{
                 method: 'POST',
@@ -222,7 +291,7 @@
                 console.log(myBlob)
             });
         }
-        test();
+        // test();
     </script>
 </div>
 {% endblock %}

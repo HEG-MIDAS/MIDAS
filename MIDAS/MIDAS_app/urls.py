@@ -18,4 +18,6 @@ urlpatterns=[
     path('reset-password/', PasswordResetView.as_view(template_name='registration/password_reset_form.html'), name='password_reset'),
     path('reset-password-success/', PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name='password_reset_done'),
     path('reset-success/', PasswordResetCompleteView.as_view(template_name='registration/password_reset_done.html'), name='password_reset_done'),
+    # Dashboard paths
+    path('stations-dashboard/', views.stations_dashboard, name='stations_dashboard'),
 ]
