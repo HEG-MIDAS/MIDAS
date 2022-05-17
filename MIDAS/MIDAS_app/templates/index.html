@@ -12,18 +12,18 @@
 {% csrf_token %}
 
 <div class="midas-container container-fluid">
+    <input class="" type="checkbox" value="" id="fixedSources" onclick="fixedAccordeon(this)">
+    <label class="" for="fixedSources">
+        Bloquer l'accordéon
+    </label>
     <div class="accordion" id="accordionDashboard">
         <div class="accordion-item">
-            <h2 class="accordion-header" id="headingOne">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSources" aria-expanded="true" aria-controls="collapseSources">
+            <h2 class="accordion-header" id="headingSources">
+                <button id="buttonSources" class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSources" aria-expanded="true" aria-controls="collapseSources">
                     Sources
-                    <input class="" type="checkbox" value="" id="fixedSources" onclick="fixedAccordeon(this)">
-                    <label class="" for="fixedSources">
-                        Bloquer l'affichage des sources
-                    </label>
                 </button>
             </h2>
-            <div id="collapseSources" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionDashboard">
+            <div id="collapseSources" class="accordion-collapse collapse show" aria-labelledby="headingSources" data-bs-parent="#accordionDashboard">
                 <div class="accordion-body sources">
                     {% for source in sources %}
                         <div class="form-check form-check-inline">
@@ -37,12 +37,12 @@
             </div>
         </div>
         <div class="accordion-item">
-            <h2 class="accordion-header" id="headingStation">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStations" aria-expanded="false" aria-controls="collapseStations" disabled>
+            <h2 class="accordion-header" id="headingStations">
+                <button id="buttonStations" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStations" aria-expanded="false" aria-controls="collapseStations" disabled>
                     Stations
                 </button>
             </h2>
-            <div id="collapseStations" class="accordion-collapse collapse" aria-labelledby="headingStation" data-bs-parent="#accordionDashboard">
+            <div id="collapseStations" class="accordion-collapse collapse" aria-labelledby="headingStations" data-bs-parent="#accordionDashboard">
                 <div class="accordion-body stations" id="accordionStations">
                     
                 </div>
@@ -53,24 +53,39 @@
         <div id="main" style="width: 800px;height:800px;"></div>
     </div>
     <script type="text/javascript">
-        var sources = []; 
+        var sources = [];
+        var fixed = false;
+
+        function fixedAccordeon(e){
+            data_to_pass = null;
+            fixed = true;
+            if (!e.checked) {
+                data_to_pass = document.getElementById('accordionDashboard');
+                fixed = false;
+            }
+
+            for (var i = 0; i < document.getElementsByClassName('accordion-collapse').length; i++) {
+                document.getElementsByClassName('accordion-collapse')[i].dataset.bsParent = false;
+                if (!fixed) {
+                    document.getElementsByClassName('accordion-collapse')[i].dataset.bsParent = '#accordionDashboard';
+                }
+                try {
+                    bootstrap.Collapse.getInstance(document.getElementsByClassName('accordion-collapse')[i])._config.parent = data_to_pass;
+                }
+                catch {}
+            }
+        }
 
         function select_source(e){
-            stationsAccordeon = document.getElementById('headingStation').getElementsByTagName('button')[0];
-            if (e.checked){
+            stationsAccordeon = document.getElementById('headingStations').getElementsByTagName('button')[0];
+            if (e.checked) {
                 stationsAccordeon.disabled = false;
-                // Collapse Sources when one is selected
-                var cs = document.getElementById('collapseSources');
-                var bcs = new bootstrap.Collapse(cs, {
-                    toggle: true
-                });
                 sources.push(e.value);
                 requestStations(sources)
-                // Display Stations
-                cs = document.getElementById('collapseStations');
-                bcs = new bootstrap.Collapse(cs, {
-                    toggle: true
-                });
+                var cs = document.getElementById('buttonStations');
+                if (!cs.ariExpanded) {
+                    cs.click();
+                }
             }
             else {
                 input_sources_array = document.getElementById('collapseSources').getElementsByTagName('input');
@@ -86,15 +101,32 @@
                 }
                 if (count_sources_off == input_sources_array.length) {
                     stationsAccordeon.disabled = true;
+                    var cs = document.getElementById('buttonStations');
+                    cs.click();
                 }
                 else{
                     requestStations(sources)
-                    var cs = document.getElementById('collapseStations');
-                    var bcs = new bootstrap.Collapse(cs, {
-                        toggle: true
-                    });
+                    var cs = document.getElementById('buttonStations');
+                    cs.click();
                 }
             }
+        }
+
+        option = {'sources' : sources}
+
+        function test(params) {
+            fetch('/stations-dashboard/',{
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrf,
+                },
+                body: JSON.stringify(
+                    params
+                )
+            })
+            .then(function(response) {
+                return response.json();
+            })
         }
 
         const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value ;
