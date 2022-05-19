@@ -20,4 +20,5 @@ urlpatterns=[
     path('reset-success/', PasswordResetCompleteView.as_view(template_name='registration/password_reset_done.html'), name='password_reset_done'),
     # Dashboard paths
     path('stations-dashboard/', views.stations_dashboard, name='stations_dashboard'),
+    path('parameters-dashboard/', views.parameters_dashboard, name='parameters_dashboard'),
 ]

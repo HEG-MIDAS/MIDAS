@@ -99,6 +99,34 @@ def stations_dashboard(request):
 
     return JsonResponse(json.dumps(data), safe=False)
 
+
+@require_http_methods(["POST"])
+def parameters_dashboard(request):
+    data = []
+
+    jsonData = json.loads(request.body)
+    sources = jsonData.get('sources')
+    stations = jsonData.get('stations')
+
+    print(stations)
+
+    request_user = request.user
+
+    request = HttpRequest()
+    new_request = Request(request)
+    new_request.method = 'POST'
+    new_request.data['sources'] = sources
+    new_request.data['stations'] = stations
+
+    new_request.user = request_user
+
+    data_parameters_response = json.loads(json.dumps(FilterView().post(new_request).data))
+    for parameter in data_parameters_response:
+        data.append({'source': sources, 'station': stations, 'name': parameter['name'], 'slug': parameter['slug'], 'infos': parameter['infos']})
+
+    return JsonResponse(json.dumps(data), safe=False)
+
+
 def statut(request):
     context = {}
     return render(request, 'statut.html', context)

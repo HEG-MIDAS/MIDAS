@@ -48,12 +48,26 @@
                 </div>
             </div>
         </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingParameters">
+                <button id="buttonParameters" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseParameters" aria-expanded="false" aria-controls="collapseParameters" disabled>
+                    Paramètres
+                </button>
+            </h2>
+            <div id="collapseParameters" class="accordion-collapse collapse" aria-labelledby="headingParameters" data-bs-parent="#accordionDashboard">
+                <div class="accordion-body parameters" id="accordionParameters">
+                    
+                </div>
+            </div>
+        </div>
     </div>
     <div class="d-flex w-100 justify-content-center">
         <div id="main" style="width: 800px;height:800px;"></div>
     </div>
     <script type="text/javascript">
         var sources = [];
+        var stations = [];
+        var option = {};
         var fixed = false;
 
         function fixedAccordeon(e){
@@ -81,7 +95,8 @@
             if (e.checked) {
                 stationsAccordeon.disabled = false;
                 sources.push(e.value);
-                requestStations(sources)
+                options = {'sources': sources}
+                requestStations(options)
                 var cs = document.getElementById('buttonStations');
                 if (!cs.ariExpanded) {
                     cs.click();
@@ -105,40 +120,61 @@
                     cs.click();
                 }
                 else{
-                    requestStations(sources)
+                    requestStations(options)
                     var cs = document.getElementById('buttonStations');
                     cs.click();
                 }
             }
         }
 
-        option = {'sources' : sources}
+        function select_station(e){
+            parametersAccordeon = document.getElementById('headingParameters').getElementsByTagName('button')[0];
+            array_e_values = e.value.split(' ');
+            options = {'sources': array_e_values[0], 'stations': array_e_values[1]};
+            console.log(options)
+            if (e.checked) {
+                parametersAccordeon.disabled = false;
+                requestParameters(options)
+                var cs = document.getElementById('buttonParameters');
+                if (!cs.ariExpanded) {
+                    cs.click();
+                }
+            }
+            else {
+                input_sources_array = document.getElementById('collapseSources').getElementsByTagName('input');
+                count_sources_off = 0
+                sources = []; 
+                for (var i = 0; i < input_sources_array.length; ++i) {
+                    if (input_sources_array[i].checked) {
+                        sources.push(input_sources_array[i].value);
+                    }
+                    else {
+                        count_sources_off++;
+                    }
+                }
+                if (count_sources_off == input_sources_array.length) {
+                    parametersAccordeon.disabled = true;
+                    var cs = document.getElementById('buttonParameters');
+                    cs.click();
+                }
+                else{
+                    requestParameters(options)
+                    var cs = document.getElementById('buttonParameters');
+                    cs.click();
+                }
+            }
+        }
 
-        function test(params) {
+        const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value ;        
+        function requestStations(options){
             fetch('/stations-dashboard/',{
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': csrf,
                 },
                 body: JSON.stringify(
-                    params
+                    options
                 )
-            })
-            .then(function(response) {
-                return response.json();
-            })
-        }
-
-        const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value ;
-        function requestStations(sources){
-            fetch('/stations-dashboard/',{
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': csrf,
-                },
-                body: JSON.stringify({
-                    'sources': sources,
-                })
             })
             .then(function(response) {
                 return response.json();
@@ -157,6 +193,7 @@
                     accInp.type = "checkbox";
                     accInp.value = jsonData[i]['source']['slug'].concat(" ", jsonData[i]['slug']);
                     accInp.id = "flexCheck" + jsonData[i]['name'];
+                    accInp.setAttribute('onclick', 'select_station(this)');
                     const accLab = document.createElement("label");
                     accLab.className = "form-check-label";
                     accLab.for = "flexCheck" + jsonData[i]['name'];
@@ -164,6 +201,46 @@
                     accDiv.appendChild(accInp);
                     accDiv.appendChild(accLab);
                     accordionStations.appendChild(accDiv);
+                }
+
+            });
+        }
+
+        function requestParameters(options){
+            fetch('/parameters-dashboard/',{
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrf,
+                },
+                body: JSON.stringify(
+                    options
+                )
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(responseJSONData) {
+                jsonData = JSON.parse(responseJSONData);
+                var accordionParameters = document.getElementById("accordionParameters");
+                while (accordionParameters.firstChild) {
+                    accordionParameters.removeChild(accordionParameters.firstChild);
+                }
+                for (var i = 0; i < jsonData.length; i++) {
+                    const accDiv = document.createElement("div");
+                    accDiv.className = "form-check form-check-inline";
+                    accDiv.title = jsonData[i]['infos'];
+                    const accInp = document.createElement("input");
+                    accInp.className = "form-check-input";
+                    accInp.type = "checkbox";
+                    accInp.value = jsonData[i]['source'].concat(" ", jsonData[i]['station']).concat(" ", jsonData[i]['slug']);
+                    accInp.id = "flexCheck" + jsonData[i]['name'];
+                    const accLab = document.createElement("label");
+                    accLab.className = "form-check-label";
+                    accLab.for = "flexCheck" + jsonData[i]['name'];
+                    accLab.innerText = jsonData[i]['name'];
+                    accDiv.appendChild(accInp);
+                    accDiv.appendChild(accLab);
+                    accordionParameters.appendChild(accDiv);
                 }
 
             });
