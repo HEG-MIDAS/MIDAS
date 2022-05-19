@@ -11,23 +11,31 @@ scraper_path = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 def createHeaders():
+    """Take the inventory csv file and create a headers file from it
+    """
+    inventoryCSV = open(os.path.join(scraper_path,'inventory.csv'))
+    inventoryCSVLength = len(inventoryCSV.readlines())
+    inventoryCSV.close()
     inventoryCSV = open(os.path.join(scraper_path,'inventory.csv'))
     inventoryCSV.readline()
     stations = {}
+    count = 1
     for csvLine in inventoryCSV:
+        print(str(count)+"/"+str(inventoryCSVLength),end="\r")
         lineList = csvLine.split('\t')
         if lineList[0] not in stations:
             stations[lineList[0]] = []
         if lineList[3] not in stations[lineList[0]]:
             stations[lineList[0]].append(lineList[3])
+        count+=1
 
-    print(stations)
     headerFile = open(os.path.join(scraper_path,'headers.csv'),'w+')
     for key,value in stations.items():
         headerFile.write(key+";"+";".join(value)+"\n")
 
     headerFile.close()
     inventoryCSV.close()
+    print("Created headers csv file !")
 
 def createInventoryCSV():
     """Take an iventory pdf file from idaweb and transform it to csv
@@ -67,12 +75,16 @@ def createInventoryCSV():
 
 def orderManipulation():
     order_files = list(filter(lambda f: f.startswith('order_'),os.listdir(scraper_path)))
+    if os.path.exists(os.path.join(scraper_path,'headers.csv')) == False:
+        print("The headers file wasn't found. run the command with the -i option to generate it.")
+        sys.exit(1)
     if(len(order_files) == 0):
         print("No order file not found !")
         sys.exit(1)
     elif(len(order_files)%2!=0):
         print("Some file seems to be missing !\nMake sure you have one order_data and one order_legend for each cod number")
         sys.exit(1)
+
 def main(argv):
     try:
       opts, args = getopt.getopt(argv,"ihs")
