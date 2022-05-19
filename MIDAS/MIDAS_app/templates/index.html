@@ -60,6 +60,30 @@
                 </div>
             </div>
         </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingDates">
+                <button id="buttonDates" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDates" aria-expanded="false" aria-controls="collapseDates" disabled>
+                    Temporalité
+                </button>
+            </h2>
+            <div id="collapseDates" class="accordion-collapse collapse" aria-labelledby="headingDates" data-bs-parent="#accordionDashboard">
+                <div class="row needs-validation">
+                    <div class="accordion-body dates" id="accordionDates">
+                        <div class="col-md-6">
+                            <label for="id_starting_date">Date de début  :</label>
+                            <input type="datetime-local" id="startingDate" name="starting_date" class="form-control" required="" id="id_starting_date">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_ending_date">Date de fin  :</label>
+                            <input type="datetime-local" id="endingDate" name="ending_date" class="form-control" required="" id="id_ending_date">
+                        </div>
+                        <button type="submit" class="btn btn-primary" onclick="requestData(this)">
+                            Envoyer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="d-flex w-100 justify-content-center">
         <div id="main" style="width: 800px;height:800px;"></div>
@@ -67,8 +91,24 @@
     <script type="text/javascript">
         var sources = [];
         var stations = [];
+        var parameters = [];
         var option = {};
         var fixed = false;
+
+        function requestData(e){
+            console.log(parameters)
+            var startingDateValue = document.getElementById('startingDate').value;
+            var endingDateValue = document.getElementById('endingDate').value;
+            if (startingDateValue != '' && endingDateValue != '') {
+                var startingDate = new Date(startingDateValue);
+                var startingDateString = startingDate.getUTCFullYear() +"-"+ (startingDate.getUTCMonth()+1) +"-"+ startingDate.getUTCDate() + " " + startingDate.getUTCHours() + ":" + startingDate.getUTCMinutes() + ":" + startingDate.getUTCSeconds();
+                var endingDate = new Date(endingDateValue);
+                var endingDateString = endingDate.getUTCFullYear() +"-"+ (endingDate.getUTCMonth()+1) +"-"+ endingDate.getUTCDate() + " " + endingDate.getUTCHours() + ":" + endingDate.getUTCMinutes() + ":" + endingDate.getUTCSeconds();
+                
+                option = {'sources': sources, 'stations': stations, 'parameters': parameters, 'starting_date': startingDateString, 'ending_date': endingDateString}
+                requestDataFetch(option)
+            }
+        }
 
         function fixedAccordeon(e){
             data_to_pass = null;
@@ -98,7 +138,6 @@
                 options = {'sources': sources}
                 requestStations(options)
                 var cs = document.getElementById('buttonStations');
-                console.log(Boolean(cs.getAttribute('aria-expanded')))
                 if (cs.getAttribute('aria-expanded') === 'false') {
                     cs.click();
                 }
@@ -154,7 +193,6 @@
                 input_stations_array = document.getElementById('collapseStations').getElementsByTagName('input');
                 count_stations_off = 0
                 stations = [];
-                console.log("HELLO")
                 for (var i = 0; i < input_stations_array.length; ++i) {
                     if (input_stations_array[i].checked) {
                         stations.push(input_stations_array[i].value.split(' ')[1]);
@@ -172,9 +210,47 @@
                 }
                 else{
                     options = {'sources': sources, 'stations': stations};
-                    console.log(options)
                     requestParameters(options)
                     var cs = document.getElementById('buttonParameters');
+                    if (!fixed) {
+                        cs.click();
+                    }
+                }
+            }
+        }
+
+        function select_parameter(e){
+            datesAccordeon = document.getElementById('headingDates').getElementsByTagName('button')[0];
+            array_e_values = e.value.split(' ');
+            parameters.push(array_e_values.at(-1));
+            if (e.checked) {
+                datesAccordeon.disabled = false;
+                var cs = document.getElementById('buttonDates');
+                if (cs.getAttribute('aria-expanded') === 'false') {
+                    cs.click();
+                }
+            }
+            else {
+                input_parameters_array = document.getElementById('collapseParameters').getElementsByTagName('input');
+                count_parameters_off = 0
+                parameters = [];
+                for (var i = 0; i < input_parameters_array.length; ++i) {
+                    if (input_parameters_array[i].checked) {
+                        parameters.push(input_parameters_array[i].value.split(' ').at(-1));
+                    }
+                    else {
+                        count_parameters_off++;
+                    }
+                }
+                if (count_parameters_off == input_parameters_array.length) {
+                    var cs = document.getElementById('buttonDates');
+                    if (cs.getAttribute('aria-expanded') === 'true') {
+                        cs.click();
+                    }
+                    datesAccordeon.disabled = true;
+                }
+                else{
+                    var cs = document.getElementById('buttonDates');
                     if (!fixed) {
                         cs.click();
                     }
@@ -251,6 +327,7 @@
                     accInp.type = "checkbox";
                     accInp.value = jsonData[i]['source'].concat(" ", jsonData[i]['station']).concat(" ", jsonData[i]['slug']);
                     accInp.id = "flexCheck" + jsonData[i]['name'];
+                    accInp.setAttribute('onclick', 'select_parameter(this)');
                     const accLab = document.createElement("label");
                     accLab.className = "form-check-label";
                     accLab.for = "flexCheck" + jsonData[i]['name'];
@@ -260,6 +337,25 @@
                     accordionParameters.appendChild(accDiv);
                 }
 
+            });
+        }
+
+        function requestDataFetch(options){
+            fetch('/request-data/',{
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrf,
+                },
+                body: JSON.stringify(
+                    options
+                )
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(responseJSONData) {
+                jsonData = JSON.parse(responseJSONData);
+                console.log(jsonData)
             });
         }
     </script>

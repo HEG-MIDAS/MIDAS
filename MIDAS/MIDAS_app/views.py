@@ -121,11 +121,46 @@ def parameters_dashboard(request):
     new_request.user = request_user
 
     data_parameters_response = json.loads(json.dumps(FilterView().post(new_request).data))
-    print(data_parameters_response)
     for parameter in data_parameters_response:
-        data.append({'source': parameter['stations'], 'station': stations, 'name': parameter['name'], 'slug': parameter['slug'], 'infos': parameter['infos']})
+        stations_tmp = []
+        sources_tmp = []
+        for station in parameter['stations']:
+            stations_tmp.append(station['slug'])
+            sources_tmp.append(station['source']['slug'])
+
+        data.append({'source': ','.join(sources_tmp), 'station': ','.join(stations_tmp), 'name': parameter['name'], 'slug': parameter['slug'], 'infos': parameter['infos']})
 
     return JsonResponse(json.dumps(data), safe=False)
+
+
+@require_http_methods(["POST"])
+def request_data(request):
+    data = []
+
+    jsonData = json.loads(request.body)
+    sources = jsonData.get('sources')
+    stations = jsonData.get('stations')
+    parameters = jsonData.get('parameters')
+    starting_date = jsonData.get('starting_date')
+    ending_date = jsonData.get('ending_date')
+
+    request_user = request.user
+
+    request = HttpRequest()
+    new_request = Request(request)
+    new_request.method = 'POST'
+    new_request.data['sources'] = sources
+    new_request.data['stations'] = stations
+    new_request.data['parameters'] = parameters
+    new_request.data['starting_date'] = starting_date
+    new_request.data['ending_date'] = ending_date
+
+    new_request.user = request_user
+
+    data_stations_response = json.loads(json.dumps(SearchView().post(new_request).data))
+    print(data_stations_response)
+
+    return JsonResponse(json.dumps(data_stations_response), safe=False)
 
 
 def statut(request):
