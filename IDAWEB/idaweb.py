@@ -74,16 +74,28 @@ def createInventoryCSV():
     createHeaders()
 
 def orderManipulation():
-    order_files = list(filter(lambda f: f.startswith('order_'),os.listdir(scraper_path)))
+    headerFile = None
+    headers = {}
     if os.path.exists(os.path.join(scraper_path,'headers.csv')) == False:
         print("The headers file wasn't found. run the command with the -i option to generate it.")
         sys.exit(1)
+    else:
+        headerFile = open(os.path.join(scraper_path,'headers.csv'))
+        for line in headerFile:
+            line = line.strip()
+            splitted_line = line.split(";",1)
+            headers[splitted_line[0]]=splitted_line[1]
+        headerFile.close()
+
+    order_files = list(filter(lambda f: f.startswith('order_'),os.listdir(scraper_path)))
     if(len(order_files) == 0):
         print("No order file not found !")
         sys.exit(1)
     elif(len(order_files)%2!=0):
         print("Some file seems to be missing !\nMake sure you have one order_data and one order_legend for each cod number")
         sys.exit(1)
+
+    print(headers)
 
 def main(argv):
     try:
