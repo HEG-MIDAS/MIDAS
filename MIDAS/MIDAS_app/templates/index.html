@@ -117,8 +117,15 @@
                 }
                 if (count_sources_off == input_sources_array.length) {
                     var cs = document.getElementById('buttonStations');
-                    cs.click();
+                    if (cs.getAttribute('aria-expanded') === 'true') {
+                        cs.click();
+                    }
+                    var cs = document.getElementById('buttonParameters');
+                    if (cs.getAttribute('aria-expanded') === 'true') {
+                        cs.click();
+                    }
                     stationsAccordeon.disabled = true;
+                    parametersAccordeon.disabled = true;
                 }
                 else{
                     requestStations(options)
@@ -158,7 +165,9 @@
                 }
                 if (count_stations_off == input_stations_array.length) {
                     var cs = document.getElementById('buttonParameters');
-                    cs.click();
+                    if (cs.getAttribute('aria-expanded') === 'true') {
+                        cs.click();
+                    }
                     parametersAccordeon.disabled = true;
                 }
                 else{
