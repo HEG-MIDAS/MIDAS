@@ -234,7 +234,6 @@ def manage_data(request):
 @user_passes_test(lambda u: u.is_superuser)
 @require_http_methods(["POST"])
 def harvest_data(request):
-    print(request.POST)
     if 'updateOperation' in request.POST and request.POST['updateOperation'] == 'files':
         if 'starting_date' in request.POST and 'ending_date' in request.POST and request.POST['starting_date'] != "" and request.POST['ending_date'] != "":
             source_dict = {
