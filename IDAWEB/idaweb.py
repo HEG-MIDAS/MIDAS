@@ -11,6 +11,8 @@ scraper_path = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 def createInventoryCSV():
+    """Take an iventory pdf file from idaweb and transform it to csv
+    """
     if os.path.exists(os.path.join(scraper_path,'inventory.pdf')) == False:
         print("The inventory pdf file doesn't exist. Please place it next to this script and name it 'inventory.pdf'")
         sys.exit(1)
@@ -18,7 +20,10 @@ def createInventoryCSV():
     outputCSV = open(os.path.join(scraper_path,'inventory.csv'), 'w+')
     pdfReader = PyPDF2.PdfFileReader(inputPDF)
     print(str(pdfReader.numPages)+' page(s) found !')
+    outputCSV.write('Station\tAltitude\tDescription du paramètre\tParamètre\tUnité\tTemporalité\tDate de service\n')
     for i in range(0,pdfReader.numPages):
+        print(str(i)+"/"+str(pdfReader.numPages),end="\r")
+        sys.stdout.flush()
         pageObj = pdfReader.getPage(i)
         extracted = pageObj.extractText()
         extracted_list = extracted.split('\n')
@@ -38,12 +43,21 @@ def createInventoryCSV():
                 outputCSV.write(s)
     outputCSV.close()
     inputPDF.close()
+    print("Created inventory csv file !")
 
+def orderManipulation():
+    order_files = list(filter(lambda f: f.startswith('order_'),os.listdir(scraper_path)))
+    if(len(order_files) == 0):
+        print("No order file not found !")
+        sys.exit(1)
+    elif(len(order_files)%2!=0):
+        print("Some file seems to be missing !\nMake sure you have one order_data and one order_legend for each cod number")
+        sys.exit(1)
 def main(argv):
     try:
       opts, args = getopt.getopt(argv,"ih")
     except getopt.GetoptError:
-      print('scrap.py -s <start_date> -e <end_date>')
+      print('idaweb.py -i|')
       sys.exit(1)
     for opt, arg in opts:
         if opt == '-h':
@@ -51,6 +65,9 @@ def main(argv):
             sys.exit(1)
         elif opt == '-i':
             createInventoryCSV()
+            sys.exit(0)
+
+    orderManipulation()
 
 if __name__ == "__main__":
     main(sys.argv[1:])
