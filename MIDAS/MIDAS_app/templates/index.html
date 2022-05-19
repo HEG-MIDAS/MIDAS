@@ -98,7 +98,8 @@
                 options = {'sources': sources}
                 requestStations(options)
                 var cs = document.getElementById('buttonStations');
-                if (!cs.ariExpanded) {
+                console.log(Boolean(cs.getAttribute('aria-expanded')))
+                if (cs.getAttribute('aria-expanded') === 'false') {
                     cs.click();
                 }
             }
@@ -115,14 +116,16 @@
                     }
                 }
                 if (count_sources_off == input_sources_array.length) {
-                    stationsAccordeon.disabled = true;
                     var cs = document.getElementById('buttonStations');
                     cs.click();
+                    stationsAccordeon.disabled = true;
                 }
                 else{
                     requestStations(options)
                     var cs = document.getElementById('buttonStations');
-                    cs.click();
+                    if (!fixed) {
+                        cs.click();
+                    }
                 }
             }
         }
@@ -130,37 +133,42 @@
         function select_station(e){
             parametersAccordeon = document.getElementById('headingParameters').getElementsByTagName('button')[0];
             array_e_values = e.value.split(' ');
-            options = {'sources': array_e_values[0], 'stations': array_e_values[1]};
-            console.log(options)
+            stations.push(array_e_values[1]);
+            options = {'sources': sources, 'stations': stations};
             if (e.checked) {
                 parametersAccordeon.disabled = false;
                 requestParameters(options)
                 var cs = document.getElementById('buttonParameters');
-                if (!cs.ariExpanded) {
+                if (cs.getAttribute('aria-expanded') === 'false') {
                     cs.click();
                 }
             }
             else {
-                input_sources_array = document.getElementById('collapseSources').getElementsByTagName('input');
-                count_sources_off = 0
-                sources = []; 
-                for (var i = 0; i < input_sources_array.length; ++i) {
-                    if (input_sources_array[i].checked) {
-                        sources.push(input_sources_array[i].value);
+                input_stations_array = document.getElementById('collapseStations').getElementsByTagName('input');
+                count_stations_off = 0
+                stations = [];
+                console.log("HELLO")
+                for (var i = 0; i < input_stations_array.length; ++i) {
+                    if (input_stations_array[i].checked) {
+                        stations.push(input_stations_array[i].value.split(' ')[1]);
                     }
                     else {
-                        count_sources_off++;
+                        count_stations_off++;
                     }
                 }
-                if (count_sources_off == input_sources_array.length) {
-                    parametersAccordeon.disabled = true;
+                if (count_stations_off == input_stations_array.length) {
                     var cs = document.getElementById('buttonParameters');
                     cs.click();
+                    parametersAccordeon.disabled = true;
                 }
                 else{
+                    options = {'sources': sources, 'stations': stations};
+                    console.log(options)
                     requestParameters(options)
                     var cs = document.getElementById('buttonParameters');
-                    cs.click();
+                    if (!fixed) {
+                        cs.click();
+                    }
                 }
             }
         }

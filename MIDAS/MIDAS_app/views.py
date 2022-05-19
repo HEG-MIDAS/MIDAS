@@ -121,8 +121,9 @@ def parameters_dashboard(request):
     new_request.user = request_user
 
     data_parameters_response = json.loads(json.dumps(FilterView().post(new_request).data))
+    print(data_parameters_response)
     for parameter in data_parameters_response:
-        data.append({'source': sources, 'station': stations, 'name': parameter['name'], 'slug': parameter['slug'], 'infos': parameter['infos']})
+        data.append({'source': parameter['stations'], 'station': stations, 'name': parameter['name'], 'slug': parameter['slug'], 'infos': parameter['infos']})
 
     return JsonResponse(json.dumps(data), safe=False)
 
