@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework import authentication
 from rest_framework import generics
 from django.conf import settings
-from .serializers import StatusSerializer, SourceSerializer, StationSerializer, ParameterSerializer, ParametersOfStationSerializer, FavoriteGroupSerializer
+from .serializers import StatusSerializer, SourceSerializer, StationSerializer, ParameterSerializer, ParametersOfStationSerializer, FavoriteGroupSerializer, ParametersOfStationStationsSerializer
 from MIDAS_app.models import Source, Station, Parameter, ParametersOfStation, GroupOfFavorite, Token
 from rest_framework import exceptions
 
@@ -288,6 +288,10 @@ class FilterView(views.APIView):
             query = Parameter.objects.filter(id__in=data)
             serializer = ParameterSerializer(query,many=True)
             data = serializer.data
+            for d in data:
+                query = ParametersOfStation.objects.filter(parameter=d['id'],station__in=station)
+                serializer = ParametersOfStationStationsSerializer(query,many=True)
+                d['stations'] = serializer.data
         elif('sources' in request.data):
             sources = request.data['sources']
             if(type(sources) is list):
