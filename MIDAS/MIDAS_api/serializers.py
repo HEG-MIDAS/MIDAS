@@ -65,6 +65,24 @@ class ParametersOfStationSerializer(serializers.ModelSerializer):
         model = ParametersOfStation
         fields = ['parameter']
 
+# Views Serializer
+class ParametersOfStationStationsSourceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Source
+        fields = ['id','name','slug','url','infos']
+
+class ParametersOfStationStationsSerializer(serializers.ModelSerializer):
+    name = serializers.ReadOnlyField(source='station.name')
+    slug = serializers.ReadOnlyField(source='station.slug')
+    infos = serializers.ReadOnlyField(source='station.infos')
+    source = ParametersOfStationStationsSourceSerializer(source='station.source')
+    latitude = serializers.ReadOnlyField(source='station.latitude')
+    longitude = serializers.ReadOnlyField(source='station.longitude')
+    height = serializers.ReadOnlyField(source='station.height')
+    class Meta:
+        model = ParametersOfStation
+        fields = ['name','slug','infos','source','latitude','longitude','height']
+
 class ParameterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Parameter
