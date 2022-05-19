@@ -26,6 +26,7 @@ pycparser==2.21
 pydotplus==2.0.2
 pyOpenSSL==22.0.0
 pyparsing==3.0.7
+pypdf2==1.27.12
 PySocks==1.7.1
 python-dateutil==2.8.2
 pytz==2022.1

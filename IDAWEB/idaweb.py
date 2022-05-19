@@ -10,6 +10,25 @@ from merge_csv_by_date_package import merge_csv_by_date
 scraper_path = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
+def createHeaders():
+    inventoryCSV = open(os.path.join(scraper_path,'inventory.csv'))
+    inventoryCSV.readline()
+    stations = {}
+    for csvLine in inventoryCSV:
+        lineList = csvLine.split('\t')
+        if lineList[0] not in stations:
+            stations[lineList[0]] = []
+        if lineList[3] not in stations[lineList[0]]:
+            stations[lineList[0]].append(lineList[3])
+
+    print(stations)
+    headerFile = open(os.path.join(scraper_path,'headers.csv'),'w+')
+    for key,value in stations.items():
+        headerFile.write(key+";"+";".join(value)+"\n")
+
+    headerFile.close()
+    inventoryCSV.close()
+
 def createInventoryCSV():
     """Take an iventory pdf file from idaweb and transform it to csv
     """
@@ -44,6 +63,7 @@ def createInventoryCSV():
     outputCSV.close()
     inputPDF.close()
     print("Created inventory csv file !")
+    createHeaders()
 
 def orderManipulation():
     order_files = list(filter(lambda f: f.startswith('order_'),os.listdir(scraper_path)))
@@ -55,14 +75,15 @@ def orderManipulation():
         sys.exit(1)
 def main(argv):
     try:
-      opts, args = getopt.getopt(argv,"ih")
+      opts, args = getopt.getopt(argv,"ihs")
     except getopt.GetoptError:
-      print('idaweb.py -i|')
+      print('idaweb.py -i|-s')
       sys.exit(1)
     for opt, arg in opts:
         if opt == '-h':
             print('idaweb.py -i|')
             sys.exit(1)
+
         elif opt == '-i':
             createInventoryCSV()
             sys.exit(0)
