@@ -387,11 +387,11 @@ def main(argv):
     try:
       opts, args = getopt.getopt(argv,"cfhs:e:",["start_date=","end_date=","chrome","firefox"])
     except getopt.GetoptError:
-      print('scrap.py -s <start_date> -e <end_date>')
+      print('sabra.py -s <start_date> -e <end_date>')
       sys.exit(1)
     for opt, arg in opts:
       if opt == '-h':
-         print('scrap.py -s <start_date> -e <end_date>')
+         print('sabra.py -s <start_date> -e <end_date>')
          sys.exit(1)
       elif opt in ("-s", "--start_date"):
          start_date = datetime.strptime(arg,'%Y-%m-%d').date()
