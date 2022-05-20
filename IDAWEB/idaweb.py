@@ -84,7 +84,7 @@ def fileToData(lines:dict):
     if(len(lines)<1):
         return None
 
-    print(lines)
+    #print(lines)
     return {}
 
 def orderManipulation():
@@ -126,13 +126,19 @@ def orderManipulation():
 
     for file in order_files:
         splitted_name = file.split("_")
-        print(splitted_name[1])
         if splitted_name[1] not in order_files_by_id:
             order_files_by_id[splitted_name[1]] = {}
 
         order_files_by_id[splitted_name[1]][splitted_name[2].replace(".txt","")] = file
 
-    print(stations)
+    for key,value in order_files_by_id.items():
+        legend_order_file = open(os.path.join(scraper_path,value["legend"]),'rb')
+        for line in legend_order_file:
+            print(line.decode("Windows-1252 "))
+        legend_order_file.close()
+        # HERE DO STUFF TO ORDER LEGEND
+
+    # print(stations)
     for station in stations:
         station_name = station.replace(" / ","-")
         station_name = station_name.replace(" /","-")
@@ -141,13 +147,19 @@ def orderManipulation():
             station_file = open(os.path.join(transformed_media_path,station_name+".csv"),"r")
         except:
             station_file = open(os.path.join(transformed_media_path,station_name+".csv"),"x+")
+        # NEED TO COMPLETE THIS FUNCTION !
         currentData = fileToData(station_file.readlines())
         station_file.close()
         if currentData == None:
-            print("NOOOOOOOOOOOOO")
-            # Use headers files to generate datas for the station...
+            currentData = content[station]
 
-    print(order_files_by_id)
+        # DATA ARE LOADED, NOW TO APPLY ORDER TO IT AND REWRITE IT
+        # station_file = open(os.path.join(transformed_media_path,station_name+".csv"),"w")
+        # station_file.write(json.dumps(currentData))
+        # station_file.close()
+    # print(order_files_by_id)
+
+
 def main(argv):
     try:
       opts, args = getopt.getopt(argv,"ihs")
