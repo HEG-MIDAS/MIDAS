@@ -103,7 +103,7 @@
                 var startingDateString = startingDate.getUTCFullYear() +"-"+ (startingDate.getUTCMonth()+1) +"-"+ startingDate.getUTCDate() + " " + startingDate.getUTCHours() + ":" + startingDate.getUTCMinutes() + ":" + startingDate.getUTCSeconds();
                 var endingDate = new Date(endingDateValue);
                 var endingDateString = endingDate.getUTCFullYear() +"-"+ (endingDate.getUTCMonth()+1) +"-"+ endingDate.getUTCDate() + " " + endingDate.getUTCHours() + ":" + endingDate.getUTCMinutes() + ":" + endingDate.getUTCSeconds();
-                
+
                 option = {'sources': sources, 'stations': stations, 'parameters': parameters, 'starting_date': startingDateString, 'ending_date': endingDateString}
                 requestDataFetch(option)
             }

@@ -108,8 +108,6 @@ def parameters_dashboard(request):
     sources = jsonData.get('sources')
     stations = jsonData.get('stations')
 
-    print(stations)
-
     request_user = request.user
 
     request = HttpRequest()
@@ -152,15 +150,19 @@ def request_data_dasboard(request):
     new_request.data['sources'] = sources
     new_request.data['stations'] = stations
     new_request.data['parameters'] = parameters
-    new_request.data['starting_date'] = starting_date
-    new_request.data['ending_date'] = ending_date
+    new_request.data['start_date'] = starting_date
+    new_request.data['end_date'] = ending_date
 
     new_request.user = request_user
 
-    print(new_request.data)
-
     data_stations_response = json.loads(json.dumps(SearchView().post(new_request).data))
-    print(data_stations_response)
+    
+    for source in data_stations_response:
+        for station in data_stations_response[str(source)]:
+            for hours in data_stations_response[str(source)][str(station)]:
+                print(hours)
+                for parameters in data_stations_response[str(source)][str(station)][str(hours)]:
+                    print(parameters)
 
     return JsonResponse(json.dumps(data_stations_response), safe=False)
 
