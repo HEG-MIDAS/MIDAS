@@ -56,17 +56,17 @@ def index(request):
     # request.GET._mutable = False
     # print(StatusView().get(new_request).data)
 
-    new_request = Request(request)
-    new_request.method = 'POST'
-    new_request.data['sources'] = ['climacity']
-    new_request.data['stations'] = ['prairie']
-    new_request.data['parameters'] = ['tamb_avg']
-    new_request.data['start_date'] = '2022-05-08 00:00:00'
-    new_request.data['end_date'] = '2022-05-08 23:59:59'
+    # new_request = Request(request)
+    # new_request.method = 'POST'
+    # new_request.data['sources'] = ['climacity']
+    # new_request.data['stations'] = ['prairie']
+    # new_request.data['parameters'] = ['tamb_avg']
+    # new_request.data['start_date'] = '2022-05-08 00:00:00'
+    # new_request.data['end_date'] = '2022-05-08 23:59:59'
 
-    new_request.user = request.user
+    # new_request.user = request.user
 
-    print(SearchView().post(new_request).data)
+    # print(SearchView().post(new_request).data)
 
     context['sources'] = [{'name': source['name'], 'slug': source['slug']} for source in json.loads(requests.get('http://localhost:8000/api/sources/').content.decode())]
     
@@ -134,7 +134,7 @@ def parameters_dashboard(request):
 
 
 @require_http_methods(["POST"])
-def request_data(request):
+def request_data_dasboard(request):
     data = []
 
     jsonData = json.loads(request.body)
@@ -156,6 +156,8 @@ def request_data(request):
     new_request.data['ending_date'] = ending_date
 
     new_request.user = request_user
+
+    print(new_request.data)
 
     data_stations_response = json.loads(json.dumps(SearchView().post(new_request).data))
     print(data_stations_response)

@@ -27,8 +27,8 @@
                 <div class="accordion-body sources">
                     {% for source in sources %}
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" value="{{ source.slug }}" id="flexCheck{{ source.name }}" onclick="select_source(this)">
-                            <label class="form-check-label" for="flexCheck{{ source.name }}">
+                            <input class="form-check-input" type="checkbox" value="{{ source.slug }}" id="flexCheck{{ source.slug }}" onclick="select_source(this)">
+                            <label class="form-check-label" for="flexCheck{{ source.slug }}">
                                 {{ source.name }}
                             </label>
                         </div>
@@ -96,7 +96,6 @@
         var fixed = false;
 
         function requestData(e){
-            console.log(parameters)
             var startingDateValue = document.getElementById('startingDate').value;
             var endingDateValue = document.getElementById('endingDate').value;
             if (startingDateValue != '' && endingDateValue != '') {
@@ -135,8 +134,8 @@
             if (e.checked) {
                 stationsAccordeon.disabled = false;
                 sources.push(e.value);
-                options = {'sources': sources}
-                requestStations(options)
+                options = {'sources': sources};
+                requestStations(options);
                 var cs = document.getElementById('buttonStations');
                 if (cs.getAttribute('aria-expanded') === 'false') {
                     cs.click();
@@ -163,11 +162,19 @@
                     if (cs.getAttribute('aria-expanded') === 'true') {
                         cs.click();
                     }
+                    var cs = document.getElementById('buttonDates');
+                    if (cs.getAttribute('aria-expanded') === 'true') {
+                        cs.click();
+                    }
+                    stations = [];
+                    parameters = [];
                     stationsAccordeon.disabled = true;
+                    parametersAccordeon = document.getElementById('headingParameters').getElementsByTagName('button')[0];
                     parametersAccordeon.disabled = true;
                 }
                 else{
-                    requestStations(options)
+                    options = {'sources': sources};
+                    requestStations(options);
                     var cs = document.getElementById('buttonStations');
                     if (!fixed) {
                         cs.click();
@@ -206,6 +213,11 @@
                     if (cs.getAttribute('aria-expanded') === 'true') {
                         cs.click();
                     }
+                    var cs = document.getElementById('buttonDates');
+                    if (cs.getAttribute('aria-expanded') === 'true') {
+                        cs.click();
+                    }
+                    parameters = [];
                     parametersAccordeon.disabled = true;
                 }
                 else{
@@ -258,8 +270,11 @@
             }
         }
 
-        const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value ;        
+        // Add CSRF into a constant to be used by the fetch requests
+        const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value ;
+        // Request all the stations available for the selected sources
         function requestStations(options){
+            // Request station-dashboard view
             fetch('/stations-dashboard/',{
                 method: 'POST',
                 headers: {
@@ -270,36 +285,83 @@
                 )
             })
             .then(function(response) {
+                // Handle json response
                 return response.json();
             })
             .then(function(responseJSONData) {
+                // Parse JSON
                 jsonData = JSON.parse(responseJSONData);
+                // Array that will contain all the slugs of the stations of the request
+                var stationsSlug = [];
                 var accordionStations = document.getElementById("accordionStations");
+                // Remove all the checkboxes of the stations in the element accordionStations
                 while (accordionStations.firstChild) {
                     accordionStations.removeChild(accordionStations.firstChild);
                 }
+                // Create checkboxes for the stations in the request
                 for (var i = 0; i < jsonData.length; i++) {
+                    // Create div
                     const accDiv = document.createElement("div");
                     accDiv.className = "form-check form-check-inline";
+                    // Create input
                     const accInp = document.createElement("input");
                     accInp.className = "form-check-input";
                     accInp.type = "checkbox";
+                    // Define the value of the input with the slug of the source concatenate with the station's slug
                     accInp.value = jsonData[i]['source']['slug'].concat(" ", jsonData[i]['slug']);
-                    accInp.id = "flexCheck" + jsonData[i]['name'];
+                    accInp.id = "flexCheck" + jsonData[i]['slug'];
                     accInp.setAttribute('onclick', 'select_station(this)');
+                    // Create label
                     const accLab = document.createElement("label");
                     accLab.className = "form-check-label";
-                    accLab.for = "flexCheck" + jsonData[i]['name'];
+                    accLab.for = "flexCheck" + jsonData[i]['slug'];
                     accLab.innerText = jsonData[i]['name'];
+                    // Add childs
                     accDiv.appendChild(accInp);
                     accDiv.appendChild(accLab);
                     accordionStations.appendChild(accDiv);
-                }
 
+                    // Add slug of the station to our array that retrace all the station out of the request
+                    stationsSlug.push(jsonData[i]['slug'])
+                }
+                
+                // This part check the boxes that were previously selected and can still be
+                // Check if there is stations selected
+                if (stations.length > 0){
+                    for (var i = 0; i < stations.length; ++i) {
+                        // Check if the station is still available to be selected
+                        if (stationsSlug.includes(stations[i])){
+                            // Select the station box
+                            document.getElementById("flexCheck"+stations[i]).checked = true;
+                            // Request for the parameters of the box selected and will do the same stuff
+                            requestParameters({'sources': sources, 'stations': stations[i]})
+                        }
+                        else {
+                            // If the code enter here, it means that the station was not in the request so it is deleted from our stations' array 
+                            stations.splice(i, 1);
+                        }
+                    }
+                }
+                // If there is no stations selected
+                if (stations.length == 0) {
+                    var cs = document.getElementById('buttonParameters');
+                    // Check if the parameters div is expanded
+                    if (cs.getAttribute('aria-expanded') === 'true') {
+                        // Closes it
+                        cs.click();
+                    }
+                    // Remove all parameters of the array
+                    parameters = [];
+                    parametersAccordeon = document.getElementById('headingParameters').getElementsByTagName('button')[0];
+                    // Disabled the accordeon of parameters as there is no stations selected
+                    parametersAccordeon.disabled = true;
+                }
             });
         }
 
+        // Request all the paremeters available for the selected stations and sources
         function requestParameters(options){
+            // Request parameters to view parameters-dashboard
             fetch('/parameters-dashboard/',{
                 method: 'POST',
                 headers: {
@@ -310,38 +372,78 @@
                 )
             })
             .then(function(response) {
+                // Get a response on JSON format
                 return response.json();
             })
             .then(function(responseJSONData) {
+                // Parse the JSON response
                 jsonData = JSON.parse(responseJSONData);
+                // Array that will serve to know which parameters where in the request (we will use the slug)
+                var parametersSlug = [];
                 var accordionParameters = document.getElementById("accordionParameters");
+                // Delete all the checkboxes inside the parameter accordion
                 while (accordionParameters.firstChild) {
                     accordionParameters.removeChild(accordionParameters.firstChild);
                 }
+                // Create checkboxes for each parameter in the request
                 for (var i = 0; i < jsonData.length; i++) {
+                    // Create div
                     const accDiv = document.createElement("div");
                     accDiv.className = "form-check form-check-inline";
                     accDiv.title = jsonData[i]['infos'];
+                    // Create input
                     const accInp = document.createElement("input");
                     accInp.className = "form-check-input";
                     accInp.type = "checkbox";
+                    // Add value to parameter that contain the slugs of the source, station and parameter
                     accInp.value = jsonData[i]['source'].concat(" ", jsonData[i]['station']).concat(" ", jsonData[i]['slug']);
-                    accInp.id = "flexCheck" + jsonData[i]['name'];
+                    accInp.id = "flexCheck" + jsonData[i]['slug'];
                     accInp.setAttribute('onclick', 'select_parameter(this)');
+                    // Create label
                     const accLab = document.createElement("label");
                     accLab.className = "form-check-label";
-                    accLab.for = "flexCheck" + jsonData[i]['name'];
+                    accLab.for = "flexCheck" + jsonData[i]['slug'];
                     accLab.innerText = jsonData[i]['name'];
+                    // Happen children
                     accDiv.appendChild(accInp);
                     accDiv.appendChild(accLab);
                     accordionParameters.appendChild(accDiv);
+
+                    // Add slug of the current paramter to our current parameter array
+                    parametersSlug.push(jsonData[i]['slug'])
+                }
+
+                // Check if there was paremeters selected
+                if (parameters.length > 0){
+                    for (var i = 0; i < parameters.length; ++i) {
+                        // If the selected parameter is still in the request
+                        if (parametersSlug.includes(parameters[i])){
+                            // Select it
+                            document.getElementById("flexCheck"+parameters[i]).checked = true;
+                        }
+                        else {
+                            // If the selected parameter is not in the request, delete it from our list of selected parameters
+                            parameters.splice(i, 1);
+                        }
+                    }
+                }
+                // After checking if there is still selected parameters, we check if there is none
+                if (parameters.length == 0) {
+                    parameters = [];
+                    var cs = document.getElementById('buttonDates');
+                    // If the accordion containing the selection of dates is expanded
+                    if (cs.getAttribute('aria-expanded') === 'true') {
+                        // Closes it
+                        cs.click();
+                    }
                 }
 
             });
         }
 
+        // Request data from the sources, stations, parameters, and date selected
         function requestDataFetch(options){
-            fetch('/request-data/',{
+            fetch('/request-data-dashboard/',{
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': csrf,
@@ -351,9 +453,11 @@
                 )
             })
             .then(function(response) {
+                // Get a JSON response
                 return response.json();
             })
             .then(function(responseJSONData) {
+                // Parse JSON response
                 jsonData = JSON.parse(responseJSONData);
                 console.log(jsonData)
             });

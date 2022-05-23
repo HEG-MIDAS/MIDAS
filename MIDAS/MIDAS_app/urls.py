@@ -21,5 +21,5 @@ urlpatterns=[
     # Dashboard paths
     path('stations-dashboard/', views.stations_dashboard, name='stations_dashboard'),
     path('parameters-dashboard/', views.parameters_dashboard, name='parameters_dashboard'),
-    path('request-data/', views.request_data, name='request_data'),
+    path('request-data-dashboard/', views.request_data_dasboard, name='request_data_dasboard'),
 ]
