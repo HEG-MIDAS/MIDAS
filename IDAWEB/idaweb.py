@@ -219,7 +219,17 @@ def orderManipulation():
                     print('Wrong Format, make sure you chose "CSV" when downloading the file from IDAWEB')
                     sys.exit(1)
         data_order_file.close()
-        print(dataToSave)
+        for key,value in dataToSave.items():
+            temp = open(os.path.join(scraper_path,"temp-"+key+".csv"),"a+")
+            temp.write('localtime;'+header[key]+"\n")
+            str = ""
+            for ke,val in value.items():
+                str += ke+";"
+                for k,v in val.items():
+                    str += v+";"
+                str += "\n"
+            temp.write(str)
+            temp.close()
 def main(argv):
     try:
       opts, args = getopt.getopt(argv,"ihs")
