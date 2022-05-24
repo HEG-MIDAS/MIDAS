@@ -156,15 +156,25 @@ def request_data_dasboard(request):
     new_request.user = request_user
 
     data_stations_response = json.loads(json.dumps(SearchView().post(new_request).data))
-    
-    for source in data_stations_response:
-        for station in data_stations_response[str(source)]:
-            for hours in data_stations_response[str(source)][str(station)]:
-                print(hours)
-                for parameters in data_stations_response[str(source)][str(station)][str(hours)]:
-                    print(parameters)
+    formatted_data = {}
 
-    return JsonResponse(json.dumps(data_stations_response), safe=False)
+    for source in data_stations_response:
+        formatted_data_source = {}
+        for station in data_stations_response[str(source)]:
+            formatted_data_station = {}
+            for hour in data_stations_response[str(source)][str(station)]:
+                for parameter in data_stations_response[str(source)][str(station)][str(hour)]:
+                    if str(parameter) not in formatted_data_station:
+                        formatted_data_station[str(parameter)] = [[hour, data_stations_response[str(source)][str(station)][str(hour)][str(parameter)]]]
+                    else:
+                        if formatted_data_station[str(parameter)][-1] != [] and (datetime.datetime.strptime(hour, '%Y-%m-%d %H:%M:%S')-datetime.datetime.strptime(formatted_data_station[str(parameter)][-1][0], '%Y-%m-%d %H:%M:%S')) == datetime.timedelta(hours=1):
+                            formatted_data_station[str(parameter)].append([hour, data_stations_response[str(source)][str(station)][str(hour)][str(parameter)]])
+                        else:
+                            formatted_data_station[str(parameter)].append([])
+            formatted_data_source[str(station)] = formatted_data_station
+        formatted_data[str(source)] = formatted_data_source
+
+    return JsonResponse(json.dumps(formatted_data), safe=False)
 
 
 def statut(request):
