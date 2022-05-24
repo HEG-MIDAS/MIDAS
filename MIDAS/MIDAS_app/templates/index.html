@@ -1,16 +1,477 @@
 {% extends 'layouts/base.html' %}
-{% block extrajs %}
-<script src="/static/lib/echarts/echarts.js" charset="utf-8"></script>
+{% block extracss %}
+    <link rel="stylesheet" href="/static/css/dashboard.css">
 {% endblock %}
+
+{% block extrajs %}
+    <script src="/static/lib/echarts/echarts.js" charset="utf-8"></script>
+{% endblock %}
+
 {% block body_content %}
+
+{% csrf_token %}
+
 <div class="midas-container container-fluid">
+    <input class="" type="checkbox" value="" id="fixedSources" onclick="fixedAccordeon(this)">
+    <label class="" for="fixedSources">
+        Bloquer l'accordéon
+    </label>
+    <div class="accordion" id="accordionDashboard">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingSources">
+                <button id="buttonSources" class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSources" aria-expanded="true" aria-controls="collapseSources">
+                    Sources
+                </button>
+            </h2>
+            <div id="collapseSources" class="accordion-collapse collapse show" aria-labelledby="headingSources" data-bs-parent="#accordionDashboard">
+                <div class="accordion-body sources">
+                    {% for source in sources %}
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="{{ source.slug }}" id="flexCheck{{ source.slug }}" onclick="select_source(this)">
+                            <label class="form-check-label" for="flexCheck{{ source.slug }}">
+                                {{ source.name }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingStations">
+                <button id="buttonStations" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStations" aria-expanded="false" aria-controls="collapseStations" disabled>
+                    Stations
+                </button>
+            </h2>
+            <div id="collapseStations" class="accordion-collapse collapse" aria-labelledby="headingStations" data-bs-parent="#accordionDashboard">
+                <div class="accordion-body stations" id="accordionStations">
+                    
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingParameters">
+                <button id="buttonParameters" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseParameters" aria-expanded="false" aria-controls="collapseParameters" disabled>
+                    Paramètres
+                </button>
+            </h2>
+            <div id="collapseParameters" class="accordion-collapse collapse" aria-labelledby="headingParameters" data-bs-parent="#accordionDashboard">
+                <div class="accordion-body parameters" id="accordionParameters">
+                    
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingDates">
+                <button id="buttonDates" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDates" aria-expanded="false" aria-controls="collapseDates" disabled>
+                    Temporalité
+                </button>
+            </h2>
+            <div id="collapseDates" class="accordion-collapse collapse" aria-labelledby="headingDates" data-bs-parent="#accordionDashboard">
+                <div class="row needs-validation">
+                    <div class="accordion-body dates" id="accordionDates">
+                        <div class="col-md-6">
+                            <label for="id_starting_date">Date de début  :</label>
+                            <input type="datetime-local" id="startingDate" name="starting_date" class="form-control" required="" id="id_starting_date">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_ending_date">Date de fin  :</label>
+                            <input type="datetime-local" id="endingDate" name="ending_date" class="form-control" required="" id="id_ending_date">
+                        </div>
+                        <button type="submit" class="btn btn-primary" onclick="requestData(this)">
+                            Envoyer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="d-flex w-100 justify-content-center">
         <div id="main" style="width: 800px;height:800px;"></div>
     </div>
-    {% csrf_token %}
     <script type="text/javascript">
+        var sources = [];
+        var stations = [];
+        var parameters = [];
+        var option = {};
+        var fixed = false;
 
-        
+        function requestData(e){
+            var startingDateValue = document.getElementById('startingDate').value;
+            var endingDateValue = document.getElementById('endingDate').value;
+            if (startingDateValue != '' && endingDateValue != '') {
+                var startingDate = new Date(startingDateValue);
+                var startingDateString = startingDate.getUTCFullYear() +"-"+ (startingDate.getUTCMonth()+1) +"-"+ startingDate.getUTCDate() + " " + startingDate.getUTCHours() + ":" + startingDate.getUTCMinutes() + ":" + startingDate.getUTCSeconds();
+                var endingDate = new Date(endingDateValue);
+                var endingDateString = endingDate.getUTCFullYear() +"-"+ (endingDate.getUTCMonth()+1) +"-"+ endingDate.getUTCDate() + " " + endingDate.getUTCHours() + ":" + endingDate.getUTCMinutes() + ":" + endingDate.getUTCSeconds();
+
+                option = {'sources': sources, 'stations': stations, 'parameters': parameters, 'starting_date': startingDateString, 'ending_date': endingDateString}
+                requestDataFetch(option)
+            }
+        }
+
+        function fixedAccordeon(e){
+            data_to_pass = null;
+            fixed = true;
+            if (!e.checked) {
+                data_to_pass = document.getElementById('accordionDashboard');
+                fixed = false;
+            }
+
+            for (var i = 0; i < document.getElementsByClassName('accordion-collapse').length; i++) {
+                document.getElementsByClassName('accordion-collapse')[i].dataset.bsParent = false;
+                if (!fixed) {
+                    document.getElementsByClassName('accordion-collapse')[i].dataset.bsParent = '#accordionDashboard';
+                }
+                try {
+                    bootstrap.Collapse.getInstance(document.getElementsByClassName('accordion-collapse')[i])._config.parent = data_to_pass;
+                }
+                catch {}
+            }
+        }
+
+        function select_source(e){
+            stationsAccordeon = document.getElementById('headingStations').getElementsByTagName('button')[0];
+            if (e.checked) {
+                stationsAccordeon.disabled = false;
+                sources.push(e.value);
+                options = {'sources': sources};
+                requestStations(options);
+                var cs = document.getElementById('buttonStations');
+                if (cs.getAttribute('aria-expanded') === 'false') {
+                    cs.click();
+                }
+            }
+            else {
+                input_sources_array = document.getElementById('collapseSources').getElementsByTagName('input');
+                count_sources_off = 0
+                sources = [];
+                for (var i = 0; i < input_sources_array.length; ++i) {
+                    if (input_sources_array[i].checked) {
+                        sources.push(input_sources_array[i].value);
+                    }
+                    else {
+                        count_sources_off++;
+                    }
+                }
+                if (count_sources_off == input_sources_array.length) {
+                    var cs = document.getElementById('buttonStations');
+                    if (cs.getAttribute('aria-expanded') === 'true') {
+                        cs.click();
+                    }
+                    var cs = document.getElementById('buttonParameters');
+                    if (cs.getAttribute('aria-expanded') === 'true') {
+                        cs.click();
+                    }
+                    var cs = document.getElementById('buttonDates');
+                    if (cs.getAttribute('aria-expanded') === 'true') {
+                        cs.click();
+                    }
+                    stations = [];
+                    parameters = [];
+                    stationsAccordeon.disabled = true;
+                    parametersAccordeon = document.getElementById('headingParameters').getElementsByTagName('button')[0];
+                    parametersAccordeon.disabled = true;
+                }
+                else{
+                    options = {'sources': sources};
+                    requestStations(options);
+                    var cs = document.getElementById('buttonStations');
+                    if (!fixed) {
+                        cs.click();
+                    }
+                }
+            }
+        }
+
+        function select_station(e){
+            parametersAccordeon = document.getElementById('headingParameters').getElementsByTagName('button')[0];
+            array_e_values = e.value.split(' ');
+            stations.push(array_e_values[1]);
+            options = {'sources': sources, 'stations': stations};
+            if (e.checked) {
+                parametersAccordeon.disabled = false;
+                requestParameters(options)
+                var cs = document.getElementById('buttonParameters');
+                if (cs.getAttribute('aria-expanded') === 'false') {
+                    cs.click();
+                }
+            }
+            else {
+                input_stations_array = document.getElementById('collapseStations').getElementsByTagName('input');
+                count_stations_off = 0
+                stations = [];
+                for (var i = 0; i < input_stations_array.length; ++i) {
+                    if (input_stations_array[i].checked) {
+                        stations.push(input_stations_array[i].value.split(' ')[1]);
+                    }
+                    else {
+                        count_stations_off++;
+                    }
+                }
+                if (count_stations_off == input_stations_array.length) {
+                    var cs = document.getElementById('buttonParameters');
+                    if (cs.getAttribute('aria-expanded') === 'true') {
+                        cs.click();
+                    }
+                    var cs = document.getElementById('buttonDates');
+                    if (cs.getAttribute('aria-expanded') === 'true') {
+                        cs.click();
+                    }
+                    parameters = [];
+                    parametersAccordeon.disabled = true;
+                }
+                else{
+                    options = {'sources': sources, 'stations': stations};
+                    requestParameters(options)
+                    var cs = document.getElementById('buttonParameters');
+                    if (!fixed) {
+                        cs.click();
+                    }
+                }
+            }
+        }
+
+        function select_parameter(e){
+            datesAccordeon = document.getElementById('headingDates').getElementsByTagName('button')[0];
+            array_e_values = e.value.split(' ');
+            parameters.push(array_e_values.at(-1));
+            if (e.checked) {
+                datesAccordeon.disabled = false;
+                var cs = document.getElementById('buttonDates');
+                if (cs.getAttribute('aria-expanded') === 'false') {
+                    cs.click();
+                }
+            }
+            else {
+                input_parameters_array = document.getElementById('collapseParameters').getElementsByTagName('input');
+                count_parameters_off = 0
+                parameters = [];
+                for (var i = 0; i < input_parameters_array.length; ++i) {
+                    if (input_parameters_array[i].checked) {
+                        parameters.push(input_parameters_array[i].value.split(' ').at(-1));
+                    }
+                    else {
+                        count_parameters_off++;
+                    }
+                }
+                if (count_parameters_off == input_parameters_array.length) {
+                    var cs = document.getElementById('buttonDates');
+                    if (cs.getAttribute('aria-expanded') === 'true') {
+                        cs.click();
+                    }
+                    datesAccordeon.disabled = true;
+                }
+                else{
+                    var cs = document.getElementById('buttonDates');
+                    if (!fixed) {
+                        cs.click();
+                    }
+                }
+            }
+        }
+
+        // Add CSRF into a constant to be used by the fetch requests
+        const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value ;
+        // Request all the stations available for the selected sources
+        function requestStations(options){
+            // Request station-dashboard view
+            fetch('/stations-dashboard/',{
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrf,
+                },
+                body: JSON.stringify(
+                    options
+                )
+            })
+            .then(function(response) {
+                // Handle json response
+                return response.json();
+            })
+            .then(function(responseJSONData) {
+                // Parse JSON
+                jsonData = JSON.parse(responseJSONData);
+                // Array that will contain all the slugs of the stations of the request
+                var stationsSlug = [];
+                var accordionStations = document.getElementById("accordionStations");
+                // Remove all the checkboxes of the stations in the element accordionStations
+                while (accordionStations.firstChild) {
+                    accordionStations.removeChild(accordionStations.firstChild);
+                }
+                // Create checkboxes for the stations in the request
+                for (var i = 0; i < jsonData.length; i++) {
+                    // Create div
+                    const accDiv = document.createElement("div");
+                    accDiv.className = "form-check form-check-inline";
+                    // Create input
+                    const accInp = document.createElement("input");
+                    accInp.className = "form-check-input";
+                    accInp.type = "checkbox";
+                    // Define the value of the input with the slug of the source concatenate with the station's slug
+                    accInp.value = jsonData[i]['source']['slug'].concat(" ", jsonData[i]['slug']);
+                    accInp.id = "flexCheck" + jsonData[i]['slug'];
+                    accInp.setAttribute('onclick', 'select_station(this)');
+                    // Create label
+                    const accLab = document.createElement("label");
+                    accLab.className = "form-check-label";
+                    accLab.for = "flexCheck" + jsonData[i]['slug'];
+                    accLab.innerText = jsonData[i]['name'];
+                    // Add childs
+                    accDiv.appendChild(accInp);
+                    accDiv.appendChild(accLab);
+                    accordionStations.appendChild(accDiv);
+
+                    // Add slug of the station to our array that retrace all the station out of the request
+                    stationsSlug.push(jsonData[i]['slug'])
+                }
+                
+                // This part check the boxes that were previously selected and can still be
+                // Check if there is stations selected
+                if (stations.length > 0){
+                    for (var i = stations.length-1; i >= 0; --i) {
+                        // Check if the station is still available to be selected
+                        console.log(stations)
+                        console.log(stationsSlug)
+                        console.log(stations[i])
+                        console.log(stationsSlug.includes(stations[i]))
+                        if (stationsSlug.includes(stations[i])){
+                            console.log(stations[i])
+                            // Select the station box
+                            document.getElementById("flexCheck"+stations[i]).checked = true;
+                            // Request for the parameters of the box selected and will do the same stuff
+                            requestParameters({'sources': sources, 'stations': stations[i]})
+                        }
+                        else {
+                            // If the code enter here, it means that the station was not in the request so it is deleted from our stations' array 
+                            stations.splice(i, 1);
+                        }
+                        console.log(stations)
+                        console.log(stationsSlug)
+                    }
+                }
+                // If there is no stations selected
+                if (stations.length == 0) {
+                    var cs = document.getElementById('buttonParameters');
+                    // Check if the parameters div is expanded
+                    if (cs.getAttribute('aria-expanded') === 'true') {
+                        // Closes it
+                        cs.click();
+                    }
+                    // Remove all parameters of the array
+                    parameters = [];
+                    parametersAccordeon = document.getElementById('headingParameters').getElementsByTagName('button')[0];
+                    // Disabled the accordeon of parameters as there is no stations selected
+                    parametersAccordeon.disabled = true;
+                }
+            });
+        }
+
+        // Request all the paremeters available for the selected stations and sources
+        function requestParameters(options){
+            // Request parameters to view parameters-dashboard
+            fetch('/parameters-dashboard/',{
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrf,
+                },
+                body: JSON.stringify(
+                    options
+                )
+            })
+            .then(function(response) {
+                // Get a response on JSON format
+                return response.json();
+            })
+            .then(function(responseJSONData) {
+                // Parse the JSON response
+                jsonData = JSON.parse(responseJSONData);
+                // Array that will serve to know which parameters where in the request (we will use the slug)
+                var parametersSlug = [];
+                var accordionParameters = document.getElementById("accordionParameters");
+                // Delete all the checkboxes inside the parameter accordion
+                while (accordionParameters.firstChild) {
+                    accordionParameters.removeChild(accordionParameters.firstChild);
+                }
+                // Create checkboxes for each parameter in the request
+                for (var i = 0; i < jsonData.length; i++) {
+                    // Create div
+                    const accDiv = document.createElement("div");
+                    accDiv.className = "form-check form-check-inline";
+                    accDiv.title = jsonData[i]['infos'];
+                    // Create input
+                    const accInp = document.createElement("input");
+                    accInp.className = "form-check-input";
+                    accInp.type = "checkbox";
+                    // Add value to parameter that contain the slugs of the source, station and parameter
+                    accInp.value = jsonData[i]['source'].concat(" ", jsonData[i]['station']).concat(" ", jsonData[i]['slug']);
+                    accInp.id = "flexCheck" + jsonData[i]['slug'];
+                    accInp.setAttribute('onclick', 'select_parameter(this)');
+                    // Create label
+                    const accLab = document.createElement("label");
+                    accLab.className = "form-check-label";
+                    accLab.for = "flexCheck" + jsonData[i]['slug'];
+                    accLab.innerText = jsonData[i]['name'];
+                    // Happen children
+                    accDiv.appendChild(accInp);
+                    accDiv.appendChild(accLab);
+                    accordionParameters.appendChild(accDiv);
+
+                    // Add slug of the current paramter to our current parameter array
+                    parametersSlug.push(jsonData[i]['slug'])
+                }
+
+                // Check if there was paremeters selected
+                if (parameters.length > 0){
+                    for (var i = parameters.length-1; i >= 0; --i) {
+                        // If the selected parameter is still in the request
+                        if (parametersSlug.includes(parameters[i])){
+                            // Select it
+                            document.getElementById("flexCheck"+parameters[i]).checked = true;
+                        }
+                        else {
+                            // If the selected parameter is not in the request, delete it from our list of selected parameters
+                            parameters.splice(i, 1);
+                        }
+                    }
+                }
+                // After checking if there is still selected parameters, we check if there is none
+                if (parameters.length == 0) {
+                    parameters = [];
+                    var cs = document.getElementById('buttonDates');
+                    // If the accordion containing the selection of dates is expanded
+                    if (cs.getAttribute('aria-expanded') === 'true') {
+                        // Closes it
+                        cs.click();
+                    }
+                }
+
+            });
+        }
+
+        // Request data from the sources, stations, parameters, and date selected
+        function requestDataFetch(options){
+            fetch('/request-data-dashboard/',{
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrf,
+                },
+                body: JSON.stringify(
+                    options
+                )
+            })
+            .then(function(response) {
+                // Get a JSON response
+                return response.json();
+            })
+            .then(function(responseJSONData) {
+                // Parse JSON response
+                jsonData = JSON.parse(responseJSONData);
+                drawChart(jsonData)
+            });
+        }
+    </script>
+
+    <script type="text/javascript">
 
         var result = []
         {% comment %} xhr.onload = function() {
@@ -25,119 +486,72 @@
         const arrayColumn = (arr, n) => arr.map(x => x[n]);
         console.log(arrayColumn(result, 1)); {% endcomment %}
 
-        // Initialize the echarts instance based on the prepared dom
-        var myChart = echarts.init(document.getElementById('main'));
-
-        const colors = ['#5470C6', '#EE6666'];
-
-        // Specify the configuration items and data for the chart
-        var option = {
-            title: {
-                text: ''
-            },
-            color: colors,
-            tooltip: {
-                trigger: 'none',
-                axisPointer: {
-                type: 'cross'
-                }
-            },
-            legend: {},
-            grid: {
-                top: 70,
-                bottom: 50
-            },
-            xAxis: [
-                {
-                type: 'category',
-                axisTick: {
-                    alignWithLabel: true
-                },
-                axisLine: {
-                    onZero: false,
-                },
-                axisPointer: {
-                    label: {
-                    formatter: function (params) {
-                        return (
-                        'PM2.5 (Climacity) ' +
-                        params.value +
-                        (params.seriesData.length ? '：' + params.seriesData[0].data : '')
-                        );
+        function generateData(JSONdata){
+            jsonSeriesData = []
+            jsonLegendData = []
+            for (var source in JSONdata) {
+                if (JSONdata.hasOwnProperty(source)) {
+                    for (var station in JSONdata[source]) {
+                        if (JSONdata[source].hasOwnProperty(station)) {
+                            for (var parameter in JSONdata[source][station]) {
+                                if (JSONdata[source].hasOwnProperty(station)) {
+                                    jsonSeriesData.push({
+                                        "name": String(parameter)+" ("+String(station)+" - "+String(source)+")",
+                                        "data": JSONdata[source][station][parameter],
+                                        "type": "line"
+                                    });
+                                    jsonLegendData.push(String(parameter)+" ("+String(station)+" - "+String(source)+")");
+                                }
+                            }
+                        }
                     }
-                    }
-                },
-                // prettier-ignore
-                data: ['2016-1', '2016-2', '2016-3', '2016-4', '2016-5', '2016-6', '2016-7', '2016-8', '2016-9', '2016-10', '2016-11', '2016-12']
-                },
-                {
-                type: 'category',
-                axisTick: {
-                    alignWithLabel: true
-                },
-                axisLine: {
-                    onZero: false,
-                },
-                axisPointer: {
-                    label: {
-                    formatter: function (params) {
-                        return (
-                        'PM2.5 (Climacity) ' +
-                        params.value +
-                        (params.seriesData.length ? '：' + params.seriesData[0].data : '')
-                        );
-                    }
-                    }
-                },
-                // prettier-ignore
-                data: ['2015-1', '2015-2', '2015-3', '2015-4', '2015-5', '2015-6', '2015-7', '2015-8', '2015-9', '2015-10', '2015-11', '2015-12']
                 }
-            ],
-            yAxis: [
-                {
-                type: 'value'
-                }
-            ],
-            series: [
-                {
-                name: 'PM2.5 (Climacity)',
-                type: 'line',
-                xAxisIndex: 1,
-                smooth: true,
-                emphasis: {
-                    focus: 'series'
-                },
-                data: [
-                    2.6, 5.9, 9.0, 0, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3
-                ]
-                },
-                {
-                name: 'PM2.5 (SABRA)',
-                type: 'line',
-                smooth: true,
-                emphasis: {
-                    focus: 'series'
-                },
-                data: [
-                    3.9, 5.9, 11.1, 18.7, 48.3, 69.2, 231.6, 46.6, 55.4, 18.4, 10.3, 0.7
-                ]
-                }
-            ],
+            }
+            jsonDataParsed = {"legend" : jsonLegendData, "series": jsonSeriesData};
+            return jsonDataParsed
+        }
 
-        };
+        function drawChart(JSONdata) {
+            // Initialize the echarts instance based on the prepared dom
+            var myChart = echarts.init(document.getElementById('main'));
 
-        // Display the chart using the configuration items and data just specified.
-        myChart.setOption(option);
+            const colors = ['#5470C6', '#EE6666'];
+
+            JSONgenerateData = generateData(JSONdata);
+
+            // Specify the configuration items and data for the chart
+            option = {
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: JSONgenerateData['legend']
+                },
+                grid: {
+                    top: '5%',
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {type: "time"},
+                yAxis: {type: 'value'},
+                series: JSONgenerateData['series'],
+            };
+
+            // Display the chart using the configuration items and data just specified.
+            myChart.setOption(option, true);
+        }
     </script>
     <script type="text/javascript">
 
-        var sources = ['climacity'];
+        {% comment %} var sources = ['climacity'];
         var stations = ['prairie'];
         var parameters = ['tamb_avg'];
         var start_date = '2022-05-08 00:00:00';
-        var end_date = '2022-05-08 23:59:59';
+        var end_date = '2022-05-08 23:59:59'; {% endcomment %}
 
-        const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value
+        // const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value
         function test(){
             fetch('/api/search/',{
                 method: 'POST',
@@ -158,10 +572,11 @@
                 return response.json();
             })
             .then(function(myBlob) {
-                console.log(myBlob)
+                //console.log(myBlob)
+                console.log()
             });
         }
-        test();
+        // test();
     </script>
 </div>
 {% endblock %}

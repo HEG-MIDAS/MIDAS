@@ -245,6 +245,7 @@ class SearchView(views.APIView):
                         else:
                             return Response({"error":"No matching station found"}, status=400)
             except:
+                break
                 return Response({"error":"An error occured"}, status=500)
 
         if(len(results)>0):

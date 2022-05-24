@@ -79,7 +79,7 @@ def dataToFiles(data: dict):
         # Loop datas
         for e in data[k]:
             # Write Date
-            text = str(e)+","
+            text = str(e).replace('  ', ' ')+","
             # If value for polluant 1, add it
             if 1 in data[k][e]:
                 if(data[k][e] == ''):

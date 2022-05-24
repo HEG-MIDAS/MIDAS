@@ -30,8 +30,15 @@ class ParametersForStationSerializer(serializers.ModelSerializer):
         model = ParametersOfStation
         fields = ['name','slug','infos']
 
+
+class Source4Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Source
+        fields = ['name', 'slug']
+
+
 class StationSerializer(serializers.ModelSerializer):
-    source = serializers.ReadOnlyField(source='source.name')
+    source = Source4Serializer()
     parameters_list = ParametersForStationSerializer(many=True,source="parameters_of_station")
     class Meta:
         model = Station

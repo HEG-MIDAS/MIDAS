@@ -5,7 +5,7 @@ import django
 import datetime
 from wsgiref import headers
 import requests
-from django.http import HttpRequest, HttpResponse, Http404
+from django.http import HttpRequest, HttpResponse, Http404, JsonResponse
 from django.shortcuts import redirect, render
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -18,7 +18,7 @@ from django.middleware import csrf
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods
 import random
-from MIDAS_api.views import StatusView, SearchView
+from MIDAS_api.views import *
 from rest_framework.request import Request
 from django.contrib import messages
 from . import update_db
@@ -49,29 +49,133 @@ def index(request):
     # update_db.update_parameters()
     context = {}
 
-    new_request = Request(request)
-    new_request.method = 'GET'
-    request.GET._mutable = True
-    new_request.query_params['format'] = 'json'
-    request.GET._mutable = False
-    print(StatusView().get(new_request).data)
+    # new_request = Request(request)
+    # new_request.method = 'GET'
+    # request.GET._mutable = True
+    # new_request.query_params['format'] = 'json'
+    # request.GET._mutable = False
+    # print(StatusView().get(new_request).data)
 
-    new_request = Request(request)
-    new_request.method = 'POST'
-    new_request.data['sources'] = ['climacity']
-    new_request.data['stations'] = ['prairie']
-    new_request.data['parameters'] = ['tamb_avg']
-    new_request.data['start_date'] = '2022-05-08 00:00:00'
-    new_request.data['end_date'] = '2022-05-08 23:59:59'
+    # new_request = Request(request)
+    # new_request.method = 'POST'
+    # new_request.data['sources'] = ['climacity']
+    # new_request.data['stations'] = ['prairie']
+    # new_request.data['parameters'] = ['tamb_avg']
+    # new_request.data['start_date'] = '2022-05-08 00:00:00'
+    # new_request.data['end_date'] = '2022-05-08 23:59:59'
 
-    new_request.user = request.user
+    # new_request.user = request.user
 
-    print(SearchView().post(new_request).data)
+    # print(SearchView().post(new_request).data)
+
+    context['sources'] = [{'name': source['name'], 'slug': source['slug']} for source in json.loads(requests.get('http://localhost:8000/api/sources/').content.decode())]
+    
 
     # csrftoken = django.middleware.csrf.get_token(request)
     # print(csrftoken)
     # print(requests.post('http://localhost:8000/api/filter/', headers={"X-CSRFToken": csrftoken}))
     return render(request, 'index.html', context)
+
+
+@require_http_methods(["POST"])
+def stations_dashboard(request):
+    data = []
+
+    jsonData = json.loads(request.body)
+    sources = jsonData.get('sources')
+
+    request_user = request.user
+
+    request = HttpRequest()
+    new_request = Request(request)
+    new_request.method = 'POST'
+    new_request.data['sources'] = sources
+
+    new_request.user = request_user
+
+    data_stations_response = json.loads(json.dumps(FilterView().post(new_request).data))
+    for station in data_stations_response:
+        data.append({'source': station['source'], 'name': station['name'], 'slug': station['slug']})
+
+    return JsonResponse(json.dumps(data), safe=False)
+
+
+@require_http_methods(["POST"])
+def parameters_dashboard(request):
+    data = []
+
+    jsonData = json.loads(request.body)
+    sources = jsonData.get('sources')
+    stations = jsonData.get('stations')
+
+    request_user = request.user
+
+    request = HttpRequest()
+    new_request = Request(request)
+    new_request.method = 'POST'
+    new_request.data['sources'] = sources
+    new_request.data['stations'] = stations
+
+    new_request.user = request_user
+
+    data_parameters_response = json.loads(json.dumps(FilterView().post(new_request).data))
+    for parameter in data_parameters_response:
+        stations_tmp = []
+        sources_tmp = []
+        for station in parameter['stations']:
+            stations_tmp.append(station['slug'])
+            sources_tmp.append(station['source']['slug'])
+
+        data.append({'source': ','.join(sources_tmp), 'station': ','.join(stations_tmp), 'name': parameter['name'], 'slug': parameter['slug'], 'infos': parameter['infos']})
+
+    return JsonResponse(json.dumps(data), safe=False)
+
+
+@require_http_methods(["POST"])
+def request_data_dasboard(request):
+    data = []
+
+    jsonData = json.loads(request.body)
+    sources = jsonData.get('sources')
+    stations = jsonData.get('stations')
+    parameters = jsonData.get('parameters')
+    starting_date = jsonData.get('starting_date')
+    ending_date = jsonData.get('ending_date')
+
+    request_user = request.user
+
+    request = HttpRequest()
+    new_request = Request(request)
+    new_request.method = 'POST'
+    new_request.data['sources'] = sources
+    new_request.data['stations'] = stations
+    new_request.data['parameters'] = parameters
+    new_request.data['start_date'] = starting_date
+    new_request.data['end_date'] = ending_date
+
+    new_request.user = request_user
+
+    data_stations_response = json.loads(json.dumps(SearchView().post(new_request).data))
+    formatted_data = {}
+
+    for source in data_stations_response:
+        formatted_data_source = {}
+        for station in data_stations_response[str(source)]:
+            formatted_data_station = {}
+            for hour in data_stations_response[str(source)][str(station)]:
+                for parameter in data_stations_response[str(source)][str(station)][str(hour)]:
+                    if str(parameter) not in formatted_data_station:
+                        formatted_data_station[str(parameter)] = [[hour, data_stations_response[str(source)][str(station)][str(hour)][str(parameter)]]]
+                    else:
+                        if formatted_data_station[str(parameter)][-1] != [] and (datetime.datetime.strptime(hour, '%Y-%m-%d %H:%M:%S')-datetime.datetime.strptime(formatted_data_station[str(parameter)][-1][0], '%Y-%m-%d %H:%M:%S')) == datetime.timedelta(hours=1):
+                            formatted_data_station[str(parameter)].append([hour, data_stations_response[str(source)][str(station)][str(hour)][str(parameter)]])
+                        else:
+                            formatted_data_station[str(parameter)].append([])
+            formatted_data_source[str(station)] = formatted_data_station
+        formatted_data[str(source)] = formatted_data_source
+
+    return JsonResponse(json.dumps(formatted_data), safe=False)
+
 
 def statut(request):
     context = {}
