@@ -120,7 +120,7 @@
 
         // Modify the properties of the accordeon component to be always open or not in function of the dedicated box
         function fixedAccordeon(e){
-            data_to_pass = null;
+            var data_to_pass = null;
             fixed = true;
             if (!e.checked) {
                 data_to_pass = document.getElementById('accordionDashboard');
@@ -143,13 +143,13 @@
         }
 
         // Function lauched when a source is selected or deselected by the user
-        // Adds or deletes the sources from the global array dedicated and enable the selection of parameters
+        // Adds or deletes the sources from the global array dedicated and enable the selection of stations
         // if there is at least one source selected
         function select_source(e){
-            stationsAccordeon = document.getElementById('headingStations').getElementsByTagName('button')[0];
-            // Check if the user selected or deselected a station
+            var stationsAccordeon = document.getElementById('headingStations').getElementsByTagName('button')[0];
+            // Check if the user selected or deselected a source
             if (e.checked) {
-                // If the user selects a stations
+                // If the user selects a source
                 // Enable accordeon component for stations
                 stationsAccordeon.disabled = false;
                 // Add source to source array
@@ -205,25 +205,37 @@
             }
         }
 
+        // Function lauched when a station is selected or deselected by the user
+        // Adds or deletes the stations from the global array dedicated and enable the selection of parameters
+        // if there is at least one station selected
         function select_station(e){
-            parametersAccordeon = document.getElementById('headingParameters').getElementsByTagName('button')[0];
-            array_e_values = e.value.split(' ');
+            var parametersAccordeon = document.getElementById('headingParameters').getElementsByTagName('button')[0];
+            // Split the value to an array of elements (value of e is formed as => value="source station")
+            var array_e_values = e.value.split(' ');
+            // Check if the user selected or deselected a station
             if (e.checked) {
+                // Add station value to its dedicated array
                 stations.push(array_e_values.at(-1));
+                // Prerare json body for POST request
                 options = {'sources': sources, 'stations': stations};
+                // If the user selects a stations
+                // Enable accordeon component for parmeters
                 parametersAccordeon.disabled = false;
                 requestParameters(options)
+                // Open parameters accordion if it's closed
                 var cs = document.getElementById('buttonParameters');
                 if (cs.getAttribute('aria-expanded') === 'false') {
                     cs.click();
                 }
             }
             else {
+                // Deletes station from its array
                 var index = stations.indexOf(array_e_values.at(-1));
                 if (index !== -1) {
                     stations.splice(index, 1);
                 }
                 if (stations.length == 0) {
+                    // If there is no more stations in the array, closes all accordeons below
                     var cs = document.getElementById('buttonParameters');
                     if (cs.getAttribute('aria-expanded') === 'true') {
                         cs.click();
@@ -232,37 +244,54 @@
                     if (cs.getAttribute('aria-expanded') === 'true') {
                         cs.click();
                     }
+                    // Set parameters array to empty
                     parameters = [];
+                    // Disabled accordeons below
                     parametersAccordeon.disabled = true;
+                    var datesAccordeon = document.getElementById('headingDates').getElementsByTagName('button')[0];
+                    datesAccordeon.disabled = true;
                 }
                 else{
+                    // Prepare json body to POST request for the stations left
                     options = {'sources': sources, 'stations': stations};
                     requestParameters(options)
-                    var cs = document.getElementById('buttonParameters');
+                    // Open next accordeon if the accordeons are not fixed
                     if (!fixed) {
+                        var cs = document.getElementById('buttonParameters');
                         cs.click();
                     }
                 }
             }
         }
 
+        // Function lauched when a parameter is selected or deselected by the user
+        // Adds or deletes the parameters from the global array dedicated and enable the selection of dates
+        // if there is at least one parameter selected
         function select_parameter(e){
-            datesAccordeon = document.getElementById('headingDates').getElementsByTagName('button')[0];
-            array_e_values = e.value.split(' ');
+            var datesAccordeon = document.getElementById('headingDates').getElementsByTagName('button')[0];
+            // Split the value to an array of elements (value of e is formed as => value="source station1,station2 parameter")
+            var array_e_values = e.value.split(' ');
+            // Check if the user selected or deselected a parameter
             if (e.checked) {
                 parameters.push(array_e_values.at(-1));
+                // If the user selects a parameter
+                // Enable accordeon component for dates
                 datesAccordeon.disabled = false;
+                // Open dates accordeon if it is closed
                 var cs = document.getElementById('buttonDates');
                 if (cs.getAttribute('aria-expanded') === 'false') {
                     cs.click();
                 }
             }
             else {
+                // Delete parameter from its array
                 var index = parameters.indexOf(array_e_values.at(-1));
                 if (index !== -1) {
                     parameters.splice(index, 1);
                 }
                 if (parameters.length == 0) {
+                    // If there are no paremeters left in the dedicated array
+                    // Closes and disable date accordeon
                     var cs = document.getElementById('buttonDates');
                     if (cs.getAttribute('aria-expanded') === 'true') {
                         cs.click();
@@ -270,8 +299,9 @@
                     datesAccordeon.disabled = true;
                 }
                 else{
-                    var cs = document.getElementById('buttonDates');
+                    // Open next accordeon if the accordeons are not fixed
                     if (!fixed) {
+                        var cs = document.getElementById('buttonDates');
                         cs.click();
                     }
                 }
