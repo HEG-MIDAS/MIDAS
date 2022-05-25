@@ -6,3 +6,7 @@
 .sources {
     align-items: center;
 }
+
+#echarts {
+    margin-top: 20px;
+}
