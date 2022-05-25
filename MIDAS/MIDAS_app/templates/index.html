@@ -513,6 +513,7 @@
     <script type="text/javascript">
 
         var result = []
+        var myChart;
         {% comment %} xhr.onload = function() {
             //console.log(JSON.parse(xhr.response));
             values_post = JSON.parse(xhr.response)['Climacity']['Prairie'];
@@ -551,8 +552,13 @@
         }
 
         function drawChart(JSONdata) {
+
+            if (myChart != null && myChart != '' && myChart != undefined) {
+                myChart.dispose() //Solve the error reported by echarts dom already loaded
+            }
+
             // Initialize the echarts instance based on the prepared dom
-            var myChart = echarts.init(document.getElementById('main'));
+            myChart = echarts.init(document.getElementById('main'));
 
             const colors = ['#5470C6', '#EE6666'];
 
