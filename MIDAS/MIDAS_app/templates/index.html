@@ -89,26 +89,36 @@
         <div id="main" style="width: 800px;height:800px;"></div>
     </div>
     <script type="text/javascript">
+        // Global variables
+        // Arrays that will contain the elements selected by the user
         var sources = [];
         var stations = [];
         var parameters = [];
+        // JSON object
         var option = {};
+        // state of the accordeon, is it always open ?
         var fixed = false;
 
+        // Handles format the json body to send via the POST method to get the data requested
         function requestData(e){
             var startingDateValue = document.getElementById('startingDate').value;
             var endingDateValue = document.getElementById('endingDate').value;
-            if (startingDateValue != '' && endingDateValue != '') {
+            // Check the dates of start and end are filled and that there is at least one element selected for source, station, and parameter
+            // to be able to send the request
+            if (startingDateValue != '' && endingDateValue != '' && sources.length > 0 && stations.length > 0 && parameters.length > 0) {
+                // Format dates
                 var startingDate = new Date(startingDateValue);
                 var startingDateString = startingDate.getUTCFullYear() +"-"+ (startingDate.getUTCMonth()+1) +"-"+ startingDate.getUTCDate() + " " + startingDate.getUTCHours() + ":" + startingDate.getUTCMinutes() + ":" + startingDate.getUTCSeconds();
                 var endingDate = new Date(endingDateValue);
                 var endingDateString = endingDate.getUTCFullYear() +"-"+ (endingDate.getUTCMonth()+1) +"-"+ endingDate.getUTCDate() + " " + endingDate.getUTCHours() + ":" + endingDate.getUTCMinutes() + ":" + endingDate.getUTCSeconds();
 
+                // Construct the json body of the POST method
                 option = {'sources': sources, 'stations': stations, 'parameters': parameters, 'starting_date': startingDateString, 'ending_date': endingDateString}
                 requestDataFetch(option)
             }
         }
 
+        // Modify the properties of the accordeon component to be always open or not in function of the dedicated box
         function fixedAccordeon(e){
             data_to_pass = null;
             fixed = true;
@@ -117,11 +127,14 @@
                 fixed = false;
             }
 
+            // Iterate over each accordion component to remove or not the property that closes it
             for (var i = 0; i < document.getElementsByClassName('accordion-collapse').length; i++) {
                 document.getElementsByClassName('accordion-collapse')[i].dataset.bsParent = false;
                 if (!fixed) {
+                    // Redifine bsParent if not fixed
                     document.getElementsByClassName('accordion-collapse')[i].dataset.bsParent = '#accordionDashboard';
                 }
+                // Catch exemption launched the first time that config parent is setted and do redifine it always after
                 try {
                     bootstrap.Collapse.getInstance(document.getElementsByClassName('accordion-collapse')[i])._config.parent = data_to_pass;
                 }
@@ -129,31 +142,36 @@
             }
         }
 
+        // Function lauched when a source is selected or deselected by the user
+        // Adds or deletes the sources from the global array dedicated and enable the selection of parameters
+        // if there is at least one source selected
         function select_source(e){
             stationsAccordeon = document.getElementById('headingStations').getElementsByTagName('button')[0];
+            // Check if the user selected or deselected a station
             if (e.checked) {
+                // If the user selects a stations
+                // Enable accordeon component for stations
                 stationsAccordeon.disabled = false;
+                // Add source to source array
                 sources.push(e.value);
+                // Prepare json body to POST request
                 options = {'sources': sources};
                 requestStations(options);
                 var cs = document.getElementById('buttonStations');
+                // Open next accordeon if it is closed
                 if (cs.getAttribute('aria-expanded') === 'false') {
                     cs.click();
                 }
             }
             else {
-                input_sources_array = document.getElementById('collapseSources').getElementsByTagName('input');
-                count_sources_off = 0
-                sources = [];
-                for (var i = 0; i < input_sources_array.length; ++i) {
-                    if (input_sources_array[i].checked) {
-                        sources.push(input_sources_array[i].value);
-                    }
-                    else {
-                        count_sources_off++;
-                    }
+                // Deletes source from source array
+                var index = sources.indexOf(e.value);
+                if (index !== -1) {
+                    sources.splice(index, 1);
                 }
-                if (count_sources_off == input_sources_array.length) {
+                // If there is no sources selected
+                if (sources.length == 0) {
+                    // Closes all open accordeons below
                     var cs = document.getElementById('buttonStations');
                     if (cs.getAttribute('aria-expanded') === 'true') {
                         cs.click();
@@ -166,17 +184,21 @@
                     if (cs.getAttribute('aria-expanded') === 'true') {
                         cs.click();
                     }
+                    // Clear stations and parameters arrays
                     stations = [];
                     parameters = [];
+                    // Disable the possibility to expand accordeon of stations and parameters
                     stationsAccordeon.disabled = true;
                     parametersAccordeon = document.getElementById('headingParameters').getElementsByTagName('button')[0];
                     parametersAccordeon.disabled = true;
                 }
                 else{
+                    // Prepare json body to POST request for the sources left
                     options = {'sources': sources};
                     requestStations(options);
-                    var cs = document.getElementById('buttonStations');
                     if (!fixed) {
+                        // Open accordeon of stations
+                        var cs = document.getElementById('buttonStations');
                         cs.click();
                     }
                 }
@@ -186,9 +208,9 @@
         function select_station(e){
             parametersAccordeon = document.getElementById('headingParameters').getElementsByTagName('button')[0];
             array_e_values = e.value.split(' ');
-            stations.push(array_e_values[1]);
-            options = {'sources': sources, 'stations': stations};
             if (e.checked) {
+                stations.push(array_e_values.at(-1));
+                options = {'sources': sources, 'stations': stations};
                 parametersAccordeon.disabled = false;
                 requestParameters(options)
                 var cs = document.getElementById('buttonParameters');
@@ -197,18 +219,11 @@
                 }
             }
             else {
-                input_stations_array = document.getElementById('collapseStations').getElementsByTagName('input');
-                count_stations_off = 0
-                stations = [];
-                for (var i = 0; i < input_stations_array.length; ++i) {
-                    if (input_stations_array[i].checked) {
-                        stations.push(input_stations_array[i].value.split(' ')[1]);
-                    }
-                    else {
-                        count_stations_off++;
-                    }
+                var index = stations.indexOf(array_e_values.at(-1));
+                if (index !== -1) {
+                    stations.splice(index, 1);
                 }
-                if (count_stations_off == input_stations_array.length) {
+                if (stations.length == 0) {
                     var cs = document.getElementById('buttonParameters');
                     if (cs.getAttribute('aria-expanded') === 'true') {
                         cs.click();
@@ -234,8 +249,8 @@
         function select_parameter(e){
             datesAccordeon = document.getElementById('headingDates').getElementsByTagName('button')[0];
             array_e_values = e.value.split(' ');
-            parameters.push(array_e_values.at(-1));
             if (e.checked) {
+                parameters.push(array_e_values.at(-1));
                 datesAccordeon.disabled = false;
                 var cs = document.getElementById('buttonDates');
                 if (cs.getAttribute('aria-expanded') === 'false') {
@@ -243,18 +258,11 @@
                 }
             }
             else {
-                input_parameters_array = document.getElementById('collapseParameters').getElementsByTagName('input');
-                count_parameters_off = 0
-                parameters = [];
-                for (var i = 0; i < input_parameters_array.length; ++i) {
-                    if (input_parameters_array[i].checked) {
-                        parameters.push(input_parameters_array[i].value.split(' ').at(-1));
-                    }
-                    else {
-                        count_parameters_off++;
-                    }
+                var index = parameters.indexOf(array_e_values.at(-1));
+                if (index !== -1) {
+                    parameters.splice(index, 1);
                 }
-                if (count_parameters_off == input_parameters_array.length) {
+                if (parameters.length == 0) {
                     var cs = document.getElementById('buttonDates');
                     if (cs.getAttribute('aria-expanded') === 'true') {
                         cs.click();
@@ -330,12 +338,13 @@
                 if (stations.length > 0){
                     for (var i = stations.length-1; i >= 0; --i) {
                         // Check if the station is still available to be selected
-                        console.log(stations)
+                        /*console.log(stations)
                         console.log(stationsSlug)
                         console.log(stations[i])
                         console.log(stationsSlug.includes(stations[i]))
+                        */
                         if (stationsSlug.includes(stations[i])){
-                            console.log(stations[i])
+                            //console.log(stations[i])
                             // Select the station box
                             document.getElementById("flexCheck"+stations[i]).checked = true;
                             // Request for the parameters of the box selected and will do the same stuff
@@ -345,8 +354,8 @@
                             // If the code enter here, it means that the station was not in the request so it is deleted from our stations' array 
                             stations.splice(i, 1);
                         }
-                        console.log(stations)
-                        console.log(stationsSlug)
+                        //console.log(stations)
+                        //console.log(stationsSlug)
                     }
                 }
                 // If there is no stations selected
