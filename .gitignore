@@ -13,6 +13,7 @@ geckodriver.log
 *.csv
 !sources.csv
 *.sql*
+*.zip
 *.txt
 !requirements.txt
 docker-compose.override.yml

@@ -5,11 +5,15 @@ import getopt
 import numpy as np
 import PyPDF2
 import datetime
+import shutil
+from zipfile import ZipFile
 from merge_csv_by_date_package import merge_csv_by_date
 
 ## Path of Scraper
 scraper_path = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
+## Path for temporatry unzipped files
+temp_path = os.path.join(scraper_path,'temp')
 ## Root of Project
 root_path = os.path.join(scraper_path,'..')
 ## Path of Media
@@ -37,7 +41,7 @@ def createHeaders():
 
     headerFile = open(os.path.join(scraper_path,'headers.csv'),'w+')
     for key,value in stations.items():
-        headerFile.write(key+";"+";".join(value)+"\n")
+        headerFile.write(key.replace(" / ","/").replace(" /","/")+";"+";".join(value)+"\n")
 
     headerFile.close()
     inventoryCSV.close()
@@ -65,7 +69,7 @@ def createInventoryCSV():
             if(j< len(extracted_list)-1):
                 next_ex = extracted_list[j+1].strip()
             if(re.match('\d*/\d*',ex) is None and ex != "" and  ex != " " and ex != 'suivant'):
-                s = ex
+                s = ex.replace(" / ","/").replace(" /","/")
                 if(re.match('^\d*$',ex) or ( re.match('^[a-z0-9]{8}$',ex) and re.match('^[a-z0-9]{8}$',next_ex) is None)or any(x in ex for x in ['Dix minutes','Heure','Jour','Mois','Année'])):
                     s = '\t'+ex+'\t'
                 elif re.match('^[a-z0-9]{8}$',next_ex):
@@ -81,6 +85,7 @@ def createInventoryCSV():
 
 def buildDataFromOrder():
     return {}
+
 def fileToData(lines:dict):
     if(len(lines)<1):
         return None
@@ -88,7 +93,10 @@ def fileToData(lines:dict):
     #print(lines)
     return {}
 
-def orderManipulation():
+def station_sanitizer(station:str) -> str:
+    return station.replace(' /',',').replace(' / ',',').replace('/',',')
+
+def loadHeader():
     headerFile = None
     header = {}
     content = {}
@@ -103,134 +111,207 @@ def orderManipulation():
         for line in headerFile:
             line = line.strip()
             splitted_line = line.split(";",1)
-            header[splitted_line[0]]=splitted_line[1]
-            content[splitted_line[0]] = {}
-            stations.append(splitted_line[0])
+            sanitized_station = station_sanitizer(splitted_line[0])
+            header[sanitized_station]=splitted_line[1]
+            content[sanitized_station] = {}
+            stations.append(sanitized_station)
             for splitter_content in splitted_line[1].split(";"):
-                content[splitted_line[0]][splitter_content] = ''
+                content[sanitized_station][splitter_content] = ''
         headerFile.close()
 
-    # Check Order files
-    order_files = list(filter(lambda f: f.startswith('order_'),os.listdir(scraper_path)))
-    order_data_files = list(filter(lambda f: f.startswith('order_') and f.endswith('data.txt'),os.listdir(scraper_path)))
-    order_legend_files = list(filter(lambda f: f.startswith('order_') and f.endswith('legend.txt'),os.listdir(scraper_path)))
-    order_files_by_id = {}
-    if(len(order_files) == 0):
-        print("No order file not found !")
-        sys.exit(1)
-    elif(len(order_files)%2!=0):
-        print("Some file seems to be missing !\nMake sure you have one order_data and one order_legend for each code number")
-        sys.exit(1)
-    elif len(order_data_files) != len(order_legend_files):
-        print("There isn't the same number of data and legend file.\nPlease make sure to have the corresponding files for each order code !")
-        sys.exit(1)
+    return header, content, stations
 
-    for file in order_files:
-        splitted_name = file.split("_")
-        if splitted_name[1] not in order_files_by_id:
-            order_files_by_id[splitted_name[1]] = {}
+def orderManipulation():
 
-        order_files_by_id[splitted_name[1]][splitted_name[2].replace(".txt","")] = file
+    # Load Header
+    header, content, stations = loadHeader()
 
-    stationManipulation = False
-    for key,value in order_files_by_id.items():
-        legend_order_file = open(os.path.join(scraper_path,value["legend"]),'rb')
-        stationDataset = {}
-        for line in legend_order_file:
-            firstLine = False
-            decodedLine = line.decode("Windows-1252").strip()
-            if("stn       Nom                                  Parameter        Source de données                                  Longitude/Latitude       Coordonnées [km] Altitude [m]" in line.decode("Windows-1252")):
-                stationManipulation = True
-                firstLine = True
-            if("Paramètre" in line.decode("Windows-1252")):
-                stationManipulation = False
-            if(stationManipulation and not firstLine):
-                if line.decode("Windows-1252").strip() != "":
-                    splittedStation = re.split(r'\s+',decodedLine)
-                    if splittedStation[0] not in stationDataset:
-                        stationDataset[splittedStation[0]] = {"parameters":[]}
+    # Delete old temporary folder if still exists
+    if os.path.isdir(temp_path):
+        shutil.rmtree(temp_path)
 
-                    if splittedStation[1] not in stationDataset[splittedStation[0]]:
-                        stationDataset[splittedStation[0]]["name"] = splittedStation[1]
+    # Search for all order zip file in the folder and extract them to the temp folder
+    order_files = list(filter(lambda f: f.startswith('order') and f.endswith('.zip'),os.listdir(scraper_path)))
+    for order_file in order_files:
+        with ZipFile(os.path.join(scraper_path,order_file), 'r') as zipObj:
+           zipObj.extractall(temp_path)
 
-                    if splittedStation[2] not in stationDataset[splittedStation[0]]["parameters"]:
-                        stationDataset[splittedStation[0]]["parameters"].append(splittedStation[2])
 
-                    if splittedStation[3] not in stationDataset[splittedStation[0]]:
-                        stationDataset[splittedStation[0]]["source"] = splittedStation[3]
+    # Order Files loading
+    order_data_files = list(filter(lambda f: f.startswith('order_') and f.endswith('data.txt'),os.listdir(temp_path)))
+    order_legend_files = list(filter(lambda f: f.startswith('order_') and f.endswith('legend.txt'),os.listdir(temp_path)))
 
-                    if splittedStation[4] not in stationDataset[splittedStation[0]]:
-                        stationDataset[splittedStation[0]]["latlong"] = splittedStation[4]
+    # Get Station Abbreviation to Station Name transformation
+    station_abbr = {}
+    for order_file in order_legend_files:
+        station_parameters_type = order_file.replace('.txt','').split('_')[2:]
+        if(len(station_parameters_type)==4):
+            station_name = order_file.replace('.txt','').split('_')[2]
+            if station_name not in station_abbr:
+                legend_order_file = open(os.path.join(temp_path,order_file),'rb')
+                for line in legend_order_file:
+                    stripped_line = line.decode('Windows-1252').strip()
+                    if stripped_line.startswith(station_name):
+                        station_abbr[station_name] = station_sanitizer(re.split(r'\s+',stripped_line)[1])
+                legend_order_file.close()
 
-                    if splittedStation[5] not in stationDataset[splittedStation[0]]:
-                        stationDataset[splittedStation[0]]["coord"] = splittedStation[5]
 
-                    if splittedStation[6] not in stationDataset[splittedStation[0]]:
-                        stationDataset[splittedStation[0]]["altitude"] = splittedStation[6]
-        legend_order_file.close()
+    for order_file in order_data_files:
+        station_parameters_type = order_file.replace('.txt','').split('_')[2:]
+        if(len(station_parameters_type)==4):
+            station_name = station_sanitizer(order_file.replace('.txt','').split('_')[2])
+            parameter = order_file.replace('.txt','').split('_')[3]
+            dataset = {}
+            for k,v in station_abbr.items():
+                if (os.path.exists(os.path.join(transformed_media_path,f'{v}.csv'))):
+                    print("File Found")
+            order_station_file = open(os.path.join(temp_path,order_file),'r')
+            for line in order_station_file:
+                stripped_line = line.strip()
+                if stripped_line != "":
+                    measures = stripped_line.split(';')[1:]
+                    order_header = []
 
-    currentData = None
-    # print(stations)
-    for station in stations:
-        station_name = station.replace(" / ","-")
-        station_name = station_name.replace(" /","-")
-        station_file = None
-        try:
-            station_file = open(os.path.join(transformed_media_path,station_name+".csv"),"r")
-        except:
-            station_file = open(os.path.join(transformed_media_path,station_name+".csv"),"x+")
-        # NEED TO COMPLETE THIS FUNCTION !
-        currentData = fileToData(station_file.readlines())
-        station_file.close()
+                    if measures[0] != "time" and measures[0] not in dataset:
+                        dataset[measures[0]] = {}
+                        for param in header[station_abbr[station_name]].split(';'):
+                            dataset[measures[0]][param] = ''
 
-    if currentData == None:
-        currentData = content
+                        dataset[measures[0]][parameter] = measures[1]
 
-        # DATA ARE LOADED, NOW TO APPLY ORDER TO IT AND REWRITE IT
-        # station_file = open(os.path.join(transformed_media_path,station_name+".csv"),"w")
-        # station_file.write(json.dumps(currentData))
-        # station_file.close()
-    # print(order_files_by_id)
-    dataToSave = {}
-    for key,value in order_files_by_id.items():
-        data_order_file = open(os.path.join(scraper_path,value["data"]),'rb')
-        orderHeader = None
-        for line in data_order_file:
-            strippedLine = line.decode("Windows-1252").strip()
-            if strippedLine != "":
-                if ";" in strippedLine:
-                    if strippedLine.startswith("stn"):
-                        orderHeader = strippedLine.split(";")
-                    else:
-                        if orderHeader is not None:
-                            strippedLineList = strippedLine.split(";")
-                            stationName = stationDataset[strippedLineList[0]]["name"]
-                            if stationName not in dataToSave:
-                                dataToSave[stationName] = {}
-                            orderTimeStamp = datetime.datetime.strptime(strippedLineList[1],"%Y%m%d%H%M")
-                            formattedOrderTimeStamp = orderTimeStamp.strftime("%Y-%m-%d %H:%M:%S")
-                            if formattedOrderTimeStamp not in dataToSave[stationName]:
-                                dataToSave[stationName][formattedOrderTimeStamp] = currentData[stationName]
-                            for param in dataToSave[stationName][formattedOrderTimeStamp]:
-                                if param in orderHeader:
-                                    index = orderHeader.index(param)
-                                    dataToSave[stationName][formattedOrderTimeStamp][param] = strippedLineList[index]
-                else:
-                    print('Wrong Format, make sure you chose "CSV" when downloading the file from IDAWEB')
-                    sys.exit(1)
-        data_order_file.close()
-        for key,value in dataToSave.items():
-            temp = open(os.path.join(scraper_path,"temp-"+key+".csv"),"a+")
-            temp.write('localtime;'+header[key]+"\n")
-            str = ""
-            for ke,val in value.items():
-                str += ke+";"
-                for k,v in val.items():
-                    str += v+";"
-                str += "\n"
-            temp.write(str)
-            temp.close()
+            order_station_file.close()
+
+    print(dataset)
+    sys.exit(0)
+    # # Check Order files
+    # order_files = list(filter(lambda f: f.startswith('order_'),os.listdir(scraper_path)))
+    # order_data_files = list(filter(lambda f: f.startswith('order_') and f.endswith('data.txt'),os.listdir(scraper_path)))
+    # order_legend_files = list(filter(lambda f: f.startswith('order_') and f.endswith('legend.txt'),os.listdir(scraper_path)))
+    # order_files_by_id = {}
+    # if(len(order_files) == 0):
+    #     print("No order file found !")
+    #     sys.exit(1)
+    # elif(len(order_files)%2!=0):
+    #     print("Some file seems to be missing !\nMake sure you have one order_data and one order_legend for each code number")
+    #     sys.exit(1)
+    # elif len(order_data_files) != len(order_legend_files):
+    #     print("There isn't the same number of data and legend file.\nPlease make sure to have the corresponding files for each order code !")
+    #     sys.exit(1)
+    #
+    # for file in order_files:
+    #     splitted_name = file.split("_")
+    #     if splitted_name[1] not in order_files_by_id:
+    #         order_files_by_id[splitted_name[1]] = {}
+    #
+    #     order_files_by_id[splitted_name[1]][splitted_name[2].replace(".txt","")] = file
+    #
+    # stationManipulation = False
+    # for key,value in order_files_by_id.items():
+    #     legend_order_file = open(os.path.join(scraper_path,value["legend"]),'rb')
+    #     stationDataset = {}
+    #     for line in legend_order_file:
+    #         firstLine = False
+    #         decodedLine = line.decode("Windows-1252").strip()
+    #         if("stn       Nom                                  Parameter        Source de données                                  Longitude/Latitude       Coordonnées [km] Altitude [m]" in line.decode("Windows-1252")):
+    #             stationManipulation = True
+    #             firstLine = True
+    #         if("Paramètre" in line.decode("Windows-1252")):
+    #             stationManipulation = False
+    #         if(stationManipulation and not firstLine):
+    #             if line.decode("Windows-1252").strip() != "":
+    #                 decodedLine = decodedLine.replace(" / ","/").replace(" /","/")
+    #                 splittedStation = re.split(r'\s+',decodedLine)
+    #                 if splittedStation[0] not in stationDataset:
+    #                     stationDataset[splittedStation[0]] = {"parameters":[]}
+    #
+    #                 if splittedStation[1] not in stationDataset[splittedStation[0]]:
+    #                     stationDataset[splittedStation[0]]["name"] = splittedStation[1]
+    #
+    #                 if splittedStation[2] not in stationDataset[splittedStation[0]]["parameters"]:
+    #                     stationDataset[splittedStation[0]]["parameters"].append(splittedStation[2])
+    #
+    #                 if splittedStation[3] not in stationDataset[splittedStation[0]]:
+    #                     stationDataset[splittedStation[0]]["source"] = splittedStation[3]
+    #
+    #                 if splittedStation[4] not in stationDataset[splittedStation[0]]:
+    #                     stationDataset[splittedStation[0]]["latlong"] = splittedStation[4]
+    #
+    #                 if splittedStation[5] not in stationDataset[splittedStation[0]]:
+    #                     stationDataset[splittedStation[0]]["coord"] = splittedStation[5]
+    #
+    #                 if splittedStation[6] not in stationDataset[splittedStation[0]]:
+    #                     stationDataset[splittedStation[0]]["altitude"] = splittedStation[6]
+    #     legend_order_file.close()
+    # currentData = None
+    # # print(stations)
+    # for station in stations:
+    #     station_name = station.replace("/","\\")
+    #     station_file = None
+    #     print(station_name)
+    #     try:
+    #         station_file = open(os.path.join(transformed_media_path,station_name+".csv"),"r+")
+    #     except:
+    #         station_file = open(os.path.join(transformed_media_path,station_name+".csv"),"x+")
+    #     # NEED TO COMPLETE THIS FUNCTION !
+    #     currentData = fileToData(station_file.readlines())
+    #     station_file.close()
+    #
+    # if currentData == None:
+    #     currentData = content
+    #
+    #     # DATA ARE LOADED, NOW TO APPLY ORDER TO IT AND REWRITE IT
+    #     # station_file = open(os.path.join(transformed_media_path,station_name+".csv"),"w")
+    #     # station_file.write(json.dumps(currentData))
+    #     # station_file.close()
+    # # print(order_files_by_id)
+    # dataToSave = {}
+    # for key,value in order_files_by_id.items():
+    #     data_order_file = open(os.path.join(scraper_path,value["data"]),'rb')
+    #     orderHeader = None
+    #     for line in data_order_file:
+    #         strippedLine = line.decode("Windows-1252").strip()
+    #         if strippedLine != "":
+    #             if ";" in strippedLine:
+    #                 if strippedLine.startswith("stn"):
+    #                     orderHeader = strippedLine.split(";")
+    #                 else:
+    #                     if orderHeader is not None:
+    #                         strippedLineList = strippedLine.split(";")
+    #                         stationName = stationDataset[strippedLineList[0]]["name"]
+    #                         if stationName not in dataToSave:
+    #                             dataToSave[stationName] = {}
+    #                         try:
+    #                             orderTimeStamp = datetime.datetime.strptime(strippedLineList[1],"%Y%m%d%H%M")
+    #                         except:
+    #                             try:
+    #                                 orderTimeStamp = datetime.datetime.strptime(strippedLineList[1],"%Y%m%d")
+    #                             except:
+    #                                 orderTimeStamp = datetime.datetime.strptime(strippedLineList[1],"%Y%m")
+    #                         formattedOrderTimeStamp = orderTimeStamp.strftime("%Y-%m-%d %H:%M:%S")
+    #                         if formattedOrderTimeStamp not in dataToSave[stationName]:
+    #                             dataToSave[stationName][formattedOrderTimeStamp] = currentData[stationName]
+    #                         for param in dataToSave[stationName][formattedOrderTimeStamp]:
+    #                             if param in orderHeader:
+    #                                 index = orderHeader.index(param)
+    #                                 dataToSave[stationName][formattedOrderTimeStamp][param] = strippedLineList[index]
+    #             else:
+    #                 print('Wrong Format, make sure you chose "CSV" when downloading the file from IDAWEB')
+    #                 sys.exit(1)
+    #     data_order_file.close()
+    #     for key,value in dataToSave.items():
+    #         name = r''+key.replace("/",'\\')
+    #         temp = open(os.path.join(scraper_path,"temp-"+name+".csv"),"a+")
+    #         temp.write('localtime;'+header[name]+"\n")
+    #         str = ""
+    #         for ke,val in value.items():
+    #             str += ke+";"
+    #             for k,v in val.items():
+    #                 str += v+";"
+    #             str += "\n"
+    #         temp.write(str)
+    #         temp.close()
 def main(argv):
+    exit_code = 0
     try:
       opts, args = getopt.getopt(argv,"ihs")
     except getopt.GetoptError:
@@ -246,6 +327,7 @@ def main(argv):
             sys.exit(0)
 
     orderManipulation()
+    sys.exit(exit_code)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
