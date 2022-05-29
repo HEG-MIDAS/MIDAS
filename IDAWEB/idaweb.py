@@ -83,15 +83,22 @@ def createInventoryCSV():
     print("Created inventory csv file !")
     createHeaders()
 
-def buildDataFromOrder():
-    return {}
-
-def fileToData(lines:dict):
-    if(len(lines)<1):
-        return None
-
-    #print(lines)
-    return {}
+def dataToFile(dataset, header):
+    try:
+        for station, timestamps in dataset.items():
+            station_file = open(os.path.join(transformed_media_path,station)+'.csv',"w+")
+            station_file.write(f'localtime;{header[station]}\n')
+            splitted_header = header[station].split(";")
+            for timestamp, parameters in timestamps.items():
+                station_file.write(f'{timestamp};')
+                # To be more safe, loop through header and assign parameter value
+                for param_header in splitted_header:
+                    station_file.write(f'{parameters[param_header]};')
+                station_file.write('\n')
+            station_file.close()
+            return 0
+    except:
+        return 1
 
 def station_sanitizer(station:str) -> str:
     return station.replace(' /',',').replace(' / ',',').replace('/',',')
@@ -105,7 +112,7 @@ def loadHeader():
     # Check and load header file
     if os.path.exists(os.path.join(scraper_path,'headers.csv')) == False:
         print("The headers file wasn't found. run the command with the -i option to generate it.")
-        sys.exit(1)
+        return 1
     else:
         headerFile = open(os.path.join(scraper_path,'headers.csv'))
         for line in headerFile:
@@ -155,16 +162,23 @@ def orderManipulation():
                         station_abbr[station_name] = station_sanitizer(re.split(r'\s+',stripped_line)[1])
                 legend_order_file.close()
 
+    # Init Dataset
+    dataset = {}
+    for k,v in station_abbr.items():
+        if v not in dataset:
+            dataset[v] = {}
+        # Load existing station file data
+        if (os.path.exists(os.path.join(transformed_media_path,f'{v}.csv'))):
+            print("File Found")
 
+    # Add Order files datas to Dataset
     for order_file in order_data_files:
         station_parameters_type = order_file.replace('.txt','').split('_')[2:]
+        # Check to exclude orders that are not divided
         if(len(station_parameters_type)==4):
             station_name = station_sanitizer(order_file.replace('.txt','').split('_')[2])
             parameter = order_file.replace('.txt','').split('_')[3]
-            dataset = {}
-            for k,v in station_abbr.items():
-                if (os.path.exists(os.path.join(transformed_media_path,f'{v}.csv'))):
-                    print("File Found")
+
             order_station_file = open(os.path.join(temp_path,order_file),'r')
             for line in order_station_file:
                 stripped_line = line.strip()
@@ -172,17 +186,19 @@ def orderManipulation():
                     measures = stripped_line.split(';')[1:]
                     order_header = []
 
-                    if measures[0] != "time" and measures[0] not in dataset:
-                        dataset[measures[0]] = {}
-                        for param in header[station_abbr[station_name]].split(';'):
-                            dataset[measures[0]][param] = ''
+                    # Ignore header line
+                    if measures[0] != "time":
+                        if measures[0] not in dataset[station_abbr[station_name]]:
+                            dataset[station_abbr[station_name]][measures[0]] = {}
+                            for param in header[station_abbr[station_name]].split(';'):
+                                dataset[station_abbr[station_name]][measures[0]][param] = ''
 
-                        dataset[measures[0]][parameter] = measures[1]
+                        # NEED TO CHECK TIMESTAMP TO PARSE IT CORRECTLY (DAIYL VALUE!)
+                        dataset[station_abbr[station_name]][measures[0]][parameter] = measures[1]
 
             order_station_file.close()
 
-    print(dataset)
-    sys.exit(0)
+    return dataToFile(dataset,header)
     # # Check Order files
     # order_files = list(filter(lambda f: f.startswith('order_'),os.listdir(scraper_path)))
     # order_data_files = list(filter(lambda f: f.startswith('order_') and f.endswith('data.txt'),os.listdir(scraper_path)))
@@ -326,7 +342,7 @@ def main(argv):
             createInventoryCSV()
             sys.exit(0)
 
-    orderManipulation()
+    exit_code = orderManipulation()
     sys.exit(exit_code)
 
 if __name__ == "__main__":
