@@ -188,19 +188,25 @@ def orderManipulation() -> int:
 
                     # Ignore header line
                     if measures[0] != "time":
-                        # NEED TO CHECK TIMESTAMP TO PARSE IT CORRECTLY (DAILY VALUE!)
                         try:
                             timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d%H')
+                            timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
                             sys.exit(0)
-                            if measures[0] not in dataset[station_abbr[station_name]]:
-                                dataset[station_abbr[station_name]][measures[0]] = {}
+                            if timestamp not in dataset[station_abbr[station_name]]:
+                                dataset[station_abbr[station_name]][timestamp] = {}
                                 for param in header[station_abbr[station_name]].split(';'):
-                                    dataset[station_abbr[station_name]][measures[0]][param] = ''
+                                    dataset[station_abbr[station_name]][timestamp][param] = ''
 
-                            dataset[station_abbr[station_name]][measures[0]][parameter] = measures[1]
+                            dataset[station_abbr[station_name]][timestamp][parameter] = measures[1]
                         except:
-                            print("No Matching Timestamp Found")
-                            return 1
+                            try:
+                                timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d%H%M')
+                                timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
+
+                                # 10 Min Datas, need to hourly average
+                            except:
+                                print("No Matching Timestamp Found")
+                                return 1
 
             order_station_file.close()
 
