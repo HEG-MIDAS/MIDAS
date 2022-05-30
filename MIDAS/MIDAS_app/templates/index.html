@@ -107,7 +107,7 @@
     <div class="" id="echartsParameters">
     </div>
     <div class="d-flex w-100 justify-content-center" id="echarts">
-        <div id="main" style="width: 800px;height:800px;"></div>
+        <div id="main" style="width: 80%;height:800px;"></div>
     </div>
     
 </div>
@@ -116,17 +116,22 @@
 
     var result = []
     var myChart;
-    {% comment %} xhr.onload = function() {
-        //console.log(JSON.parse(xhr.response));
-        values_post = JSON.parse(xhr.response)['Climacity']['Prairie'];
-        for (var i in values_post) {
-            result.push([i, values_post[i]['Tamb_Avg*']]);
+    
+    // Handles the responsiveness of the echarts plot
+    function reportEchartsSize() {
+        if (myChart != null && myChart != '' && myChart != undefined) {
+            myChart.dispose() //Solve the error reported by echarts dom already loaded
         }
-    } {% endcomment %}
 
-    {% comment %} console.log(result[1]);
-    const arrayColumn = (arr, n) => arr.map(x => x[n]);
-    console.log(arrayColumn(result, 1)); {% endcomment %}
+        // Initialize the echarts instance based on the prepared dom
+        myChart = echarts.init(document.getElementById('main'));
+
+        // Display the chart using the configuration items and data just specified.
+        myChart.setOption(option, true);
+    }
+
+    window.addEventListener('resize', reportEchartsSize);
+
 
     function addRuleOfEChartsParameters(){
         var baseDiv = document.getElementById("echartsParameters");
@@ -495,7 +500,7 @@
                 // Create label
                 const accLab = document.createElement("label");
                 accLab.className = "form-check-label";
-                accLab.for = "flexCheck" + jsonData[i]['slug'];
+                accLab.setAttribute("for", "flexCheck" + jsonData[i]['slug']);
                 accLab.innerText = jsonData[i]['name'];
                 // Add childs
                 accDiv.appendChild(accInp);
@@ -591,7 +596,7 @@
                 // Create label
                 const accLab = document.createElement("label");
                 accLab.className = "form-check-label";
-                accLab.for = "flexCheck" + jsonData[i]['slug'];
+                accLab.setAttribute("for", "flexCheck" + jsonData[i]['slug']);
                 accLab.innerText = jsonData[i]['name'];
                 // Happen children
                 accDiv.appendChild(accInp);
