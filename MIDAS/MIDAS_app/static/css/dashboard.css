@@ -35,3 +35,19 @@
 .title {
     margin-left: 1em;
 }
+
+#EchartsParameters {
+    margin-top: 10px;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+#EchartsViewParameters {
+    text-align: center;
+    border: 1px;
+    border-style: solid;
+    border-color: #dfdfdf;
+    border-radius: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
