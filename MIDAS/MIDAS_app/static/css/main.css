@@ -8,6 +8,11 @@ div.midas-container{
     margin-top: 0.5rem;
 }
 
+.balise-infos {
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
 /* Spinner */
 .spinner-border {
     display: none;

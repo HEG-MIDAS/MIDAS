@@ -10,3 +10,28 @@
 #echarts {
     margin-top: 20px;
 }
+
+.switch-accordeon {
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 10%;
+    padding-right: 0.75rem;
+}
+
+.accordion-body:not(.dates){
+    text-align: center;
+}
+
+.ending-date {
+    margin-top: 10px;
+}
+
+.submit-data-dashboard{
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.title {
+    margin-left: 1em;
+}
