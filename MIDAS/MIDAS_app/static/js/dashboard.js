@@ -13,23 +13,20 @@ var result = []
 var myChart;
 
 // get todays date
-var today = new Date();
-var date = today.getDate()+'/'+(today.getMonth()+1)+'/'+today.getFullYear();
-var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-var dateTime = date+' '+time;
+var datePH = new Date();
+// var date = datePH.getFullYear()+'-'+(datePH.getMonth() + 1)+'-'+datePH.getDate();
+// var time = datePH.getHours() + ":" + datePH.getMinutes();
+// var dateTime = date+' '+time;
 
 const endingDate = document.getElementById("endingDate");
-console.log(dateTime)
-endingDate.value = dateTime.toString();
-
-console.log(endingDate.value = dateTime)
+endingDate.value = datePH.toISOString().slice(0, -8);
 
 // Get 30 days ago date
-var monthAgo = new Date()
-monthAgo.setDate( monthAgo.getDate() - 30 );
-
 const startingDate = document.getElementById("startingDate");
-startingDate.value = monthAgo;
+datePH.setDate(datePH.getDate() - 30);
+datePH.setHours(2);
+datePH.setMinutes(0);
+startingDate.value = datePH.toISOString().slice(0, -8);
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Elements Dashboard Selection
