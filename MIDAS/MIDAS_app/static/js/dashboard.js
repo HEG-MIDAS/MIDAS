@@ -9,14 +9,27 @@ var option = {};
 // state of the accordeon, is it always open ?
 var fixed = true;
 
-
 var result = []
 var myChart;
 
-// On page refresh display the top of the page
-window.onbeforeunload = () => {
-    window.scrollTo(0, 0);
-}
+// get todays date
+var today = new Date();
+var date = today.getDate()+'/'+(today.getMonth()+1)+'/'+today.getFullYear();
+var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+var dateTime = date+' '+time;
+
+const endingDate = document.getElementById("endingDate");
+console.log(dateTime)
+endingDate.value = dateTime.toString();
+
+console.log(endingDate.value = dateTime)
+
+// Get 30 days ago date
+var monthAgo = new Date()
+monthAgo.setDate( monthAgo.getDate() - 30 );
+
+const startingDate = document.getElementById("startingDate");
+startingDate.value = monthAgo;
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Elements Dashboard Selection
@@ -428,6 +441,7 @@ function requestDataFetch(options){
     .then(function(responseJSONData) {
         // Parse JSON response
         jsonData = JSON.parse(responseJSONData);
+        document.getElementById("main").className = '';
         drawChart(jsonData)
     });
 }
@@ -436,7 +450,6 @@ function requestDataFetch(options){
 //////////////////////////////////////////////////////////////////////////////////////
 // Echarts
 //////////////////////////////////////////////////////////////////////////////////////
-
 
 
 // Handles the responsiveness of the echarts plot
@@ -455,17 +468,21 @@ function resetEchartsPlot() {
 window.addEventListener('resize', resetEchartsPlot);
 
 
-function addAverageToEchartsPlot(e){
+function addMarkLineToEchartsPlot(e, typeString, nameString){
     if (e.checked) {
         for (var i=0; i < option.series.length; i++) {
-            option.series[i].markLine = {
-                data: [{ type: 'average', name: 'Avg' }]
-            };
+            if (!option.series[i].markLine.data.some(e => e.type === typeString)){
+                option.series[i].markLine.data.push({ type: typeString, name: nameString });//), { type: 'median', name: 'Median line' }];
+            }
         }
     }
     else {
-        for (var i=0; i < option.series.length; i++) {
-            option.series[i].markLine = null;
+        for (var i=option.series.length-1; i >= 0; i--) {
+            option.series[i].markLine.data.forEach((element, index) => {
+                if (element.type === typeString){
+                    option.series[i].markLine.data.splice(index, 1);
+                }
+            });
         }
     }
     resetEchartsPlot();
@@ -482,17 +499,30 @@ function addRuleOfEChartsParameters(){
     const div = document.createElement("div");
     div.id = "EchartsViewParameters";
     const averageInp = document.createElement("input");
-    averageInp.className = "form-check-input";
+    averageInp.className = "form-check-input ";
     averageInp.type = "checkbox";
     averageInp.id = "CheckAverage";
-    averageInp.setAttribute("onclick", "addAverageToEchartsPlot(this)");
+    averageInp.setAttribute("onclick", "addMarkLineToEchartsPlot(this, 'average', 'Avg')");
     const averageLab = document.createElement("label");
-    averageLab.className = "form-check-label";
+    averageLab.className = "form-check-label lab-param-echarts";
     averageLab.setAttribute("for", "CheckAverage");
-    averageLab.innerText = "Afficher les moyennes";
+    averageLab.innerText = "Afficher la moyenne";
+
+    // Median button
+    const medianInp = document.createElement("input");
+    medianInp.className = "form-check-input";
+    medianInp.type = "checkbox";
+    medianInp.id = "CheckMedian";
+    medianInp.setAttribute("onclick", "addMarkLineToEchartsPlot(this, 'median', 'Median Line')");
+    const medianLab = document.createElement("label");
+    medianLab.className = "form-check-label lab-param-echarts";
+    medianLab.setAttribute("for", "CheckMedian");
+    medianLab.innerText = "Afficher la medianne";
 
     div.appendChild(averageInp);
     div.appendChild(averageLab);
+    div.appendChild(medianInp);
+    div.appendChild(medianLab);
     baseDiv.appendChild(div);
 }
 
@@ -509,7 +539,9 @@ function generateData(JSONdata){
                                 "name": String(parameter)+" ("+String(station)+" - "+String(source)+")",
                                 "data": JSONdata[source][station][parameter],
                                 "type": "line",
-                                "markLine": null
+                                "markLine": {
+                                    data: []
+                                }
                             });
                             jsonLegendData.push(String(parameter)+" ("+String(station)+" - "+String(source)+")");
                         }
