@@ -227,36 +227,48 @@ def orderManipulation() -> int:
                     # Ignore header line
                     if measures[0] != "time":
                         try:
-                            timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d%H')
-                            timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
-                            if timestamp not in dataset[station_abbr[station_name]]:
-                                dataset[station_abbr[station_name]][timestamp] = {}
-                                for param in header[station_abbr[station_name]].split(';'):
-                                    dataset[station_abbr[station_name]][timestamp][param] = ''
+                            o_timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d')
+                            for i in range(0,24):
+                                timestamp = o_timestamp + datetime.timedelta(hours=i)
+                                timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
+                                if timestamp not in dataset[station_abbr[station_name]]:
+                                    dataset[station_abbr[station_name]][timestamp] = {}
+                                    for param in header[station_abbr[station_name]].split(';'):
+                                        dataset[station_abbr[station_name]][timestamp][param] = ''
 
-                            dataset[station_abbr[station_name]][timestamp][parameter] = measures[1]
+                                dataset[station_abbr[station_name]][timestamp][parameter] = measures[1]
                         except:
                             try:
-                                timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d%H%M')
-                                if(timestamp.minute==0):
-                                    average = ""
-                                    if len(data_10_minutes) > 0:
-                                        average = np.average(data_10_minutes)
-                                    timestamp = timestamp - datetime.timedelta(hours=1)
-                                    timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
-                                    if timestamp not in dataset[station_abbr[station_name]]:
-                                        dataset[station_abbr[station_name]][timestamp] = {}
-                                        for param in header[station_abbr[station_name]].split(';'):
-                                            dataset[station_abbr[station_name]][timestamp][param] = ''
-                                    dataset[station_abbr[station_name]][timestamp][parameter] = average
-                                    if measures[1] != '-' and measures[1] != '':
-                                        data_10_minutes = [float(measures[1])]
-                                else:
-                                    if measures[1] != '-' and measures[1] != '':
-                                        data_10_minutes.append(float(measures[1]))
+                                timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d%H')
+                                timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
+                                if timestamp not in dataset[station_abbr[station_name]]:
+                                    dataset[station_abbr[station_name]][timestamp] = {}
+                                    for param in header[station_abbr[station_name]].split(';'):
+                                        dataset[station_abbr[station_name]][timestamp][param] = ''
+
+                                dataset[station_abbr[station_name]][timestamp][parameter] = measures[1]
                             except:
-                                print("No Matching Timestamp Found")
-                                return 1
+                                try:
+                                    timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d%H%M')
+                                    if(timestamp.minute==0):
+                                        average = ""
+                                        if len(data_10_minutes) > 0:
+                                            average = np.average(data_10_minutes)
+                                        timestamp = timestamp - datetime.timedelta(hours=1)
+                                        timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
+                                        if timestamp not in dataset[station_abbr[station_name]]:
+                                            dataset[station_abbr[station_name]][timestamp] = {}
+                                            for param in header[station_abbr[station_name]].split(';'):
+                                                dataset[station_abbr[station_name]][timestamp][param] = ''
+                                        dataset[station_abbr[station_name]][timestamp][parameter] = average
+                                        if measures[1] != '-' and measures[1] != '':
+                                            data_10_minutes = [float(measures[1])]
+                                    else:
+                                        if measures[1] != '-' and measures[1] != '':
+                                            data_10_minutes.append(float(measures[1]))
+                                except:
+                                    print("No Matching Timestamp Found")
+                                    return 1
 
             order_station_file.close()
     print("Dataset created")
