@@ -116,7 +116,7 @@ def dataToFile(dataset: dict, header:dict) -> int:
         return 1
 
 def station_sanitizer(station:str) -> str:
-    '""" Sanitize the station string
+    """Sanitize the station string
     """
     return station.replace(' /',',').replace(' / ',',').replace('/',',')
 
@@ -270,7 +270,7 @@ def main(argv):
     argv : dict
         Parsed set of arguments passed when script called
     """
-    print(f"Starting {time.strftime("%Y-%m-%d %H:%M:%S")}")
+    print(f"Starting {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     exit_code = 0
     try:
       opts, args = getopt.getopt(argv,"ihs")
@@ -289,7 +289,7 @@ def main(argv):
 
     print("Manipulating Order(s)")
     exit_code = orderManipulation()
-    print(f"Done {time.strftime("%Y-%m-%d %H:%M:%S")}")
+    print(f"Done {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     sys.exit(exit_code)
 
 if __name__ == "__main__":
