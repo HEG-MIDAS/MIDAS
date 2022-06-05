@@ -84,6 +84,20 @@ def createInventoryCSV():
     createHeaders()
 
 def dataToFile(dataset: dict, header:dict) -> int:
+    """Write dataset to files
+
+    Parameters
+    ----------
+    dataset : dict
+        Dictionary to write
+    header: dict
+        Dictionary of the headers to get the correct order
+
+    Returns
+    -------
+    int
+        The System Exit Code
+    """
     try:
         for station, timestamps in dataset.items():
             station_file = open(os.path.join(transformed_media_path,station)+'.csv',"w+")
@@ -96,14 +110,19 @@ def dataToFile(dataset: dict, header:dict) -> int:
                     station_file.write(f'{parameters[param_header]};')
                 station_file.write('\n')
             station_file.close()
-            return 0
+        print("Done creating or editing the station files")
+        return 0
     except:
         return 1
 
 def station_sanitizer(station:str) -> str:
+    '""" Sanitize the station string
+    """
     return station.replace(' /',',').replace(' / ',',').replace('/',',')
 
 def loadHeader():
+    """Loop through an existing header.csv to load header, content and stations
+    """
     headerFile = None
     header = {}
     content = {}
@@ -129,7 +148,13 @@ def loadHeader():
     return header, content, stations
 
 def orderManipulation() -> int:
+    """Manipulate order file to create the station output file
 
+    Returns
+    -------
+    int
+        the system exit code
+    """
     # Load Header
     header, content, stations = loadHeader()
 
@@ -150,6 +175,7 @@ def orderManipulation() -> int:
 
     # Get Station Abbreviation to Station Name transformation
     station_abbr = {}
+    print("Start looping through legend file(s)")
     for order_file in order_legend_files:
         station_parameters_type = order_file.replace('.txt','').split('_')[2:]
         if(len(station_parameters_type)==4):
@@ -169,7 +195,7 @@ def orderManipulation() -> int:
             dataset[v] = {}
         # Load existing station file data
         if (os.path.exists(os.path.join(transformed_media_path,f'{v}.csv'))):
-            print("File Found")
+            print(f"File Found for {v}")
             # Load file if exist and fill dataset
             station_found_file = open(os.path.join(transformed_media_path,f'{v}.csv'))
             header_found_file = station_found_file.readline().strip().split(";")
@@ -182,6 +208,7 @@ def orderManipulation() -> int:
             station_found_file.close()
 
     # Add Order files datas to Dataset
+    print("Start lopping through data file(s)")
     for order_file in order_data_files:
         station_parameters_type = order_file.replace('.txt','').split('_')[2:]
         # Check to exclude orders that are not divided
@@ -232,10 +259,18 @@ def orderManipulation() -> int:
                                 return 1
 
             order_station_file.close()
-
+    print("Dataset created")
     return dataToFile(dataset,header)
 
 def main(argv):
+    """Main function of the script
+
+    Parameters
+    ----------
+    argv : dict
+        Parsed set of arguments passed when script called
+    """
+    print(f"Starting {time.strftime("%Y-%m-%d %H:%M:%S")}")
     exit_code = 0
     try:
       opts, args = getopt.getopt(argv,"ihs")
@@ -248,10 +283,13 @@ def main(argv):
             sys.exit(1)
 
         elif opt == '-i':
+            print("Creating Inventory")
             createInventoryCSV()
             sys.exit(0)
 
+    print("Manipulating Order(s)")
     exit_code = orderManipulation()
+    print(f"Done {time.strftime("%Y-%m-%d %H:%M:%S")}")
     sys.exit(exit_code)
 
 if __name__ == "__main__":
