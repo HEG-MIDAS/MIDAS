@@ -52,7 +52,7 @@ def createInventoryCSV():
     """
     if os.path.exists(os.path.join(scraper_path,'inventory.pdf')) == False:
         print("The inventory pdf file doesn't exist. Please place it next to this script and name it 'inventory.pdf'")
-        sys.exit(1)
+        return 1
     inputPDF = open(os.path.join(scraper_path,'inventory.pdf'), 'rb')
     outputCSV = open(os.path.join(scraper_path,'inventory.csv'), 'w+')
     pdfReader = PyPDF2.PdfFileReader(inputPDF)
@@ -170,6 +170,16 @@ def orderManipulation() -> int:
         # Load existing station file data
         if (os.path.exists(os.path.join(transformed_media_path,f'{v}.csv'))):
             print("File Found")
+            # Load file if exist and fill dataset
+            station_found_file = open(os.path.join(transformed_media_path,f'{v}.csv'))
+            header_found_file = station_found_file.readline().strip().split(";")
+            for line in station_found_file:
+                stripped_line = line.strip().split(";")
+                if stripped_line[0] not in dataset[v]:
+                    dataset[v][stripped_line[0]] = {}
+                for i in range(1,len(stripped_line)-1):
+                    dataset[v][stripped_line[0]][header_found_file[i]] = stripped_line[i]
+            station_found_file.close()
 
     # Add Order files datas to Dataset
     for order_file in order_data_files:
