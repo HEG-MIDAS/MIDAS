@@ -8,6 +8,7 @@ import datetime
 import shutil
 from zipfile import ZipFile
 from merge_csv_by_date_package import merge_csv_by_date
+import gc
 
 ## Path of Scraper
 scraper_path = os.path.realpath(
@@ -218,13 +219,14 @@ def orderManipulation() -> int:
 
             order_station_file = open(os.path.join(temp_path,order_file),'r')
             data_10_minutes = []
+            cnt = 0
             for line in order_station_file:
                 stripped_line = line.strip()
+                cnt+=1
                 if stripped_line != "":
                     measures = stripped_line.split(';')[1:]
-                    order_header = []
 
-                    # Ignore header line
+                    # Ignore header lineimport gc
                     if measures[0] != "time":
                         try:
                             o_timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d')
@@ -237,6 +239,8 @@ def orderManipulation() -> int:
                                         dataset[station_abbr[station_name]][timestamp][param] = ''
 
                                 dataset[station_abbr[station_name]][timestamp][parameter] = measures[1]
+                                del timestamp
+                                gc.collect()
                         except:
                             try:
                                 timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d%H')
@@ -268,9 +272,10 @@ def orderManipulation() -> int:
                                             data_10_minutes.append(float(measures[1]))
                                 except:
                                     print("No Matching Timestamp Found")
-                                    return 1
+                                    break
 
             order_station_file.close()
+            print(f'{order_file}...done')
     print("Dataset created")
     return dataToFile(dataset,header)
 
