@@ -113,7 +113,7 @@ def dataToFile(dataset: dict, header:dict) -> int:
             station_file.close()
         print("Done creating or editing the station files")
         return 0
-    except:
+    except Exception:
         return 1
 
 def station_sanitizer(station:str) -> str:
@@ -219,10 +219,11 @@ def orderManipulation() -> int:
 
             order_station_file = open(os.path.join(temp_path,order_file),'r')
             data_10_minutes = []
-            cnt = 0
-            for line in order_station_file:
+            # cnt = 0
+            file = order_station_file.readlines()
+            for line in file:
                 stripped_line = line.strip()
-                cnt+=1
+                # cnt+=1
                 if stripped_line != "":
                     measures = stripped_line.split(';')[1:]
 
@@ -233,6 +234,7 @@ def orderManipulation() -> int:
                             for i in range(0,24):
                                 timestamp = o_timestamp + datetime.timedelta(hours=i)
                                 timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
+                                print(timestamp ,end="\r")
                                 if timestamp not in dataset[station_abbr[station_name]]:
                                     dataset[station_abbr[station_name]][timestamp] = {}
                                     for param in header[station_abbr[station_name]].split(';'):
@@ -241,7 +243,7 @@ def orderManipulation() -> int:
                                 dataset[station_abbr[station_name]][timestamp][parameter] = measures[1]
                                 del timestamp
                                 gc.collect()
-                        except:
+                        except Exception:
                             try:
                                 timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d%H')
                                 timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
@@ -251,7 +253,7 @@ def orderManipulation() -> int:
                                         dataset[station_abbr[station_name]][timestamp][param] = ''
 
                                 dataset[station_abbr[station_name]][timestamp][parameter] = measures[1]
-                            except:
+                            except Exception:
                                 try:
                                     timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d%H%M')
                                     if(timestamp.minute==0):
@@ -270,7 +272,7 @@ def orderManipulation() -> int:
                                     else:
                                         if measures[1] != '-' and measures[1] != '':
                                             data_10_minutes.append(float(measures[1]))
-                                except:
+                                except Exception:
                                     print("No Matching Timestamp Found")
                                     break
 
