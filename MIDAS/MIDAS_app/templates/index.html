@@ -25,19 +25,19 @@
 </div>
 
 <div class="midas-container container-fluid">
-    <div class="accordion" id="accordionDashboard">
+    <div class="accordion" id="accordionDashboard0">
         <div class="accordion-item">
-            <h2 class="accordion-header" id="headingSources">
-                <button id="buttonSources" class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSources" aria-expanded="true" aria-controls="collapseSources">
+            <h2 class="accordion-header" id="headingSources0">
+                <button id="buttonSources0" class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSources0" aria-expanded="true" aria-controls="collapseSources">
                     Sources
                 </button>
             </h2>
-            <div id="collapseSources" class="accordion-collapse collapse show" aria-labelledby="headingSources">
+            <div id="collapseSources0" class="accordion-collapse collapse show" aria-labelledby="headingSources">
                 <div class="accordion-body sources">
                     {% for source in sources %}
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" value="{{ source.slug }}" id="flexCheck{{ source.slug }}" onclick="select_source(this)">
-                            <label class="form-check-label" for="flexCheck{{ source.slug }}">
+                            <input class="form-check-input" type="checkbox" value="{{ source.slug }}" id="flexCheck{{ source.slug }}0" onclick="select_source(this, 0)">
+                            <label class="form-check-label" for="flexCheck{{ source.slug }}0">
                                 {{ source.name }}
                             </label>
                         </div>
@@ -46,57 +46,57 @@
             </div>
         </div>
         <div class="accordion-item">
-            <h2 class="accordion-header" id="headingStations">
-                <button id="buttonStations" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStations" aria-expanded="false" aria-controls="collapseStations" disabled>
+            <h2 class="accordion-header" id="headingStations0">
+                <button id="buttonStations0" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStations0" aria-expanded="false" aria-controls="collapseStations" disabled>
                     Stations
                 </button>
             </h2>
-            <div id="collapseStations" class="accordion-collapse collapse" aria-labelledby="headingStations">
-                <div class="accordion-body stations" id="accordionStations">
+            <div id="collapseStations0" class="accordion-collapse collapse" aria-labelledby="headingStations">
+                <div class="accordion-body stations" id="accordionStations0">
                     
                 </div>
             </div>
         </div>
         <div class="accordion-item">
-            <h2 class="accordion-header" id="headingParameters">
-                <button id="buttonParameters" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseParameters" aria-expanded="false" aria-controls="collapseParameters" disabled>
+            <h2 class="accordion-header" id="headingParameters0">
+                <button id="buttonParameters0" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseParameters0" aria-expanded="false" aria-controls="collapseParameters" disabled>
                     Paramètres
                 </button>
             </h2>
-            <div id="collapseParameters" class="accordion-collapse collapse" aria-labelledby="headingParameters">
-                <div class="accordion-body parameters" id="accordionParameters">
+            <div id="collapseParameters0" class="accordion-collapse collapse" aria-labelledby="headingParameters">
+                <div class="accordion-body parameters" id="accordionParameters0">
                     
                 </div>
             </div>
         </div>
         <div class="accordion-item">
-            <h2 class="accordion-header" id="headingDates">
-                <button id="buttonDates" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDates" aria-expanded="false" aria-controls="collapseDates" disabled>
+            <h2 class="accordion-header" id="headingDates0">
+                <button id="buttonDates0" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDates0" aria-expanded="false" aria-controls="collapseDates" disabled>
                     Temporalité
                 </button>
             </h2>
-            <div id="collapseDates" class="accordion-collapse collapse" aria-labelledby="headingDates">
+            <div id="collapseDates0" class="accordion-collapse collapse" aria-labelledby="headingDates">
                 <div class="needs-validation">
-                    <div class="accordion-body dates" id="accordionDates">
+                    <div class="accordion-body dates" id="accordionDates0">
                         <div class="row align-items-center justify-content-center starting-date">
                             <div class="col-sm-3">
-                                <label for="id_starting_date">Date de début  :</label>
+                                <label for="startingDate0">Date de début  :</label>
                             </div>
                             <div class="col-sm-6">
-                                <input type="datetime-local" id="startingDate" name="starting_date" class="form-control" required="" id="id_starting_date">
+                                <input type="datetime-local" id="startingDate0" name="starting_date" class="form-control" required="">
                             </div>
                         </div>
                         <div class="row align-items-center justify-content-center ending-date">
                             <div class="col-sm-3">
-                                <label for="id_ending_date">Date de fin  :</label>
+                                <label for="endingDate0">Date de fin  :</label>
                             </div>
                             <div class="col-sm-6">
-                                <input type="datetime-local" id="endingDate" name="ending_date" class="form-control" required="" id="id_ending_date">
+                                <input type="datetime-local" id="endingDate0" name="ending_date" class="form-control" required="">
                             </div>
                         </div>
                 
                         <div class="submit-data-dashboard">
-                            <button type="submit" class="btn btn-primary" onclick="requestData(this)">
+                            <button type="submit" class="btn btn-primary" onclick="requestData(this, 0)">
                                 Envoyer
                             </button>
                         </div>
@@ -108,13 +108,13 @@
 
     <div class="addResearchDiv"></div>
 
-    <div class="addResearch" onclick="addResearch()">Ajouter une recherche <i class="fas fa-plus-circle"></i></div>
+    <div class="addResearch" onclick="addResearch()">Ajouter une recherche <i class="fa-solid fa-circle-plus"></i></div>
 
     <div class="" id="EchartsParameters">
     </div>
 
     <div class="d-flex w-100 justify-content-center" id="echarts">
-        <div id="main" class="d-none" style="width: 100%;height:800px;"></div>
+        <div id="main" class="d-none" width="100%" height="800px" style="width: 100%; height: 800px;"></div>
     </div>
 
 </div>
@@ -122,6 +122,7 @@
 <script type="text/javascript">
     function addResearch(){
         console.log("Pouet");
+        console.log(document.getElementById("accordionDashboard").cloneNode(true))
     }
 
 </script>

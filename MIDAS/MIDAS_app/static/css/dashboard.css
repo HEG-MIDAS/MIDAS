@@ -1,4 +1,4 @@
-#accordionDashboard {
+.accordion {
     margin-left: 10%;
     margin-right: 10%;
 }
@@ -67,7 +67,7 @@
     margin-top: 1em;
 }
 
-.addResearch .fa-plus-circle {
+.addResearch .fa-circle-plus {
     font-size: 1.2em;
     margin-left: 5px;
 }
