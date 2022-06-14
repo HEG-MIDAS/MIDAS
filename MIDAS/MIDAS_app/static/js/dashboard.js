@@ -494,6 +494,7 @@ function addRuleOfEChartsParameters(){
     }
 
     const div = document.createElement("div");
+
     div.id = "EchartsViewParameters";
     const averageInp = document.createElement("input");
     averageInp.className = "form-check-input ";
@@ -505,21 +506,51 @@ function addRuleOfEChartsParameters(){
     averageLab.setAttribute("for", "CheckAverage");
     averageLab.innerText = "Afficher la moyenne";
 
+    div.appendChild(averageInp);
+    div.appendChild(averageLab);
+
     // Median button
     const medianInp = document.createElement("input");
     medianInp.className = "form-check-input";
     medianInp.type = "checkbox";
     medianInp.id = "CheckMedian";
-    medianInp.setAttribute("onclick", "addMarkLineToEchartsPlot(this, 'median', 'Median Line')");
+    medianInp.setAttribute("onclick", "addMarkLineToEchartsPlot(this, 'median', 'Median')");
     const medianLab = document.createElement("label");
     medianLab.className = "form-check-label lab-param-echarts";
     medianLab.setAttribute("for", "CheckMedian");
     medianLab.innerText = "Afficher la medianne";
 
-    div.appendChild(averageInp);
-    div.appendChild(averageLab);
     div.appendChild(medianInp);
     div.appendChild(medianLab);
+
+    // Min button
+    const minInp = document.createElement("input");
+    minInp.className = "form-check-input";
+    minInp.type = "checkbox";
+    minInp.id = "CheckMin";
+    minInp.setAttribute("onclick", "addMarkLineToEchartsPlot(this, 'min', 'Min')");
+    const minLab = document.createElement("label");
+    minLab.className = "form-check-label lab-param-echarts";
+    minLab.setAttribute("for", "CheckMin");
+    minLab.innerText = "Afficher le minimum";
+
+    div.appendChild(minInp);
+    div.appendChild(minLab);
+
+    // Max button
+    const maxInp = document.createElement("input");
+    maxInp.className = "form-check-input";
+    maxInp.type = "checkbox";
+    maxInp.id = "CheckMax";
+    maxInp.setAttribute("onclick", "addMarkLineToEchartsPlot(this, 'max', 'Max')");
+    const maxLab = document.createElement("label");
+    maxLab.className = "form-check-label lab-param-echarts";
+    maxLab.setAttribute("for", "CheckMax");
+    maxLab.innerText = "Afficher le maximum";
+
+    div.appendChild(maxInp);
+    div.appendChild(maxLab);
+    
     baseDiv.appendChild(div);
 }
 

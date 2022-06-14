@@ -56,3 +56,18 @@
     margin-left: 5px;
     margin-right: 10px;
 }
+
+.addResearch {
+    color: #1363e4;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    cursor: pointer;
+    margin-right: 10%;
+    margin-top: 1em;
+}
+
+.addResearch .fa-plus-circle {
+    font-size: 1.2em;
+    margin-left: 5px;
+}
