@@ -148,6 +148,9 @@ def loadHeader():
 
     return header, content, stations
 
+def datasetManiulation():
+    return {}
+
 def orderManipulation() -> int:
     """Manipulate order file to create the station output file
 
@@ -234,7 +237,6 @@ def orderManipulation() -> int:
                             for i in range(0,24):
                                 timestamp = o_timestamp + datetime.timedelta(hours=i)
                                 timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
-                                print(timestamp ,end="\r")
                                 if timestamp not in dataset[station_abbr[station_name]]:
                                     dataset[station_abbr[station_name]][timestamp] = {}
                                     for param in header[station_abbr[station_name]].split(';'):
