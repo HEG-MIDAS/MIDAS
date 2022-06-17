@@ -125,7 +125,7 @@
     function addResearch(){
         console.log("Pouet");
         var test = document.getElementById("accordionDashboard0").cloneNode(true);
-        console.log(test);
+        console.log(test.id);
         console.log(test.querySelectorAll("[id*='0']"));
         console.log(Array.from(test.querySelectorAll("[id*='0']")).map(element => element.id = element.id.replace("0", "1"))); //.map(element => element.replace("0", "1"))
         console.log(test)
