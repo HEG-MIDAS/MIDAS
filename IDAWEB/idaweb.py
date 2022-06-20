@@ -8,6 +8,7 @@ import datetime
 import shutil
 from zipfile import ZipFile
 from merge_csv_by_date_package import merge_csv_by_date
+import gc
 
 ## Path of Scraper
 scraper_path = os.path.realpath(
@@ -52,7 +53,7 @@ def createInventoryCSV():
     """
     if os.path.exists(os.path.join(scraper_path,'inventory.pdf')) == False:
         print("The inventory pdf file doesn't exist. Please place it next to this script and name it 'inventory.pdf'")
-        sys.exit(1)
+        return 1
     inputPDF = open(os.path.join(scraper_path,'inventory.pdf'), 'rb')
     outputCSV = open(os.path.join(scraper_path,'inventory.csv'), 'w+')
     pdfReader = PyPDF2.PdfFileReader(inputPDF)
@@ -84,6 +85,20 @@ def createInventoryCSV():
     createHeaders()
 
 def dataToFile(dataset: dict, header:dict) -> int:
+    """Write dataset to files
+
+    Parameters
+    ----------
+    dataset : dict
+        Dictionary to write
+    header: dict
+        Dictionary of the headers to get the correct order
+
+    Returns
+    -------
+    int
+        The System Exit Code
+    """
     try:
         for station, timestamps in dataset.items():
             station_file = open(os.path.join(transformed_media_path,station)+'.csv',"w+")
@@ -96,14 +111,19 @@ def dataToFile(dataset: dict, header:dict) -> int:
                     station_file.write(f'{parameters[param_header]};')
                 station_file.write('\n')
             station_file.close()
-            return 0
-    except:
+        print("Done creating or editing the station files")
+        return 0
+    except Exception:
         return 1
 
 def station_sanitizer(station:str) -> str:
+    """Sanitize the station string
+    """
     return station.replace(' /',',').replace(' / ',',').replace('/',',')
 
 def loadHeader():
+    """Loop through an existing header.csv to load header, content and stations
+    """
     headerFile = None
     header = {}
     content = {}
@@ -128,8 +148,17 @@ def loadHeader():
 
     return header, content, stations
 
-def orderManipulation() -> int:
+def datasetManiulation():
+    return {}
 
+def orderManipulation() -> int:
+    """Manipulate order file to create the station output file
+
+    Returns
+    -------
+    int
+        the system exit code
+    """
     # Load Header
     header, content, stations = loadHeader()
 
@@ -150,6 +179,7 @@ def orderManipulation() -> int:
 
     # Get Station Abbreviation to Station Name transformation
     station_abbr = {}
+    print("Start looping through legend file(s)")
     for order_file in order_legend_files:
         station_parameters_type = order_file.replace('.txt','').split('_')[2:]
         if(len(station_parameters_type)==4):
@@ -169,9 +199,20 @@ def orderManipulation() -> int:
             dataset[v] = {}
         # Load existing station file data
         if (os.path.exists(os.path.join(transformed_media_path,f'{v}.csv'))):
-            print("File Found")
+            print(f"File Found for {v}")
+            # Load file if exist and fill dataset
+            station_found_file = open(os.path.join(transformed_media_path,f'{v}.csv'))
+            header_found_file = station_found_file.readline().strip().split(";")
+            for line in station_found_file:
+                stripped_line = line.strip().split(";")
+                if stripped_line[0] not in dataset[v]:
+                    dataset[v][stripped_line[0]] = {}
+                for i in range(1,len(stripped_line)-1):
+                    dataset[v][stripped_line[0]][header_found_file[i]] = stripped_line[i]
+            station_found_file.close()
 
     # Add Order files datas to Dataset
+    print("Start lopping through data file(s)")
     for order_file in order_data_files:
         station_parameters_type = order_file.replace('.txt','').split('_')[2:]
         # Check to exclude orders that are not divided
@@ -181,51 +222,76 @@ def orderManipulation() -> int:
 
             order_station_file = open(os.path.join(temp_path,order_file),'r')
             data_10_minutes = []
-            for line in order_station_file:
+            # cnt = 0
+            file = order_station_file.readlines()
+            for line in file:
                 stripped_line = line.strip()
+                # cnt+=1
                 if stripped_line != "":
                     measures = stripped_line.split(';')[1:]
-                    order_header = []
 
-                    # Ignore header line
+                    # Ignore header lineimport gc
                     if measures[0] != "time":
                         try:
-                            timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d%H')
-                            timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
-                            if timestamp not in dataset[station_abbr[station_name]]:
-                                dataset[station_abbr[station_name]][timestamp] = {}
-                                for param in header[station_abbr[station_name]].split(';'):
-                                    dataset[station_abbr[station_name]][timestamp][param] = ''
+                            o_timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d')
+                            for i in range(0,24):
+                                timestamp = o_timestamp + datetime.timedelta(hours=i)
+                                timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
+                                if timestamp not in dataset[station_abbr[station_name]]:
+                                    dataset[station_abbr[station_name]][timestamp] = {}
+                                    for param in header[station_abbr[station_name]].split(';'):
+                                        dataset[station_abbr[station_name]][timestamp][param] = ''
 
-                            dataset[station_abbr[station_name]][timestamp][parameter] = measures[1]
-                        except:
+                                dataset[station_abbr[station_name]][timestamp][parameter] = measures[1]
+                                del timestamp
+                                gc.collect()
+                        except Exception:
                             try:
-                                timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d%H%M')
-                                if(timestamp.minute==0):
-                                    average = ""
-                                    if len(data_10_minutes) > 0:
-                                        average = np.average(data_10_minutes)
-                                    timestamp = timestamp - datetime.timedelta(hours=1)
-                                    timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
-                                    if timestamp not in dataset[station_abbr[station_name]]:
-                                        dataset[station_abbr[station_name]][timestamp] = {}
-                                        for param in header[station_abbr[station_name]].split(';'):
-                                            dataset[station_abbr[station_name]][timestamp][param] = ''
-                                    dataset[station_abbr[station_name]][timestamp][parameter] = average
-                                    if measures[1] != '-' and measures[1] != '':
-                                        data_10_minutes = [float(measures[1])]
-                                else:
-                                    if measures[1] != '-' and measures[1] != '':
-                                        data_10_minutes.append(float(measures[1]))
-                            except:
-                                print("No Matching Timestamp Found")
-                                return 1
+                                timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d%H')
+                                timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
+                                if timestamp not in dataset[station_abbr[station_name]]:
+                                    dataset[station_abbr[station_name]][timestamp] = {}
+                                    for param in header[station_abbr[station_name]].split(';'):
+                                        dataset[station_abbr[station_name]][timestamp][param] = ''
+
+                                dataset[station_abbr[station_name]][timestamp][parameter] = measures[1]
+                            except Exception:
+                                try:
+                                    timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d%H%M')
+                                    if(timestamp.minute==0):
+                                        average = ""
+                                        if len(data_10_minutes) > 0:
+                                            average = np.average(data_10_minutes)
+                                        timestamp = timestamp - datetime.timedelta(hours=1)
+                                        timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
+                                        if timestamp not in dataset[station_abbr[station_name]]:
+                                            dataset[station_abbr[station_name]][timestamp] = {}
+                                            for param in header[station_abbr[station_name]].split(';'):
+                                                dataset[station_abbr[station_name]][timestamp][param] = ''
+                                        dataset[station_abbr[station_name]][timestamp][parameter] = average
+                                        if measures[1] != '-' and measures[1] != '':
+                                            data_10_minutes = [float(measures[1])]
+                                    else:
+                                        if measures[1] != '-' and measures[1] != '':
+                                            data_10_minutes.append(float(measures[1]))
+                                except Exception:
+                                    print("No Matching Timestamp Found")
+                                    break
 
             order_station_file.close()
-
+            print(f'{order_file}...done')
+    print("Dataset created")
     return dataToFile(dataset,header)
 
 def main(argv):
+    """Main function of the script
+
+    Parameters
+    ----------
+    argv : dict
+        Parsed set of arguments passed when script called
+    """
+    print(f"Starting {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     exit_code = 0
     try:
       opts, args = getopt.getopt(argv,"ihs")
@@ -238,10 +304,13 @@ def main(argv):
             sys.exit(1)
 
         elif opt == '-i':
+            print("Creating Inventory")
             createInventoryCSV()
             sys.exit(0)
 
+    print("Manipulating Order(s)")
     exit_code = orderManipulation()
+    print(f"Done {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     sys.exit(exit_code)
 
 if __name__ == "__main__":
