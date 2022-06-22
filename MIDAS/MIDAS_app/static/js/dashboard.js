@@ -1,9 +1,9 @@
 // Global variables
 // Arrays that will contain the elements selected by the user
 // each dimension correspond to a research div used
-var sources = [[]];
-var stations = [[]];
-var parameters = [[]];
+var sources = [];
+var stations = [];
+var parameters = [];
 // JSON object
 var options = {};
 var option = {};
@@ -33,22 +33,32 @@ startingDate.value = datePH.toISOString().slice(0, -8);
 //////////////////////////////////////////////////////////////////////////////////////
 
 // Handles format the json body to send via the POST method to get the data requested
-function requestData(e, idx){
-    var startingDateValue = document.getElementById('startingDate'+idx.toString()).value;
-    var endingDateValue = document.getElementById('endingDate'+idx.toString()).value;
-    // Check the dates of start and end are filled and that there is at least one element selected for source, station, and parameter
-    // to be able to send the request
-    if (startingDateValue != '' && endingDateValue != '' && sources.length > 0 && stations[idx].length > 0 && parameters[idx].length > 0) {
-        // Format dates
-        var startingDate = new Date(startingDateValue);
-        var startingDateString = startingDate.getUTCFullYear() +"-"+ (startingDate.getUTCMonth()+1) +"-"+ startingDate.getUTCDate() + " " + startingDate.getUTCHours() + ":" + startingDate.getUTCMinutes() + ":" + startingDate.getUTCSeconds();
-        var endingDate = new Date(endingDateValue);
-        var endingDateString = endingDate.getUTCFullYear() +"-"+ (endingDate.getUTCMonth()+1) +"-"+ endingDate.getUTCDate() + " " + endingDate.getUTCHours() + ":" + endingDate.getUTCMinutes() + ":" + endingDate.getUTCSeconds();
+function requestData(){
+    var cnt = 0;
+    array_current_idx.forEach(function(index){
+        var startingDateValue = document.getElementById('startingDate'+index.toString()).value;
+        var endingDateValue = document.getElementById('endingDate'+index.toString()).value;
+        // Check the dates of start and end are filled and that there is at least one element selected for source, station, and parameter
+        // to be able to send the request
+        if (startingDateValue != '' && endingDateValue != '' && sources[cnt].length > 0 && stations[cnt].length > 0 && parameters[cnt].length > 0) {
+            // Format dates
+            var startingDate = new Date(startingDateValue);
+            var startingDateString = startingDate.getUTCFullYear() +"-"+ (startingDate.getUTCMonth()+1) +"-"+ startingDate.getUTCDate() + " " + startingDate.getUTCHours() + ":" + startingDate.getUTCMinutes() + ":" + startingDate.getUTCSeconds();
+            var endingDate = new Date(endingDateValue);
+            var endingDateString = endingDate.getUTCFullYear() +"-"+ (endingDate.getUTCMonth()+1) +"-"+ endingDate.getUTCDate() + " " + endingDate.getUTCHours() + ":" + endingDate.getUTCMinutes() + ":" + endingDate.getUTCSeconds();
 
-        // Construct the json body of the POST method
-        options = {'sources': sources[idx], 'stations': stations[idx], 'parameters': parameters[idx], 'starting_date': startingDateString, 'ending_date': endingDateString}
-        requestDataFetch(options)
-    }
+            // Construct the json body of the POST method
+            options = {'sources': sources[cnt], 'stations': stations[cnt], 'parameters': parameters[cnt], 'starting_date': startingDateString, 'ending_date': endingDateString}
+            var jsonData = [];
+            Promise.all([requestDataFetch(options)]).then((data) => {
+                //console.log(data)
+                jsonData.push(data);
+            })
+            console.log(jsonData[0])
+            //console.log(requestDataFetch(options))
+        }
+        cnt++;
+    })
 }
 
 // Modify the properties of the accordeon component to be always open or not in function of the dedicated box
@@ -79,6 +89,7 @@ function fixedAccordeon(e){
 // Adds or deletes the sources from the global array dedicated and enable the selection of stations
 // if there is at least one source selected
 function select_source(e, idx){
+    var index = array_current_idx.indexOf(idx);
     var stationsAccordeon = document.getElementById('headingStations'+idx.toString()).getElementsByTagName('button')[0];
     // Check if the user selected or deselected a source
     if (e.checked) {
@@ -86,9 +97,9 @@ function select_source(e, idx){
         // Enable accordeon component for stations
         stationsAccordeon.disabled = false;
         // Add source to source array
-        sources[idx].push(e.value);
+        sources[index].push(e.value);
         // Prepare json body to POST request
-        options = {'sources': sources[idx]};
+        options = {'sources': sources[index]};
         requestStations(options, idx);
         var cs = document.getElementById('buttonStations'+idx.toString());
         // Open next accordeon if it is closed
@@ -98,12 +109,12 @@ function select_source(e, idx){
     }
     else {
         // Deletes source from source array
-        var index = sources[idx].indexOf(e.value);
+        var index = sources[index].indexOf(e.value);
         if (index !== -1) {
-            sources[idx].splice(index, 1);
+            sources[index].splice(index, 1);
         }
         // If there is no sources selected
-        if (sources[idx].length == 0) {
+        if (sources[index].length == 0) {
             // Closes all open accordeons below
             var cs = document.getElementById('buttonStations'+idx.toString());
             if (cs.getAttribute('aria-expanded') === 'true') {
@@ -118,8 +129,8 @@ function select_source(e, idx){
                 cs.click();
             }
             // Clear stations and parameters arrays
-            stations[idx] = [];
-            parameters[idx] = [];
+            stations[index] = [];
+            parameters[index] = [];
             // Disable the possibility to expand accordeon of stations and parameters
             stationsAccordeon.disabled = true;
             parametersAccordeon = document.getElementById('headingParameters'+idx.toString()).getElementsByTagName('button')[0];
@@ -127,7 +138,7 @@ function select_source(e, idx){
         }
         else{
             // Prepare json body to POST request for the sources left
-            options = {'sources': sources[idx]};
+            options = {'sources': sources[index]};
             requestStations(options, idx);
             if (!fixed) {
                 // Open accordeon of stations
@@ -142,15 +153,16 @@ function select_source(e, idx){
 // Adds or deletes the stations from the global array dedicated and enable the selection of parameters
 // if there is at least one station selected
 function select_station(e, idx){
+    var index = array_current_idx.indexOf(idx);
     var parametersAccordeon = document.getElementById('headingParameters'+idx.toString()).getElementsByTagName('button')[0];
     // Split the value to an array of elements (value of e is formed as => value="source station")
     var array_e_values = e.value.split(' ');
     // Check if the user selected or deselected a station
     if (e.checked) {
         // Add station value to its dedicated array
-        stations[idx].push(array_e_values.at(-1));
+        stations[index].push(array_e_values.at(-1));
         // Prerare json body for POST request
-        options = {'sources': sources[idx], 'stations': stations[idx]};
+        options = {'sources': sources[index], 'stations': stations[index]};
         // If the user selects a stations
         // Enable accordeon component for parmeters
         parametersAccordeon.disabled = false;
@@ -163,11 +175,11 @@ function select_station(e, idx){
     }
     else {
         // Deletes station from its array
-        var index = stations[idx].indexOf(array_e_values.at(-1));
+        var index = stations[index].indexOf(array_e_values.at(-1));
         if (index !== -1) {
-            stations[idx].splice(index, 1);
+            stations[index].splice(index, 1);
         }
-        if (stations[idx].length == 0) {
+        if (stations[index].length == 0) {
             // If there is no more stations in the array, closes all accordeons below
             var cs = document.getElementById('buttonParameters'+idx.toString());
             if (cs.getAttribute('aria-expanded') === 'true') {
@@ -178,7 +190,7 @@ function select_station(e, idx){
                 cs.click();
             }
             // Set parameters array to empty
-            parameters[idx] = [];
+            parameters[index] = [];
             // Disabled accordeons below
             parametersAccordeon.disabled = true;
             var datesAccordeon = document.getElementById('headingDates'+idx.toString()).getElementsByTagName('button')[0];
@@ -186,7 +198,7 @@ function select_station(e, idx){
         }
         else{
             // Prepare json body to POST request for the stations left
-            options = {'sources': sources[idx], 'stations': stations[idx]};
+            options = {'sources': sources[index], 'stations': stations[index]};
             requestParameters(options, idx)
             // Open next accordeon if the accordeons are not fixed
             if (!fixed) {
@@ -201,12 +213,13 @@ function select_station(e, idx){
 // Adds or deletes the parameters from the global array dedicated and enable the selection of dates
 // if there is at least one parameter selected
 function select_parameter(e, idx){
+    var index = array_current_idx.indexOf(idx);
     var datesAccordeon = document.getElementById('headingDates'+idx.toString()).getElementsByTagName('button')[0];
     // Split the value to an array of elements (value of e is formed as => value="source station1,station2 parameter")
     var array_e_values = e.value.split(' ');
     // Check if the user selected or deselected a parameter
     if (e.checked) {
-        parameters[idx].push(array_e_values.at(-1));
+        parameters[index].push(array_e_values.at(-1));
         // If the user selects a parameter
         // Enable accordeon component for dates
         datesAccordeon.disabled = false;
@@ -218,11 +231,11 @@ function select_parameter(e, idx){
     }
     else {
         // Delete parameter from its array
-        var index = parameters[idx].indexOf(array_e_values.at(-1));
+        var index = parameters[index].indexOf(array_e_values.at(-1));
         if (index !== -1) {
-            parameters[idx].splice(index, 1);
+            parameters[index].splice(index, 1);
         }
-        if (parameters[idx].length == 0) {
+        if (parameters[index].length == 0) {
             // If there are no paremeters left in the dedicated array
             // Closes and disable date accordeon
             var cs = document.getElementById('buttonDates'+idx.toString());
@@ -246,6 +259,7 @@ const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value ;
 // Request all the stations available for the selected sources
 function requestStations(options, idx){
     // Request station-dashboard view
+    var index = array_current_idx.indexOf(idx);
     fetch('/stations-dashboard/',{
         method: 'POST',
         headers: {
@@ -298,31 +312,31 @@ function requestStations(options, idx){
         
         // This part check the boxes that were previously selected and can still be
         // Check if there is stations selected
-        if (stations[idx].length > 0){
-            for (var i = stations[idx].length-1; i >= 0; --i) {
+        if (stations[index].length > 0){
+            for (var i = stations[index].length-1; i >= 0; --i) {
                 // Check if the station is still available to be selected
                 /*console.log(stations)
                 console.log(stationsSlug)
                 console.log(stations[i])
                 console.log(stationsSlug.includes(stations[i]))
                 */
-                if (stationsSlug.includes(stations[idx][i])){
+                if (stationsSlug.includes(stations[index][i])){
                     //console.log(stations[i])
                     // Select the station box
-                    document.getElementById("flexCheck"+stations[idx][i]+idx.toString()).checked = true;
+                    document.getElementById("flexCheck"+stations[index][i]+idx.toString()).checked = true;
                     // Request for the parameters of the box selected and will do the same stuff
-                    requestParameters({'sources': sources[idx], 'stations': stations[idx][i]})
+                    requestParameters({'sources': sources[index], 'stations': stations[index][i]})
                 }
                 else {
                     // If the code enter here, it means that the station was not in the request so it is deleted from our stations' array 
-                    stations[idx].splice(i, 1);
+                    stations[index].splice(i, 1);
                 }
                 //console.log(stations)
                 //console.log(stationsSlug)
             }
         }
         // If there is no stations selected
-        if (stations[idx].length == 0) {
+        if (stations[index].length == 0) {
             var cs = document.getElementById('buttonParameters'+idx.toString());
             // Check if the parameters div is expanded
             if (cs.getAttribute('aria-expanded') === 'true') {
@@ -330,7 +344,7 @@ function requestStations(options, idx){
                 cs.click();
             }
             // Remove all parameters of the array
-            parameters[idx] = [];
+            parameters[index] = [];
             parametersAccordeon = document.getElementById('headingParameters'+idx.toString()).getElementsByTagName('button')[0];
             // Disabled the accordeon of parameters as there is no stations selected
             parametersAccordeon.disabled = true;
@@ -340,6 +354,7 @@ function requestStations(options, idx){
 
 // Request all the paremeters available for the selected stations and sources
 function requestParameters(options, idx){
+    var index = array_current_idx.indexOf(idx);
     // Request parameters to view parameters-dashboard
     fetch('/parameters-dashboard/',{
         method: 'POST',
@@ -393,22 +408,22 @@ function requestParameters(options, idx){
         }
 
         // Check if there was paremeters selected
-        if (parameters[idx].length > 0){
-            for (var i = parameters[idx].length-1; i >= 0; --i) {
+        if (parameters[index].length > 0){
+            for (var i = parameters[index].length-1; i >= 0; --i) {
                 // If the selected parameter is still in the request
-                if (parametersSlug.includes(parameters[idx][i])){
+                if (parametersSlug.includes(parameters[index][i])){
                     // Select it
-                    document.getElementById("flexCheck"+parameters[idx][i]+idx.toString()).checked = true;
+                    document.getElementById("flexCheck"+parameters[index][i]+idx.toString()).checked = true;
                 }
                 else {
                     // If the selected parameter is not in the request, delete it from our list of selected parameters
-                    parameters[idx].splice(i, 1);
+                    parameters[index].splice(i, 1);
                 }
             }
         }
         // After checking if there is still selected parameters, we check if there is none
-        if (parameters[idx].length == 0) {
-            parameters[idx] = [];
+        if (parameters[index].length == 0) {
+            parameters[index] = [];
             var cs = document.getElementById('buttonDates'+idx.toString());
             // If the accordion containing the selection of dates is expanded
             if (cs.getAttribute('aria-expanded') === 'true') {
@@ -421,8 +436,8 @@ function requestParameters(options, idx){
 }
 
 // Request data from the sources, stations, parameters, and date selected
-function requestDataFetch(options){
-    fetch('/request-data-dashboard/',{
+async function requestDataFetch(options){
+    var valueTest = fetch('/request-data-dashboard/',{
         method: 'POST',
         headers: {
             'X-CSRFToken': csrf,
@@ -438,9 +453,11 @@ function requestDataFetch(options){
     .then(function(responseJSONData) {
         // Parse JSON response
         jsonData = JSON.parse(responseJSONData);
+        return jsonData;
         document.getElementById("main").className = '';
         drawChart(jsonData)
     });
+    //return await valueTest
 }
 
 

@@ -223,8 +223,8 @@ def orderManipulation() -> int:
             order_station_file = open(os.path.join(temp_path,order_file),'r')
             data_10_minutes = []
             # cnt = 0
-            file = order_station_file.readlines()
-            for line in file:
+            #file = order_station_file.readlines()
+            for line in order_station_file:
                 stripped_line = line.strip()
                 # cnt+=1
                 if stripped_line != "":
@@ -243,8 +243,8 @@ def orderManipulation() -> int:
                                         dataset[station_abbr[station_name]][timestamp][param] = ''
 
                                 dataset[station_abbr[station_name]][timestamp][parameter] = measures[1]
-                                del timestamp
-                                gc.collect()
+                                # del timestamp
+                                # gc.collect()
                         except Exception:
                             try:
                                 timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d%H')

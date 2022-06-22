@@ -1,6 +1,7 @@
 .accordion {
     margin-left: 10%;
     margin-right: 10%;
+    margin-bottom: 1em;
 }
 
 .sources {
@@ -28,6 +29,7 @@
 
 .submit-data-dashboard{
     margin-top: 10px;
+    margin-right: 10%;
     display: flex;
     justify-content: flex-end;
 }
@@ -70,4 +72,16 @@
 .addResearch .fa-circle-plus {
     font-size: 1.2em;
     margin-left: 5px;
+}
+
+.delete-search {
+    cursor: pointer;
+    float: right;
+    margin-right: -2em;
+    margin-top: -16em;
+}
+
+.delete-search .fa-circle-xmark {
+    color: red;
+    font-size: 1.2em;
 }
