@@ -57,7 +57,7 @@ def orderManipulation():
     order_legend_files = sortFileListByStation(order_legend_files)
 
     station_abbr = {}
-    print(f"Retrieving station abbreviation to full name {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Retrieving station abbreviation to full name")
     for file in order_legend_files:
         station_name = file[0].split('_')[2]
         if station_name not in station_abbr:
@@ -66,13 +66,14 @@ def orderManipulation():
                 if line.startswith(station_name):
                     station_abbr[station_name] = station_sanitizer(re.split(r'\s+',line)[1])
 
-    print(f"Manipulating Data Files {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Manipulating Data Files")
     for station_file in order_data_files:
         dataset = {}
         for file in station_file:
             name = file.split('_')[2]
             param = file.split('_')[3]
             open_file = open(os.path.join(temp_path,file),'r')
+            data_10_minutes = []
             for line in open_file:
                 measures = line.strip()
                 if measures != "":
@@ -91,12 +92,10 @@ def orderManipulation():
                             try:
                                 timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d%H')
                                 timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
-                                if timestamp not in dataset[station_abbr[station_name]]:
-                                    dataset[station_abbr[station_name]][timestamp] = {}
-                                    for param in header[station_abbr[station_name]].split(';'):
-                                        dataset[station_abbr[station_name]][timestamp][param] = ''
+                                if timestamp not in dataset:
+                                    dataset[timestamp] = []
 
-                                dataset[station_abbr[station_name]][timestamp][parameter] = measures[1]
+                                dataset[timestamp] = (param,measures[1])
                             except Exception:
                                 try:
                                     timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d%H%M')
@@ -106,22 +105,20 @@ def orderManipulation():
                                             average = np.average(data_10_minutes)
                                         timestamp = timestamp - datetime.timedelta(hours=1)
                                         timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
-                                        if timestamp not in dataset[station_abbr[station_name]]:
-                                            dataset[station_abbr[station_name]][timestamp] = {}
-                                            for param in header[station_abbr[station_name]].split(';'):
-                                                dataset[station_abbr[station_name]][timestamp][param] = ''
-                                        dataset[station_abbr[station_name]][timestamp][parameter] = average
+                                        if timestamp not in dataset:
+                                            dataset[timestamp] = []
+
+                                        dataset[timestamp] = (param,average)
                                         if measures[1] != '-' and measures[1] != '':
                                             data_10_minutes = [float(measures[1])]
                                     else:
                                         if measures[1] != '-' and measures[1] != '':
                                             data_10_minutes.append(float(measures[1]))
                                 except Exception:
-                                    print(f'{file} - No Matching Timestamp Found {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
+                                    print(f'[{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}] {file} - \033[91mNo Matching Timestamp Found\033[0m')
                                     break
             open_file.close()
-            print(f'{file} - Done {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
-        print(f"Dataset created {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Dataset created for {name}")
         # Write to temp file
         # merge temp file with final one if exists or write it
 def main(argv):
@@ -132,7 +129,7 @@ def main(argv):
     argv : dict
         Parsed set of arguments passed when script called
     """
-    print(f"Starting {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Starting...")
     exit_code = 0
     try:
       opts, args = getopt.getopt(argv,"h")
@@ -145,7 +142,7 @@ def main(argv):
             sys.exit(1)
 
     exit_code = orderManipulation()
-    print(f"Done {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Done!")
     sys.exit(exit_code)
 
 if __name__ == "__main__":
