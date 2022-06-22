@@ -115,7 +115,7 @@ def orderManipulation():
                                         if measures[1] != '-' and measures[1] != '':
                                             data_10_minutes.append(float(measures[1]))
                                 except Exception:
-                                    print(f'[{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}] {file} - \033[91mNo Matching Timestamp Found\033[0m')
+                                    print(f'[{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}][{file}] \033[91mNo Matching Timestamp Found\033[0m (Timestamp = {measures[0]})')
                                     break
             open_file.close()
         print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Dataset created for {name}")
