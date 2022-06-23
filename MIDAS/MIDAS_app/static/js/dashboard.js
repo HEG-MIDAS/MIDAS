@@ -33,11 +33,11 @@ startingDate.value = datePH.toISOString().slice(0, -8);
 //////////////////////////////////////////////////////////////////////////////////////
 
 // Handles format the json body to send via the POST method to get the data requested
-function requestData(){
-    var cnt = 0;
-    array_current_idx.forEach(function(index){
-        var startingDateValue = document.getElementById('startingDate'+index.toString()).value;
-        var endingDateValue = document.getElementById('endingDate'+index.toString()).value;
+async function requestData(){
+    array_promises = [];
+    for (var cnt=0; cnt < array_current_idx.length; cnt++) {
+        var startingDateValue = document.getElementById('startingDate'+array_current_idx[cnt].toString()).value;
+        var endingDateValue = document.getElementById('endingDate'+array_current_idx[cnt].toString()).value;
         // Check the dates of start and end are filled and that there is at least one element selected for source, station, and parameter
         // to be able to send the request
         if (startingDateValue != '' && endingDateValue != '' && sources[cnt].length > 0 && stations[cnt].length > 0 && parameters[cnt].length > 0) {
@@ -49,16 +49,16 @@ function requestData(){
 
             // Construct the json body of the POST method
             options = {'sources': sources[cnt], 'stations': stations[cnt], 'parameters': parameters[cnt], 'starting_date': startingDateString, 'ending_date': endingDateString}
-            var jsonData = [];
-            Promise.all([requestDataFetch(options)]).then((data) => {
-                //console.log(data)
-                jsonData.push(data);
-            })
-            console.log(jsonData[0])
-            //console.log(requestDataFetch(options))
+
+            let test = await requestDataFetch(options);
+            array_promises.push(test);
         }
-        cnt++;
-    })
+    };
+
+    Promise.all([array_promises]).then((data) => {
+        document.getElementById("main").className = '';
+        drawChart(data[0]);
+    });
 }
 
 // Modify the properties of the accordeon component to be always open or not in function of the dedicated box
@@ -109,9 +109,9 @@ function select_source(e, idx){
     }
     else {
         // Deletes source from source array
-        var index = sources[index].indexOf(e.value);
-        if (index !== -1) {
-            sources[index].splice(index, 1);
+        var idx_sources = sources[index].indexOf(e.value);
+        if (idx_sources !== -1) {
+            sources[index].splice(idx_sources, 1);
         }
         // If there is no sources selected
         if (sources[index].length == 0) {
@@ -175,9 +175,9 @@ function select_station(e, idx){
     }
     else {
         // Deletes station from its array
-        var index = stations[index].indexOf(array_e_values.at(-1));
-        if (index !== -1) {
-            stations[index].splice(index, 1);
+        var idx_stations = stations[index].indexOf(array_e_values.at(-1));
+        if (idx_stations !== -1) {
+            stations[index].splice(idx_stations, 1);
         }
         if (stations[index].length == 0) {
             // If there is no more stations in the array, closes all accordeons below
@@ -231,9 +231,9 @@ function select_parameter(e, idx){
     }
     else {
         // Delete parameter from its array
-        var index = parameters[index].indexOf(array_e_values.at(-1));
-        if (index !== -1) {
-            parameters[index].splice(index, 1);
+        var idx_param = parameters[index].indexOf(array_e_values.at(-1));
+        if (idx_param !== -1) {
+            parameters[index].splice(idx_param, 1);
         }
         if (parameters[index].length == 0) {
             // If there are no paremeters left in the dedicated array
@@ -436,8 +436,8 @@ function requestParameters(options, idx){
 }
 
 // Request data from the sources, stations, parameters, and date selected
-async function requestDataFetch(options){
-    var valueTest = fetch('/request-data-dashboard/',{
+function requestDataFetch(options){
+    return fetch('/request-data-dashboard/',{
         method: 'POST',
         headers: {
             'X-CSRFToken': csrf,
@@ -580,7 +580,7 @@ function generateData(JSONdata){
                 if (JSONdata[source].hasOwnProperty(station)) {
                     for (var parameter in JSONdata[source][station]) {
                         if (JSONdata[source].hasOwnProperty(station)) {
-                            console.log(JSONdata[source][station][parameter])
+                            //console.log(JSONdata[source][station][parameter])
                             jsonSeriesData.push({
                                 "name": String(parameter)+" ("+String(station)+" - "+String(source)+")",
                                 "data": JSONdata[source][station][parameter],
@@ -611,7 +611,13 @@ function drawChart(JSONdata) {
 
     const colors = ['#5470C6', '#EE6666'];
 
-    JSONgenerateData = generateData(JSONdata);
+    JSONgenerateData = [];
+    JSONdata.forEach(element => JSONgenerateData.push(generateData(element)));
+    var legendData = []
+    JSONgenerateData.forEach(element => legendData.push(element['legend'][0]))
+    var seriesData = []
+    JSONgenerateData.forEach(element => seriesData.push(element['series'][0]))
+    console.log(seriesData)
 
     // Specify the configuration items and data for the chart
     option = {
@@ -620,7 +626,7 @@ function drawChart(JSONdata) {
         },
         legend: {
             type: 'scroll',
-            data: JSONgenerateData['legend']
+            data: legendData,
         },
         grid: {
             containLabel: true,
@@ -629,7 +635,7 @@ function drawChart(JSONdata) {
         },
         xAxis: {type: "time"},
         yAxis: {type: 'value'},
-        series: JSONgenerateData['series'],
+        series: seriesData,
     };
 
     // Display the chart using the configuration items and data just specified.
