@@ -20,6 +20,75 @@ root_path = os.path.join(scraper_path,'..')
 original_media_path = os.path.join(root_path,'media/original/IDAWEB')
 transformed_media_path = os.path.join(root_path,'media/transformed/IDAWEB')
 
+def station_sanitizer(station:str) -> str:
+    """Sanitize the station string
+    """
+    return station.replace(' /',',').replace(' / ',',').replace('/',',')
+
+
+def createHeaders():
+    """Take the inventory csv file and create a headers file from it
+    """
+    inventoryCSV = open(os.path.join(scraper_path,'inventory.csv'))
+    inventoryCSVLength = len(inventoryCSV.readlines())
+    inventoryCSV.close()
+    inventoryCSV = open(os.path.join(scraper_path,'inventory.csv'))
+    inventoryCSV.readline()
+    stations = {}
+    count = 1
+    for csvLine in inventoryCSV:
+        print(str(count)+"/"+str(inventoryCSVLength),end="\r")
+        lineList = csvLine.split('\t')
+        if lineList[0] not in stations:
+            stations[lineList[0]] = []
+        if lineList[3] not in stations[lineList[0]]:
+            stations[lineList[0]].append(lineList[3])
+        count+=1
+
+    headerFile = open(os.path.join(scraper_path,'headers.csv'),'w+')
+    for key,value in stations.items():
+        headerFile.write(key.replace(" / ","/").replace(" /","/")+";"+";".join(value)+"\n")
+
+    headerFile.close()
+    inventoryCSV.close()
+    print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Created headers csv file")
+
+def createInventoryCSV():
+    """Take an iventory pdf file from idaweb and transform it to csv
+    """
+    if os.path.exists(os.path.join(scraper_path,'inventory.pdf')) == False:
+        print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] The inventory pdf file doesn't exist. Please place it next to this script and name it 'inventory.pdf'")
+        return 1
+    inputPDF = open(os.path.join(scraper_path,'inventory.pdf'), 'rb')
+    outputCSV = open(os.path.join(scraper_path,'inventory.csv'), 'w+')
+    pdfReader = PyPDF2.PdfFileReader(inputPDF)
+    print(str(pdfReader.numPages)+' page(s) found !')
+    outputCSV.write('Station\tAltitude\tDescription du paramètre\tParamètre\tUnité\tTemporalité\tDate de service\n')
+    for i in range(0,pdfReader.numPages):
+        print(str(i)+"/"+str(pdfReader.numPages),end="\r")
+        sys.stdout.flush()
+        pageObj = pdfReader.getPage(i)
+        extracted = pageObj.extractText()
+        extracted_list = extracted.split('\n')
+        for j in range(0,len(extracted_list)):
+            ex = extracted_list[j].strip()
+            if(j< len(extracted_list)-1):
+                next_ex = extracted_list[j+1].strip()
+            if(re.match('\d*/\d*',ex) is None and ex != "" and  ex != " " and ex != 'suivant'):
+                s = station_sanitizer(ex)
+                if(re.match('^\d*$',ex) or ( re.match('^[a-z0-9]{8}$',ex) and re.match('^[a-z0-9]{8}$',next_ex) is None)or any(x in ex for x in ['Dix minutes','Heure','Jour','Mois','Année'])):
+                    s = '\t'+ex+'\t'
+                elif re.match('^[a-z0-9]{8}$',next_ex):
+                    s = ' '+ex
+                elif(re.match('^\d{2}.\d{2}.\d{4}-\d{2}.\d{2}.\d{4}$',ex)):
+                    s = ex+'\n'
+
+                outputCSV.write(s)
+    outputCSV.close()
+    inputPDF.close()
+    print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Created inventory csv file")
+    createHeaders()
+
 def sortFileListByStation(list):
     new_array = []
     stations = []
@@ -33,10 +102,11 @@ def sortFileListByStation(list):
     new_array.sort()
     return new_array
 
-def station_sanitizer(station:str) -> str:
-    """Sanitize the station string
-    """
-    return station.replace(' /',',').replace(' / ',',').replace('/',',')
+def writeTempfile(dataset,station_name):
+    print(station_name)
+    # Load Header for station
+    # Create File
+    sys.exit(0)
 
 def orderManipulation():
     # Delete old temporary folder if still exists
@@ -120,6 +190,7 @@ def orderManipulation():
             open_file.close()
         print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Dataset created for {name}")
         # Write to temp file
+        writeTempfile(dataset,station_abbr[name])
         # merge temp file with final one if exists or write it
 def main(argv):
     """Main function of the script
@@ -131,8 +202,9 @@ def main(argv):
     """
     print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Starting...")
     exit_code = 0
+    inventory = False
     try:
-      opts, args = getopt.getopt(argv,"h")
+      opts, args = getopt.getopt(argv,"ih")
     except getopt.GetoptError:
       print('idaweb.py')
       sys.exit(1)
@@ -140,8 +212,17 @@ def main(argv):
         if opt == '-h':
             print('idaweb.py')
             sys.exit(1)
+        elif opt == '-i':
+            createInventoryCSV()
+            inventory = True
 
-    exit_code = orderManipulation()
+    if inventory == False:
+        if os.path.exists(os.path.join(scraper_path,'headers.csv')) == True:
+            exit_code = orderManipulation()
+        else:
+            exit_code = 1
+            print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] The headers file doesn't exist. Please launch this script with the -i option to create it")
+
     print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Done!")
     sys.exit(exit_code)
 
