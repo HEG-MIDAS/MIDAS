@@ -25,7 +25,6 @@ def station_sanitizer(station:str) -> str:
     """
     return station.replace(' /',',').replace(' / ',',').replace('/',',')
 
-
 def createHeaders():
     """Take the inventory csv file and create a headers file from it
     """
@@ -101,11 +100,14 @@ def sortFileListByStation(list):
     new_array.sort()
     return new_array
 
-def writeTempfile(dataset,station_name):
-    print(station_name)
-    # Load Header for station
-    # Create File
-    sys.exit(0)
+def writeTempfile(dataset,headers,station_name):
+    print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Writing temp file for {station_name}",end="\r")
+    open_file = open(os.path.join(temp_path,f'temp-{station_name}.csv'),'w')
+    open_file.write(f'localtime;{headers}\n')
+    for timestamp,array in dataset.items():
+        open_file.write(timestamp+";\n")
+    open_file.close()
+    print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Written temp file for {station_name}")
 
 def orderManipulation():
     # Delete old temporary folder if still exists
@@ -130,10 +132,21 @@ def orderManipulation():
     for file in order_legend_files:
         station_name = file[0].split('_')[2]
         if station_name not in station_abbr:
-            for line in open(os.path.join(temp_path,file[0]),'rb'):
+            open_file = open(os.path.join(temp_path,file[0]),'rb')
+            for line in open_file:
                 line = line.decode('Windows-1252').strip()
                 if line.startswith(station_name):
                     station_abbr[station_name] = station_sanitizer(re.split(r'\s+',line)[1])
+            open_file.close()
+
+    headers = {}
+    print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Loading Headers")
+    open_file = open(os.path.join(scraper_path,'headers.csv'),'r')
+    for line in open_file:
+        line = line.split(";",1)
+        if line[0] in list(station_abbr.values()):
+            headers[line[0]] = line[1].strip()
+    open_file.close()
 
     print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Manipulating Data Files")
     for station_file in order_data_files:
@@ -143,6 +156,7 @@ def orderManipulation():
             param = file.split('_')[3]
             open_file = open(os.path.join(temp_path,file),'r')
             data_10_minutes = []
+            print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Creating dataset for {name}",end="\r")
             for line in open_file:
                 measures = line.strip()
                 if measures != "":
@@ -187,9 +201,9 @@ def orderManipulation():
                                     print(f'[{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}][{file}] \033[91mNo Matching Timestamp Found\033[0m (Timestamp = {measures[0]})')
                                     break
             open_file.close()
-        print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Dataset created for {name}")
+        print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Created dataset for {name} ")
         # Write to temp file
-        writeTempfile(dataset,station_abbr[name])
+        writeTempfile(dataset,headers[station_abbr[name]],station_abbr[name])
         # merge temp file with final one if exists or write it
 def main(argv):
     """Main function of the script
