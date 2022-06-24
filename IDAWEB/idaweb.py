@@ -37,7 +37,7 @@ def createHeaders():
     stations = {}
     count = 1
     for csvLine in inventoryCSV:
-        print(str(count)+"/"+str(inventoryCSVLength),end="\r")
+        print(str(count)+"/"+str(inventoryCSVLength)+" lines",end="\r")
         lineList = csvLine.split('\t')
         if lineList[0] not in stations:
             stations[lineList[0]] = []
@@ -62,10 +62,9 @@ def createInventoryCSV():
     inputPDF = open(os.path.join(scraper_path,'inventory.pdf'), 'rb')
     outputCSV = open(os.path.join(scraper_path,'inventory.csv'), 'w+')
     pdfReader = PyPDF2.PdfFileReader(inputPDF)
-    print(str(pdfReader.numPages)+' page(s) found !')
     outputCSV.write('Station\tAltitude\tDescription du paramètre\tParamètre\tUnité\tTemporalité\tDate de service\n')
     for i in range(0,pdfReader.numPages):
-        print(str(i)+"/"+str(pdfReader.numPages),end="\r")
+        print(str(i)+"/"+str(pdfReader.numPages)+" page(s)",end="\r")
         sys.stdout.flush()
         pageObj = pdfReader.getPage(i)
         extracted = pageObj.extractText()
@@ -223,7 +222,7 @@ def main(argv):
             exit_code = 1
             print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] The headers file doesn't exist. Please launch this script with the -i option to create it")
 
-    print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Done!")
+    print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Done")
     sys.exit(exit_code)
 
 if __name__ == "__main__":
