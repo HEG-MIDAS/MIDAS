@@ -637,8 +637,9 @@ function generateData(JSONdata, currentIndex, nbOffset){
                             arrayTemp = []
                             JSONdata[source][station][parameter].forEach(element => arrayTemp.push(element[0]))
                             //console.log(arrayData);
+                            nameOfParam = String(parameter)+" ("+String(station)+" - "+String(source)+") Filtre : " + String(currentIndex);
                             jsonSeriesData.push({
-                                "name": String(parameter)+" ("+String(station)+" - "+String(source)+")",
+                                "name": nameOfParam,
                                 "xAxisIndex": currentIndex,
                                 "yAxisIndex": nbOffset.offset+currentIndex+cnt,
                                 "data": arrayData,
@@ -651,28 +652,32 @@ function generateData(JSONdata, currentIndex, nbOffset){
                                 jsonxAxisData.push({
                                         "type": 'category',
                                         "axisTick": {
-                                        "alignWithLabel": true
+                                            "alignWithLabel": true
                                         },
                                         "axisLine": {
-                                        "onZero": true,
+                                            "onZero": true,
                                         },
-                                        "data": arrayTemp
+                                        "data": arrayTemp,
+                                        axisLabel: {
+                                            rotate: '45',
+                                            interval: 50
+                                        },
                                 });
                             }
                             jsonyAxisData.push({
-                                type: 'value',
-                                name: String(parameter),
-                                position: currentIndex>0 ? 'right' : cnt>0 ? 'right' : 'left',
-                                alignTicks: true,
-                                offset: currentIndex>0 ? (nbOffset.offset+cnt)*80 : cnt>0 ? (cnt-1)*80 : 0,
-                                axisLine: {
+                                "type": 'value',
+                                "name": String(parameter),
+                                "position": currentIndex>0 ? 'right' : cnt>0 ? 'right' : 'left',
+                                "alignTicks": true,
+                                "offset": currentIndex>0 ? (nbOffset.offset+cnt)*80 : cnt>0 ? (cnt-1)*80 : 0,
+                                "axisLine": {
                                     show: true,
+                                },
+                                "nameTextStyle": {
+                                    "padding": currentIndex>0 ? [0, 0, 0, 70] : cnt>0 ? [0, 0, 0, 70] : [0, 70, 0, 0],
                                 }
                             });
-                            console.log("Cnt : " + cnt)
-                            console.log("Nb Offset : " + nbOffset.offset)
-                            console.log("Offset : " + currentIndex>0 ? (nbOffset.offset+cnt)*80 : cnt>0 ? (cnt-1)*80 : 0)
-                            jsonLegendData.push(String(parameter)+" ("+String(station)+" - "+String(source)+")");
+                            jsonLegendData.push(nameOfParam);
                             
                             cnt++;
                         }
@@ -721,11 +726,13 @@ function drawChart(JSONdata) {
                 dataView: { show: true, readOnly: false },
                 restore: { show: true },
                 saveAsImage: { show: true }
-            }
+            },
+            padding: [0, 120, 0, 0]
         },
         legend: {
             type: 'scroll',
             data: legendData,
+            padding: [0, 400, 400, 0]
         },
         grid: {
             containLabel: true,
