@@ -108,7 +108,7 @@
     <div class="addResearch" onclick="addResearch()">Ajouter une recherche <i class="fa-solid fa-circle-plus"></i></div>
 
     <div class="submit-data-dashboard">
-        <button type="submit" class="btn btn-primary" onclick="requestData()">
+        <button type="submit" id="submitButton" class="btn btn-primary" onclick="requestData()" disabled>
             Envoyer
         </button>
     </div>
@@ -153,6 +153,8 @@
 
         target = document.querySelector("#addResearchDiv");
         target.parentNode.insertBefore(test, target);
+
+        handleSubmitButton();
     }
 
     function removeResearch(e, idx){

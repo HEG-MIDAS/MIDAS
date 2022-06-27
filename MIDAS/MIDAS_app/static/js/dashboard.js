@@ -135,6 +135,8 @@ function select_source(e, idx){
             stationsAccordeon.disabled = true;
             parametersAccordeon = document.getElementById('headingParameters'+idx.toString()).getElementsByTagName('button')[0];
             parametersAccordeon.disabled = true;
+
+            handleSubmitButton();
         }
         else{
             // Prepare json body to POST request for the sources left
@@ -195,6 +197,8 @@ function select_station(e, idx){
             parametersAccordeon.disabled = true;
             var datesAccordeon = document.getElementById('headingDates'+idx.toString()).getElementsByTagName('button')[0];
             datesAccordeon.disabled = true;
+
+            handleSubmitButton();
         }
         else{
             // Prepare json body to POST request for the stations left
@@ -228,6 +232,7 @@ function select_parameter(e, idx){
         if (cs.getAttribute('aria-expanded') === 'false') {
             cs.click();
         }
+        handleSubmitButton();
     }
     else {
         // Delete parameter from its array
@@ -243,6 +248,7 @@ function select_parameter(e, idx){
                 cs.click();
             }
             datesAccordeon.disabled = true;
+            handleSubmitButton();
         }
         else{
             // Open next accordeon if the accordeons are not fixed
@@ -454,10 +460,24 @@ function requestDataFetch(options){
         // Parse JSON response
         jsonData = JSON.parse(responseJSONData);
         return jsonData;
-        document.getElementById("main").className = '';
-        drawChart(jsonData)
     });
-    //return await valueTest
+}
+
+
+function handleSubmitButton(){
+    var domDates = document.querySelectorAll('*[id^="buttonDates"]');
+    var wait4submit = false;
+    domDates.forEach(function(element, currentIndex, listObj){
+        if (element.disabled && currentIndex > 0){
+            wait4submit = true;
+        }
+    })
+    if (wait4submit){
+        document.getElementById('submitButton').disabled = true;
+    }
+    else {
+        document.getElementById('submitButton').disabled = false;
+    }
 }
 
 
@@ -571,7 +591,7 @@ function addRuleOfEChartsParameters(){
     baseDiv.appendChild(div);
 }
 
-function generateData(JSONdata){
+function generateDataOld(JSONdata){
     var jsonSeriesData = []
     var jsonLegendData = []
     for (var source in JSONdata) {
@@ -600,6 +620,72 @@ function generateData(JSONdata){
     return jsonDataParsed
 }
 
+function generateData(JSONdata, currentIndex, nbOffset){
+    var jsonSeriesData = [];
+    var jsonLegendData = [];
+    var jsonxAxisData = [];
+    var jsonyAxisData = [];
+    var cnt = 0;
+    for (var source in JSONdata) {
+        if (JSONdata.hasOwnProperty(source)) {
+            for (var station in JSONdata[source]) {
+                if (JSONdata[source].hasOwnProperty(station)) {
+                    for (var parameter in JSONdata[source][station]) {
+                        if (JSONdata[source].hasOwnProperty(station)) {
+                            arrayData = []
+                            JSONdata[source][station][parameter].forEach(element => arrayData.push(element[1]))
+                            arrayTemp = []
+                            JSONdata[source][station][parameter].forEach(element => arrayTemp.push(element[0]))
+                            //console.log(arrayData);
+                            jsonSeriesData.push({
+                                "name": String(parameter)+" ("+String(station)+" - "+String(source)+")",
+                                "xAxisIndex": currentIndex,
+                                "yAxisIndex": nbOffset.offset+currentIndex+cnt,
+                                "data": arrayData,
+                                "type": "line",
+                                "markLine": {
+                                    data: []
+                                }
+                            });
+                            if (!jsonxAxisData.length > 0) {
+                                jsonxAxisData.push({
+                                        "type": 'category',
+                                        "axisTick": {
+                                        "alignWithLabel": true
+                                        },
+                                        "axisLine": {
+                                        "onZero": true,
+                                        },
+                                        "data": arrayTemp
+                                });
+                            }
+                            jsonyAxisData.push({
+                                type: 'value',
+                                name: String(parameter),
+                                position: currentIndex>0 ? 'right' : cnt>0 ? 'right' : 'left',
+                                alignTicks: true,
+                                offset: currentIndex>0 ? (nbOffset.offset+cnt)*80 : cnt>0 ? (cnt-1)*80 : 0,
+                                axisLine: {
+                                    show: true,
+                                }
+                            });
+                            console.log("Cnt : " + cnt)
+                            console.log("Nb Offset : " + nbOffset.offset)
+                            console.log("Offset : " + currentIndex>0 ? (nbOffset.offset+cnt)*80 : cnt>0 ? (cnt-1)*80 : 0)
+                            jsonLegendData.push(String(parameter)+" ("+String(station)+" - "+String(source)+")");
+                            
+                            cnt++;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    nbOffset.offset = cnt-1;
+    jsonDataParsed = {"legend" : jsonLegendData, "series": jsonSeriesData, "xaxis": jsonxAxisData, "yaxis": jsonyAxisData};
+    return jsonDataParsed
+}
+
 function drawChart(JSONdata) {
 
     if (myChart != null && myChart != '' && myChart != undefined) {
@@ -612,17 +698,30 @@ function drawChart(JSONdata) {
     const colors = ['#5470C6', '#EE6666'];
 
     JSONgenerateData = [];
-    JSONdata.forEach(element => JSONgenerateData.push(generateData(element)));
+    nbOffset = {"offset": 0}
+    JSONdata.forEach(function(element, currentIndex) {
+        JSONgenerateData.push(generateData(element, currentIndex, nbOffset));
+    });
     var legendData = []
-    JSONgenerateData.forEach(element => legendData.push(element['legend'][0]))
+    JSONgenerateData.forEach(element => element['legend'].forEach(e => legendData.push(e)));
     var seriesData = []
-    JSONgenerateData.forEach(element => seriesData.push(element['series'][0]))
-    console.log(seriesData)
+    JSONgenerateData.forEach(element =>element['series'].forEach(e => seriesData.push(e)));
+    var xaxisData = []
+    JSONgenerateData.forEach(element => element['xaxis'].forEach(e => xaxisData.push(e)));
+    var yaxisData = []
+    JSONgenerateData.forEach(element =>element['yaxis'].forEach(e => yaxisData.push(e)));
 
     // Specify the configuration items and data for the chart
     option = {
         tooltip: {
             trigger: 'axis'
+        },
+        toolbox: {
+            feature: {
+                dataView: { show: true, readOnly: false },
+                restore: { show: true },
+                saveAsImage: { show: true }
+            }
         },
         legend: {
             type: 'scroll',
@@ -633,8 +732,8 @@ function drawChart(JSONdata) {
             width: "auto",
             heigth: "800px"
         },
-        xAxis: {type: "time"},
-        yAxis: {type: 'value'},
+        xAxis: xaxisData,
+        yAxis: yaxisData,
         series: seriesData,
     };
 
