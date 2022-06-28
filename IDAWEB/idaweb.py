@@ -100,14 +100,35 @@ def sortFileListByStation(list):
     new_array.sort()
     return new_array
 
+def mergeFile(final_filename,temp_filename):
+    if(os.path.exists(os.path.join(transformed_media_path,final_filename))):
+        print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Final file exists, proceed to merge",end="\r")
+        final = open(os.path.join(transformed_media_path,final_filename),'r')
+        temp = open(os.path.join(temp_path,temp_filename),'r')
+        final_array = final.read().splitlines()
+        temp_array = temp.read().splitlines()
+        temp.close()
+        final.close()
+    else:
+        print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Moving temp file",end="\r")
+        shutil.move(os.path.join(temp_path,temp_filename),os.path.join(transformed_media_path,final_filename))
+
+    print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Final file {final_filename} written")
+
 def writeTempfile(dataset,headers,station_name):
     print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Writing temp file for {station_name}",end="\r")
     open_file = open(os.path.join(temp_path,f'temp-{station_name}.csv'),'w')
     open_file.write(f'localtime;{headers}\n')
+    headers = headers.split(";")
     for timestamp,array in dataset.items():
-        open_file.write(timestamp+";\n")
+        tuple_array = [""] * len(headers)
+        for tuple in array:
+            tuple_array[headers.index(tuple[0])] = tuple[1]
+        line = ';'.join(tuple_array)
+        open_file.write(timestamp+";"+line+"\n")
     open_file.close()
     print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Written temp file for {station_name}")
+    mergeFile(f'{station_name}.csv',f'temp-{station_name}.csv')
 
 def orderManipulation():
     # Delete old temporary folder if still exists
@@ -136,9 +157,8 @@ def orderManipulation():
             for line in open_file:
                 line = line.decode('Windows-1252').strip()
                 if line.startswith(station_name):
-                    station_abbr[station_name] = station_sanitizer(re.split(r'\s+',line)[1])
+                    station_abbr[station_name] = station_sanitizer(re.split(r'\s{2,}',line)[1])
             open_file.close()
-
     headers = {}
     print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Loading Headers")
     open_file = open(os.path.join(scraper_path,'headers.csv'),'r')
