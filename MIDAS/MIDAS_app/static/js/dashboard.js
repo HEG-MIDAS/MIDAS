@@ -545,6 +545,7 @@ function requestDataFetch(options){
     })
     .then(function(responseJSONData) {
         // Parse JSON response
+        console.log(responseJSONData);
         jsonData = JSON.parse(responseJSONData);
         return jsonData;
     });
