@@ -105,7 +105,7 @@
 
     <div id="addResearchDiv"></div>
 
-    <div class="addResearch" onclick="addResearch()">Ajouter une recherche <i class="fa-solid fa-circle-plus"></i></div>
+    <div class="addResearch" id="addResearchButton" onclick="addResearch()">Ajouter une recherche <i class="fa-solid fa-circle-plus"></i></div>
 
     <div class="submit-data-dashboard">
         <button type="submit" id="submitButton" class="btn btn-primary" onclick="requestData()" disabled>
@@ -128,50 +128,6 @@
 </script>
 
 <script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
-
-<script type="text/javascript">
-    
-
-    function addResearch(){
-        //console.log("Pouet");
-        var test = document.getElementById("accordionDashboard0").cloneNode(true);
-        test.removeAttribute("hidden");
-        //console.log(test.id);
-        //console.log(test.querySelectorAll("[id*='0']"));
-        Array.from(test.querySelectorAll("[id*='0']")).map(element => element.id = element.id.replace("0", idx.toString()));
-        test.id = test.id.replace("0", idx.toString());
-        Array.from(test.querySelectorAll("[data-bs-target*='0']")).map(element => element.setAttribute("data-bs-target", element.getAttribute("data-bs-target").replace("0", idx.toString())));
-        Array.from(test.querySelectorAll("[for*='0']")).map(element => element.setAttribute("for", element.getAttribute("for").replace("0", idx.toString())));
-        Array.from(test.querySelectorAll("[onclick*='0']")).map(element => element.setAttribute("onclick", element.getAttribute("onclick").replace("0", idx.toString())));
-        //console.log(test)
-        array_current_idx.push(idx);
-        idx++;
-
-        sources.push([]);
-        stations.push([]);
-        parameters.push([]);
-
-        target = document.querySelector("#addResearchDiv");
-        target.parentNode.insertBefore(test, target);
-
-        handleSubmitButton();
-    }
-
-    function removeResearch(e, idx){
-        e.parentElement.remove()
-
-        var index = array_current_idx.indexOf(idx);
-        if (index !== -1) {
-            array_current_idx.splice(index, 1);
-            sources.splice(index, 1);
-            stations.splice(index, 1);
-            parameters.splice(index, 1);
-        }
-    }
-
-    window.addEventListener("load", addResearch);
-
-</script>
 
 <script type="text/javascript">
 

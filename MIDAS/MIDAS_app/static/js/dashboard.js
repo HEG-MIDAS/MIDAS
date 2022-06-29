@@ -1,16 +1,35 @@
+// CONSTANTS
+const NBMAXPARAMETERSSELECTED = 6;
+const NBMAXPARALLELSEARCHS = 2;
+
 // Global variables
+
 // Arrays that will contain the elements selected by the user
 // each dimension correspond to a research div used
 var sources = [];
 var stations = [];
 var parameters = [];
-// JSON object
+
+// Will contain all the current indexes of the research interfaces
+var arrayCurrentIdx = [];
+
+// Data requests JSON object
 var options = {};
+// Data of echarts JSON object
 var option = {};
+
 // state of the accordeon, is it always open ?
 var fixed = true;
 
+// index to give to the next research interface created
+var idxResearch = 1;
+
+// echarts display
 var myChart;
+
+//////////////////////////////////////////////////////////////////////////////////////
+// Define default dates of data research
+//////////////////////////////////////////////////////////////////////////////////////
 
 // get todays date
 var datePH = new Date();
@@ -29,15 +48,83 @@ datePH.setMinutes(0);
 startingDate.value = datePH.toISOString().slice(0, -8);
 
 //////////////////////////////////////////////////////////////////////////////////////
+// Handle parameters selection
+//////////////////////////////////////////////////////////////////////////////////////
+
+function disableOrNotParametersThatCanBeSelected(){
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+// Handle research and parallel research
+//////////////////////////////////////////////////////////////////////////////////////
+
+function addResearch(){
+    // Check if it is possible to add a new research interface
+    if (document.querySelectorAll("[id^='accordionDashboard']").length < NBMAXPARALLELSEARCHS+1) {
+
+        // Clone accordionDashboard0 that is used as reference and display the it
+        var test = document.getElementById("accordionDashboard0").cloneNode(true);
+        test.removeAttribute("hidden");
+
+        // Modify the index of the element of the new accordion
+        Array.from(test.querySelectorAll("[id*='0']")).map(element => element.id = element.id.replace("0", idxResearch.toString()));
+        test.id = test.id.replace("0", idxResearch.toString());
+        Array.from(test.querySelectorAll("[data-bs-target*='0']")).map(element => element.setAttribute("data-bs-target", element.getAttribute("data-bs-target").replace("0", idxResearch.toString())));
+        Array.from(test.querySelectorAll("[for*='0']")).map(element => element.setAttribute("for", element.getAttribute("for").replace("0", idxResearch.toString())));
+        Array.from(test.querySelectorAll("[onclick*='0']")).map(element => element.setAttribute("onclick", element.getAttribute("onclick").replace("0", idxResearch.toString())));
+
+        // Add new index inside the array that will contain the current indexes
+        arrayCurrentIdx.push(idxResearch);
+        idxResearch++;
+
+        // Create new arrays that will contain the data of the new research inside of the elements array
+        sources.push([]);
+        stations.push([]);
+        parameters.push([]);
+
+        target = document.querySelector("#addResearchDiv");
+        target.parentNode.insertBefore(test, target);
+
+        handleSubmitButton();
+    }
+    // Check if the addResearchButton was not already disabled and if we exceed the size max accepted for the research interfaces
+    if (document.getElementById("addResearchButton").getAttribute("disabled")==null && document.querySelectorAll("[id^='accordionDashboard']").length >= NBMAXPARALLELSEARCHS+1) {
+        document.getElementById("addResearchButton").setAttribute("disabled", true);
+    }
+}
+
+function removeResearch(e, idx){
+    e.parentElement.remove()
+
+    // Remove arrays with the data from the differents arrays of elements
+    var index = arrayCurrentIdx.indexOf(idx);
+    if (index !== -1) {
+        arrayCurrentIdx.splice(index, 1);
+        sources.splice(index, 1);
+        stations.splice(index, 1);
+        parameters.splice(index, 1);
+    }
+    handleSubmitButton();
+
+    // Check if addResearchButton is already disable and if the number of simultaneous researchs are below the max
+    if (document.getElementById("addResearchButton").getAttribute("disabled")!=null && document.querySelectorAll("[id^='accordionDashboard']").length < NBMAXPARALLELSEARCHS+1) {
+        document.getElementById("addResearchButton").removeAttribute("disabled");
+    }
+}
+
+window.addEventListener("load", addResearch);
+
+//////////////////////////////////////////////////////////////////////////////////////
 // Elements Dashboard Selection
 //////////////////////////////////////////////////////////////////////////////////////
 
 // Handles format the json body to send via the POST method to get the data requested
 async function requestData(){
     array_promises = [];
-    for (var cnt=0; cnt < array_current_idx.length; cnt++) {
-        var startingDateValue = document.getElementById('startingDate'+array_current_idx[cnt].toString()).value;
-        var endingDateValue = document.getElementById('endingDate'+array_current_idx[cnt].toString()).value;
+    for (var cnt=0; cnt < arrayCurrentIdx.length; cnt++) {
+        var startingDateValue = document.getElementById('startingDate'+arrayCurrentIdx[cnt].toString()).value;
+        var endingDateValue = document.getElementById('endingDate'+arrayCurrentIdx[cnt].toString()).value;
         // Check the dates of start and end are filled and that there is at least one element selected for source, station, and parameter
         // to be able to send the request
         if (startingDateValue != '' && endingDateValue != '' && sources[cnt].length > 0 && stations[cnt].length > 0 && parameters[cnt].length > 0) {
@@ -89,7 +176,7 @@ function fixedAccordeon(e){
 // Adds or deletes the sources from the global array dedicated and enable the selection of stations
 // if there is at least one source selected
 function select_source(e, idx){
-    var index = array_current_idx.indexOf(idx);
+    var index = arrayCurrentIdx.indexOf(idx);
     var stationsAccordeon = document.getElementById('headingStations'+idx.toString()).getElementsByTagName('button')[0];
     // Check if the user selected or deselected a source
     if (e.checked) {
@@ -155,7 +242,7 @@ function select_source(e, idx){
 // Adds or deletes the stations from the global array dedicated and enable the selection of parameters
 // if there is at least one station selected
 function select_station(e, idx){
-    var index = array_current_idx.indexOf(idx);
+    var index = arrayCurrentIdx.indexOf(idx);
     var parametersAccordeon = document.getElementById('headingParameters'+idx.toString()).getElementsByTagName('button')[0];
     // Split the value to an array of elements (value of e is formed as => value="source station")
     var array_e_values = e.value.split(' ');
@@ -217,7 +304,7 @@ function select_station(e, idx){
 // Adds or deletes the parameters from the global array dedicated and enable the selection of dates
 // if there is at least one parameter selected
 function select_parameter(e, idx){
-    var index = array_current_idx.indexOf(idx);
+    var index = arrayCurrentIdx.indexOf(idx);
     var datesAccordeon = document.getElementById('headingDates'+idx.toString()).getElementsByTagName('button')[0];
     // Split the value to an array of elements (value of e is formed as => value="source station1,station2 parameter")
     var array_e_values = e.value.split(' ');
@@ -265,7 +352,7 @@ const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value ;
 // Request all the stations available for the selected sources
 function requestStations(options, idx){
     // Request station-dashboard view
-    var index = array_current_idx.indexOf(idx);
+    var index = arrayCurrentIdx.indexOf(idx);
     fetch('/stations-dashboard/',{
         method: 'POST',
         headers: {
@@ -360,7 +447,7 @@ function requestStations(options, idx){
 
 // Request all the paremeters available for the selected stations and sources
 function requestParameters(options, idx){
-    var index = array_current_idx.indexOf(idx);
+    var index = arrayCurrentIdx.indexOf(idx);
     // Request parameters to view parameters-dashboard
     fetch('/parameters-dashboard/',{
         method: 'POST',
