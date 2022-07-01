@@ -103,12 +103,58 @@ def sortFileListByStation(list):
 def mergeFile(final_filename,temp_filename):
     if(os.path.exists(os.path.join(transformed_media_path,final_filename))):
         print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Final file exists, proceed to merge",end="\r")
-        final = open(os.path.join(transformed_media_path,final_filename),'r')
-        temp = open(os.path.join(temp_path,temp_filename),'r')
-        final_array = final.read().splitlines()
-        temp_array = temp.read().splitlines()
-        temp.close()
-        final.close()
+        old_data_file = open(os.path.join(transformed_media_path,final_filename), 'r')
+        new_data_file = open(os.path.join(temp_path,temp_filename), 'r')
+        old_data_file_array = old_data_file.read().splitlines()
+        new_data_file_array = new_data_file.read().splitlines()
+        old_data_file.close()
+        new_data_file.close()
+        merged_data_file_array = []
+
+        pos_old = 0
+        pos_new = 0
+
+        new_stopped = False
+        old_stopped = False
+
+        while pos_old != len(old_data_file_array) or pos_new != len(new_data_file_array):
+
+            if pos_old == len(old_data_file_array):
+                old_stopped = True
+            if pos_new == len(new_data_file_array):
+                new_stopped = True
+
+            new_splitted_line = [''] if new_stopped else re.split('[,;]', new_data_file_array[pos_new])
+            old_splitted_line = [''] if old_stopped else re.split('[,;]', old_data_file_array[pos_old])
+
+            # Check that the first element of new or old splitted line is a date or that one has stopped and the one is a date
+            if (is_string_date(new_splitted_line[0], format_date) and is_string_date(old_splitted_line[0], format_date)) or (is_string_date(new_splitted_line[0], format_date) and old_stopped) or (new_stopped and is_string_date(old_splitted_line[0], format_date)):
+                if (not old_stopped) and ((new_stopped and is_string_date(old_splitted_line[0], format_date)) or (datetime.datetime.strptime(new_splitted_line[0], format_date) > datetime.datetime.strptime(old_splitted_line[0], format_date))):
+                    merged_data_file_array.append(old_data_file_array[pos_old])
+                    pos_old += 1
+                elif (not new_stopped) and ((is_string_date(new_splitted_line[0], format_date) and old_stopped) or (datetime.datetime.strptime(new_splitted_line[0], format_date) < datetime.datetime.strptime(old_splitted_line[0], format_date))):
+                    merged_data_file_array.append(new_data_file_array[pos_new])
+                    pos_new += 1
+                elif datetime.datetime.strptime(new_splitted_line[0], format_date) == datetime.datetime.strptime(new_splitted_line[0], format_date):
+                    merged_data_file_array.append(new_data_file_array[pos_new])
+                    pos_new += 1
+                    pos_old += 1
+            else:
+                # Move indexes until it reaches the first line with a date at position 0
+
+                if (not is_string_date(new_splitted_line[0], format_date)) and not new_stopped:
+                    # Write comments and header of the new file
+                    merged_data_file_array.append(new_data_file_array[pos_new])
+                    pos_new += 1
+                if (not is_string_date(old_splitted_line[0], format_date)) and not old_stopped:
+                    pos_old += 1
+
+
+        merged_data_file = open(old_data_file_path, 'w')
+        for line in merged_data_file_array:
+            merged_data_file.write("{}\n".format(line))
+        merged_data_file.close()
+        return old_data_file_path
     else:
         print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Moving temp file",end="\r")
         shutil.move(os.path.join(temp_path,temp_filename),os.path.join(transformed_media_path,final_filename))
