@@ -64,15 +64,18 @@ function addResearch(){
     if (document.querySelectorAll("[id^='accordionDashboard']").length < NBMAXPARALLELSEARCHS+1) {
 
         // Clone accordionDashboard0 that is used as reference and display the it
-        var test = document.getElementById("accordionDashboard0").cloneNode(true);
-        test.removeAttribute("hidden");
+        var clone = document.getElementById("accordionDashboard0").cloneNode(true);
+        clone.removeAttribute("hidden");
 
         // Modify the index of the element of the new accordion
-        Array.from(test.querySelectorAll("[id*='0']")).map(element => element.id = element.id.replace("0", idxResearch.toString()));
-        test.id = test.id.replace("0", idxResearch.toString());
-        Array.from(test.querySelectorAll("[data-bs-target*='0']")).map(element => element.setAttribute("data-bs-target", element.getAttribute("data-bs-target").replace("0", idxResearch.toString())));
-        Array.from(test.querySelectorAll("[for*='0']")).map(element => element.setAttribute("for", element.getAttribute("for").replace("0", idxResearch.toString())));
-        Array.from(test.querySelectorAll("[onclick*='0']")).map(element => element.setAttribute("onclick", element.getAttribute("onclick").replace("0", idxResearch.toString())));
+        Array.from(clone.querySelectorAll("[id*='0']")).map(element => element.id = element.id.replace("0", idxResearch.toString()));
+        clone.id = clone.id.replace("0", idxResearch.toString());
+        Array.from(clone.querySelectorAll("[data-bs-target*='0']")).map(element => element.setAttribute("data-bs-target", element.getAttribute("data-bs-target").replace("0", idxResearch.toString())));
+        Array.from(clone.querySelectorAll("[for*='0']")).map(element => element.setAttribute("for", element.getAttribute("for").replace("0", idxResearch.toString())));
+        Array.from(clone.querySelectorAll("[onclick*='0']")).map(element => element.setAttribute("onclick", element.getAttribute("onclick").replace("0", idxResearch.toString())));
+
+        const titleOfFilter = clone.querySelector("#title"+idxResearch.toString())
+        titleOfFilter.innerHTML = titleOfFilter.innerHTML.replace("0", idxResearch.toString());
 
         // Add new index inside the array that will contain the current indexes
         arrayCurrentIdx.push(idxResearch);
@@ -84,7 +87,7 @@ function addResearch(){
         parameters.push([]);
 
         target = document.querySelector("#addResearchDiv");
-        target.parentNode.insertBefore(test, target);
+        target.parentNode.insertBefore(clone, target);
 
         handleSubmitButton();
     }
@@ -862,7 +865,7 @@ function drawChart(JSONdata) {
                 restore: { show: true },
                 saveAsImage: { show: true }
             },
-            padding: [0, 120, 0, 0]
+            padding: [0, 0, 0, 0]
         },
         legend: {
             type: 'scroll',
