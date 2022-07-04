@@ -1,6 +1,7 @@
 // CONSTANTS
 const NBMAXPARAMETERSSELECTED = 6;
 const NBMAXPARALLELSEARCHS = 2;
+const TYPESPLOTGRAPH = ['line', 'bar', 'scatter']
 
 // Global variables
 
@@ -731,19 +732,15 @@ function addRuleOfEChartsParameters(echartSeriesNames){
         const select = document.createElement("select");
         select.classList.add("form-select");
         select.classList.add("select-type-display");
-        select.setAttribute("ONCHANGE", "changeLinePlotDisplay('"+echartSeriesNames[i]+"', this.value)")
+        select.setAttribute("onchange", "changeLinePlotDisplay('"+echartSeriesNames[i]+"', this.value)")
 
-        const optionSelectLine = document.createElement("option")
-        optionSelectLine.value = "line";
-        optionSelectLine.innerHTML = "line";
+        TYPESPLOTGRAPH.forEach(function(element){
+            const optionSelectLine = document.createElement("option")
+            optionSelectLine.value = element;
+            optionSelectLine.innerHTML = element;
 
-        select.appendChild(optionSelectLine);
-
-        const optionSelectBar = document.createElement("option")
-        optionSelectBar.value = "bar";
-        optionSelectBar.innerHTML = "bar";
-
-        select.appendChild(optionSelectBar);
+            select.appendChild(optionSelectLine);
+        });
 
         labelSelect.appendChild(select);
 
