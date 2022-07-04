@@ -105,6 +105,7 @@ function removeResearch(e, idx){
         stations.splice(index, 1);
         parameters.splice(index, 1);
     }
+    console.log("HERE :")
     handleSubmitButton();
 
     // Check if addResearchButton is already disable and if the number of simultaneous researchs are below the max
@@ -222,6 +223,8 @@ function select_source(e, idx){
             stationsAccordeon.disabled = true;
             parametersAccordeon = document.getElementById('headingParameters'+idx.toString()).getElementsByTagName('button')[0];
             parametersAccordeon.disabled = true;
+            parametersAccordeon = document.getElementById('headingDates'+idx.toString()).getElementsByTagName('button')[0];
+            parametersAccordeon.disabled = true;
 
             handleSubmitButton();
         }
@@ -298,6 +301,7 @@ function select_station(e, idx){
             }
         }
     }
+    handleElementsSelection()
 }
 
 // Function lauched when a parameter is selected or deselected by the user
@@ -345,7 +349,17 @@ function select_parameter(e, idx){
             }
         }
     }
+    handleElementsSelection()
 }
+
+function handleElementsSelection() {
+    var allParameters = document.querySelectorAll('[id^="accordionParameters"]');
+    //console.log(allParameters);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+// Fetch requests to get data
+//////////////////////////////////////////////////////////////////////////////////////
 
 // Add CSRF into a constant to be used by the fetch requests
 const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value ;
@@ -545,7 +559,7 @@ function requestDataFetch(options){
     })
     .then(function(responseJSONData) {
         // Parse JSON response
-        console.log(responseJSONData);
+        // console.log(responseJSONData);
         jsonData = JSON.parse(responseJSONData);
         return jsonData;
     });
@@ -554,13 +568,14 @@ function requestDataFetch(options){
 
 function handleSubmitButton(){
     var domDates = document.querySelectorAll('*[id^="buttonDates"]');
+    console.log(domDates);
     var wait4submit = false;
     domDates.forEach(function(element, currentIndex, listObj){
         if (element.disabled && currentIndex > 0){
             wait4submit = true;
         }
     })
-    if (wait4submit){
+    if (wait4submit || domDates.length == 1){
         document.getElementById('submitButton').disabled = true;
     }
     else {
@@ -611,7 +626,19 @@ function addMarkLineToEchartsPlot(e, typeString, nameString){
 }
 
 
-function addRuleOfEChartsParameters(){
+function changeLinePlotDisplay(name, displayType){
+    console.log(displayType)
+    option.series.forEach(function(element, currentIndex) {
+        if (element.name == name){
+            element.type = displayType;
+        }
+    });
+
+    resetEchartsPlot();
+}
+
+
+function addRuleOfEChartsParameters(echartSeriesNames){
     var baseDiv = document.getElementById("EchartsParameters");
     
     while (baseDiv.firstChild) {
@@ -619,8 +646,17 @@ function addRuleOfEChartsParameters(){
     }
 
     const div = document.createElement("div");
-
     div.id = "EchartsViewParameters";
+
+    const title = document.createElement("h4");
+    title.innerHTML = "Paramètres d'affichage";
+    div.appendChild(title);
+
+    // Creates some buttons that allow to show statistical values on the echarts graph
+
+    const divStats = document.createElement("div");
+    divStats.id = "EchartsViewParametersStatistics";
+
     const averageInp = document.createElement("input");
     averageInp.className = "form-check-input ";
     averageInp.type = "checkbox";
@@ -631,8 +667,8 @@ function addRuleOfEChartsParameters(){
     averageLab.setAttribute("for", "CheckAverage");
     averageLab.innerText = "Afficher la moyenne";
 
-    div.appendChild(averageInp);
-    div.appendChild(averageLab);
+    divStats.appendChild(averageInp);
+    divStats.appendChild(averageLab);
 
     // Median button
     const medianInp = document.createElement("input");
@@ -645,8 +681,8 @@ function addRuleOfEChartsParameters(){
     medianLab.setAttribute("for", "CheckMedian");
     medianLab.innerText = "Afficher la medianne";
 
-    div.appendChild(medianInp);
-    div.appendChild(medianLab);
+    divStats.appendChild(medianInp);
+    divStats.appendChild(medianLab);
 
     // Min button
     const minInp = document.createElement("input");
@@ -659,8 +695,8 @@ function addRuleOfEChartsParameters(){
     minLab.setAttribute("for", "CheckMin");
     minLab.innerText = "Afficher le minimum";
 
-    div.appendChild(minInp);
-    div.appendChild(minLab);
+    divStats.appendChild(minInp);
+    divStats.appendChild(minLab);
 
     // Max button
     const maxInp = document.createElement("input");
@@ -673,40 +709,49 @@ function addRuleOfEChartsParameters(){
     maxLab.setAttribute("for", "CheckMax");
     maxLab.innerText = "Afficher le maximum";
 
-    div.appendChild(maxInp);
-    div.appendChild(maxLab);
+    divStats.appendChild(maxInp);
+    divStats.appendChild(maxLab);
     
+    div.appendChild(divStats);
+
+    // Create a select for each element displayed that allow to change the line to bar or bar to line
+
+    const divPlot = document.createElement("div");
+    divPlot.id = "EchartsViewParametersPlot";
+
+    for (var i=0; i<echartSeriesNames.length; i++){
+
+        const labelSelect = document.createElement("label");
+        labelSelect.classList.add("label-select-type-display");
+        labelSelect.innerHTML = echartSeriesNames[i]+" :";
+
+        const select = document.createElement("select");
+        select.classList.add("form-select");
+        select.classList.add("select-type-display");
+        select.setAttribute("ONCHANGE", "changeLinePlotDisplay('"+echartSeriesNames[i]+"', this.value)")
+
+        const optionSelectLine = document.createElement("option")
+        optionSelectLine.value = "line";
+        optionSelectLine.innerHTML = "line";
+
+        select.appendChild(optionSelectLine);
+
+        const optionSelectBar = document.createElement("option")
+        optionSelectBar.value = "bar";
+        optionSelectBar.innerHTML = "bar";
+
+        select.appendChild(optionSelectBar);
+
+        labelSelect.appendChild(select);
+
+        divPlot.appendChild(labelSelect);
+    }
+
+    div.appendChild(divPlot);
+
     baseDiv.appendChild(div);
 }
 
-function generateDataOld(JSONdata){
-    var jsonSeriesData = []
-    var jsonLegendData = []
-    for (var source in JSONdata) {
-        if (JSONdata.hasOwnProperty(source)) {
-            for (var station in JSONdata[source]) {
-                if (JSONdata[source].hasOwnProperty(station)) {
-                    for (var parameter in JSONdata[source][station]) {
-                        if (JSONdata[source].hasOwnProperty(station)) {
-                            //console.log(JSONdata[source][station][parameter])
-                            jsonSeriesData.push({
-                                "name": String(parameter)+" ("+String(station)+" - "+String(source)+")",
-                                "data": JSONdata[source][station][parameter],
-                                "type": "line",
-                                "markLine": {
-                                    data: []
-                                }
-                            });
-                            jsonLegendData.push(String(parameter)+" ("+String(station)+" - "+String(source)+")");
-                        }
-                    }
-                }
-            }
-        }
-    }
-    jsonDataParsed = {"legend" : jsonLegendData, "series": jsonSeriesData};
-    return jsonDataParsed
-}
 
 function generateData(JSONdata, currentIndex, nbOffset){
     var jsonSeriesData = [];
@@ -725,7 +770,7 @@ function generateData(JSONdata, currentIndex, nbOffset){
                             arrayTemp = []
                             JSONdata[source][station][parameter].forEach(element => arrayTemp.push(element[0]))
                             //console.log(arrayData);
-                            nameOfParam = String(parameter)+" ("+String(station)+" - "+String(source)+") Filtre : " + String(currentIndex);
+                            nameOfParam = String(parameter)+" ("+String(station)+" - "+String(source)+") Filtre " + String(currentIndex);
                             jsonSeriesData.push({
                                 "name": nameOfParam,
                                 "xAxisIndex": currentIndex,
@@ -812,6 +857,8 @@ function drawChart(JSONdata) {
         toolbox: {
             feature: {
                 dataView: { show: true, readOnly: false },
+                dataZoom: { yAxisIndex: true},
+                magicType: { show: true, type: ['line', 'bar'] },
                 restore: { show: true },
                 saveAsImage: { show: true }
             },
@@ -835,7 +882,10 @@ function drawChart(JSONdata) {
     // Display the chart using the configuration items and data just specified.
     myChart.setOption(option, true);
 
-    addRuleOfEChartsParameters();
+    echartSeriesNames = [];
+    option.series.forEach(element => echartSeriesNames.push(element.name));
+
+    addRuleOfEChartsParameters(echartSeriesNames);
 }
 
 

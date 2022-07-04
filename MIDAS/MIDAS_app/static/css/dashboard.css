@@ -96,3 +96,23 @@
     color: red;
     font-size: 1.2em;
 }
+
+#EchartsViewParametersPlot {
+    margin-top: 10px;
+}
+
+.select-type-display {
+    margin-left: 5px;
+    display: inline-block;
+    width: auto;
+}
+
+.label-select-type-display {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.label-select-type-display::after {
+    content:"\a";
+    white-space: pre;
+}
