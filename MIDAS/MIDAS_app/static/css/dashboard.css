@@ -116,3 +116,9 @@
     content:"\a";
     white-space: pre;
 }
+
+.dimension-display {
+    float: right;
+    margin-right: 10%;
+    padding-right: 0.75rem;
+}

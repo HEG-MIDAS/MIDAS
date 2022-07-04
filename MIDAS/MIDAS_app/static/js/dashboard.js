@@ -589,6 +589,16 @@ function handleSubmitButton(){
 
 
 //////////////////////////////////////////////////////////////////////////////////////
+// Change the dimension display
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+function flipDimensionDisplay(){
+    console.log("Switch");
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
 // Echarts
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -770,7 +780,7 @@ function generateData(JSONdata, currentIndex, nbOffset){
                             arrayTemp = []
                             JSONdata[source][station][parameter].forEach(element => arrayTemp.push(element[0]))
                             //console.log(arrayData);
-                            nameOfParam = String(parameter)+" ("+String(station)+" - "+String(source)+") Filtre " + String(currentIndex);
+                            nameOfParam = String(parameter)+" ("+String(station)+" - "+String(source)+") Filtre " + String(arrayCurrentIdx[currentIndex]);
                             jsonSeriesData.push({
                                 "name": nameOfParam,
                                 "xAxisIndex": currentIndex,

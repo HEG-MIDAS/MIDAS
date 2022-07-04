@@ -15,6 +15,14 @@
 
 <p class="h1 title">Dashboard</p>
 
+<div class="btn-group dimension-display" role="group" aria-label="Selection of display graph mode 2D or 3D" onchange="flipDimensionDisplay()">
+    <input type="radio" class="btn-check" name="btnradio" id="btn2D" autocomplete="off"  checked>
+    <label class="btn btn-outline-primary" for="btn2D">2D</label>
+  
+    <input type="radio" class="btn-check" name="btnradio" id="btn3D" autocomplete="off">
+    <label class="btn btn-outline-primary" for="btn3D">3D</label>
+</div>
+
 <div class="switch-accordeon">
     <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" value="" id="fixedSources" onclick="fixedAccordeon(this)" checked>
