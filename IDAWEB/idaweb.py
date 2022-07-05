@@ -20,6 +20,29 @@ root_path = os.path.join(scraper_path,'..')
 original_media_path = os.path.join(root_path,'media/original/IDAWEB')
 transformed_media_path = os.path.join(root_path,'media/transformed/IDAWEB')
 
+def is_string_date(date_string: str, format_date: str) -> bool:
+    """Test if a string is a date and return a boolean
+
+    Parameters
+    ----------
+    date_string : str
+        string to be cast
+    format_date: str
+        The format of the date that will be used
+
+    Returns
+    -------
+    bool
+        indicate if the string is a date or not
+    """
+
+    try:
+        datetime.datetime.strptime(date_string, format_date)
+    except:
+        return False
+    return True
+
+
 def station_sanitizer(station:str) -> str:
     """Sanitize the station string
     """
@@ -110,6 +133,7 @@ def mergeFile(final_filename,temp_filename):
         old_data_file.close()
         new_data_file.close()
         merged_data_file_array = []
+        format_date = '%Y-%m-%d %H:%M:%S'
 
         pos_old = 0
         pos_new = 0
@@ -127,7 +151,6 @@ def mergeFile(final_filename,temp_filename):
             new_splitted_line = [''] if new_stopped else re.split('[,;]', new_data_file_array[pos_new])
             old_splitted_line = [''] if old_stopped else re.split('[,;]', old_data_file_array[pos_old])
 
-            # Change this part to check datas
             if (is_string_date(new_splitted_line[0], format_date) and is_string_date(old_splitted_line[0], format_date)) or (is_string_date(new_splitted_line[0], format_date) and old_stopped) or (new_stopped and is_string_date(old_splitted_line[0], format_date)):
                 if (not old_stopped) and ((new_stopped and is_string_date(old_splitted_line[0], format_date)) or (datetime.datetime.strptime(new_splitted_line[0], format_date) > datetime.datetime.strptime(old_splitted_line[0], format_date))):
                     merged_data_file_array.append(old_data_file_array[pos_old])
@@ -136,7 +159,16 @@ def mergeFile(final_filename,temp_filename):
                     merged_data_file_array.append(new_data_file_array[pos_new])
                     pos_new += 1
                 elif datetime.datetime.strptime(new_splitted_line[0], format_date) == datetime.datetime.strptime(new_splitted_line[0], format_date):
-                    merged_data_file_array.append(new_data_file_array[pos_new])
+                    # Here the timestamp exists on both files
+                    if len(new_splitted_line) != len(old_splitted_line):
+                        print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Content length doesn't match. Exiting...")
+                        sys.exit(1)
+
+                    for j in range(1, len(old_splitted_line)):
+                        if old_splitted_line[j] != '':
+                            new_splitted_line[j] = old_splitted_line[j]
+
+                    merged_data_file_array.append(';'.join(new_splitted_line))
                     pos_new += 1
                     pos_old += 1
             else:
@@ -144,17 +176,20 @@ def mergeFile(final_filename,temp_filename):
 
                 if (not is_string_date(new_splitted_line[0], format_date)) and not new_stopped:
                     # Write comments and header of the new file
+                    if len(new_data_file_array[pos_new]) != len(old_data_file_array[pos_new]):
+                        print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Header length doesn't match. New:({len(new_data_file_array[pos_new])} Old:{len(old_data_file_array[pos_new])}) Exiting...")
+                        sys.exit(1)
                     merged_data_file_array.append(new_data_file_array[pos_new])
                     pos_new += 1
                 if (not is_string_date(old_splitted_line[0], format_date)) and not old_stopped:
                     pos_old += 1
 
 
-        merged_data_file = open(old_data_file_path, 'w')
+        merged_data_file = open(os.path.join(transformed_media_path,final_filename), 'w')
         for line in merged_data_file_array:
             merged_data_file.write("{}\n".format(line))
         merged_data_file.close()
-        return old_data_file_path
+        return os.path.join(transformed_media_path,final_filename)
     else:
         print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Moving temp file",end="\r")
         shutil.move(os.path.join(temp_path,temp_filename),os.path.join(transformed_media_path,final_filename))
