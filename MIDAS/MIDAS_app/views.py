@@ -357,3 +357,11 @@ def harvest_data(request):
         print("{}".format(os.system("python3 MIDAS/manage.py update_db_params_infos")))
 
     return redirect(manage_data)
+
+
+def about(request):
+    return render(request, 'about.html')
+
+
+def hackathon(request):
+    return render(request, 'hackathon.html')

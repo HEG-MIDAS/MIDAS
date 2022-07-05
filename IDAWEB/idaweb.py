@@ -257,12 +257,25 @@ def orderManipulation():
             param = file.split('_')[3]
             open_file = open(os.path.join(temp_path,file),'r')
             data_10_minutes = []
+<<<<<<< HEAD
             print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Creating dataset for {name}",end="\r")
             for line in open_file:
                 measures = line.strip()
                 if measures != "":
                     if measures.startswith("stn") == False:
                         measures = measures.split(';')[1:]
+=======
+            # cnt = 0
+            #file = order_station_file.readlines()
+            for line in order_station_file:
+                stripped_line = line.strip()
+                # cnt+=1
+                if stripped_line != "":
+                    measures = stripped_line.split(';')[1:]
+
+                    # Ignore header lineimport gc
+                    if measures[0] != "time":
+>>>>>>> david
                         try:
                             o_timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d')
                             for i in range(0,24):
@@ -271,7 +284,13 @@ def orderManipulation():
                                 if timestamp not in dataset:
                                     dataset[timestamp] = []
 
+<<<<<<< HEAD
                                 dataset[timestamp].append((param,measures[1]))
+=======
+                                dataset[station_abbr[station_name]][timestamp][parameter] = measures[1]
+                                # del timestamp
+                                # gc.collect()
+>>>>>>> david
                         except Exception:
                             try:
                                 timestamp = datetime.datetime.strptime(measures[0],'%Y%m%d%H')

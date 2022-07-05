@@ -1,6 +1,7 @@
-#accordionDashboard {
+.accordion {
     margin-left: 10%;
     margin-right: 10%;
+    margin-bottom: 1em;
 }
 
 .sources {
@@ -28,6 +29,7 @@
 
 .submit-data-dashboard{
     margin-top: 10px;
+    margin-right: 10%;
     display: flex;
     justify-content: flex-end;
 }
@@ -55,4 +57,68 @@
 .lab-param-echarts {
     margin-left: 5px;
     margin-right: 10px;
+}
+
+.addResearch {
+    color: #1363e4;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    cursor: pointer;
+    margin-right: 10%;
+    margin-top: 1em;
+}
+
+.addResearch:disabled,
+.addResearch[disabled]{
+    color: #62a1fe;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    cursor: default;
+    margin-right: 10%;
+    margin-top: 1em;
+}
+
+.addResearch .fa-circle-plus {
+    font-size: 1.2em;
+    margin-left: 5px;
+}
+
+.delete-search {
+    cursor: pointer;
+    float: right;
+    margin-right: -2em;
+    margin-top: -250px;
+}
+
+.delete-search .fa-circle-xmark {
+    color: red;
+    font-size: 1.2em;
+}
+
+#EchartsViewParametersPlot {
+    margin-top: 10px;
+}
+
+.select-type-display {
+    margin-left: 5px;
+    display: inline-block;
+    width: auto;
+}
+
+.label-select-type-display {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.label-select-type-display::after {
+    content:"\a";
+    white-space: pre;
+}
+
+.dimension-display {
+    float: right;
+    margin-right: 10%;
+    padding-right: 0.75rem;
 }
