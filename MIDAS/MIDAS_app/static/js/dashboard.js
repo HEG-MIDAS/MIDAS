@@ -867,10 +867,10 @@ function drawChart(JSONdata) {
         toolbox: {
             feature: {
                 dataView: { show: true, readOnly: false },
-                dataZoom: { yAxisIndex: true},
+                dataZoom: { yAxisIndex: 'none'},
                 magicType: { show: true, type: ['line', 'bar'] },
                 restore: { show: true },
-                saveAsImage: { show: true }
+                saveAsImage: { show: true, restore: true }
             },
             padding: [0, 0, 0, 0]
         },
@@ -886,6 +886,17 @@ function drawChart(JSONdata) {
         },
         xAxis: xaxisData,
         yAxis: yaxisData,
+        dataZoom: [
+            {
+              type: 'inside',
+              start: 0,
+              end: 100
+            },
+            {
+              start: 0,
+              end: 100
+            }
+        ],
         series: seriesData,
     };
 
