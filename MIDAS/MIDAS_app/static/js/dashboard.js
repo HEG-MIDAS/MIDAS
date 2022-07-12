@@ -44,7 +44,7 @@ endingDate.value = datePH.toISOString().slice(0, -8);
 // Get 30 days ago date
 const startingDate = document.getElementById("startingDate0");
 datePH.setDate(datePH.getDate() - 30);
-datePH.setHours(2);
+datePH.setHours(0);
 datePH.setMinutes(0);
 startingDate.value = datePH.toISOString().slice(0, -8);
 
@@ -109,7 +109,6 @@ function removeResearch(e, idx){
         stations.splice(index, 1);
         parameters.splice(index, 1);
     }
-    console.log("HERE :")
     handleSubmitButton();
 
     // Check if addResearchButton is already disable and if the number of simultaneous researchs are below the max
@@ -135,9 +134,10 @@ async function requestData(){
         if (startingDateValue != '' && endingDateValue != '' && sources[cnt].length > 0 && stations[cnt].length > 0 && parameters[cnt].length > 0) {
             // Format dates
             var startingDate = new Date(startingDateValue);
-            var startingDateString = startingDate.getUTCFullYear() +"-"+ (startingDate.getUTCMonth()+1) +"-"+ startingDate.getUTCDate() + " " + startingDate.getUTCHours() + ":" + startingDate.getUTCMinutes() + ":" + startingDate.getUTCSeconds();
+            console.log(startingDate)
+            var startingDateString = startingDate.getFullYear() +"-"+ (startingDate.getMonth()+1) +"-"+ startingDate.getDate() + " " + startingDate.getHours() + ":" + startingDate.getMinutes() + ":" + startingDate.getSeconds();
             var endingDate = new Date(endingDateValue);
-            var endingDateString = endingDate.getUTCFullYear() +"-"+ (endingDate.getUTCMonth()+1) +"-"+ endingDate.getUTCDate() + " " + endingDate.getUTCHours() + ":" + endingDate.getUTCMinutes() + ":" + endingDate.getUTCSeconds();
+            var endingDateString = endingDate.getFullYear() +"-"+ (endingDate.getMonth()+1) +"-"+ endingDate.getDate() + " " + endingDate.getHours() + ":" + endingDate.getMinutes() + ":" + endingDate.getSeconds();
 
             // Construct the json body of the POST method
             options = {'sources': sources[cnt], 'stations': stations[cnt], 'parameters': parameters[cnt], 'starting_date': startingDateString, 'ending_date': endingDateString}
@@ -563,7 +563,7 @@ function requestDataFetch(options){
     })
     .then(function(responseJSONData) {
         // Parse JSON response
-        // console.log(responseJSONData);
+        console.log(responseJSONData);
         jsonData = JSON.parse(responseJSONData);
         return jsonData;
     });
@@ -572,7 +572,6 @@ function requestDataFetch(options){
 
 function handleSubmitButton(){
     var domDates = document.querySelectorAll('*[id^="buttonDates"]');
-    console.log(domDates);
     var wait4submit = false;
     domDates.forEach(function(element, currentIndex, listObj){
         if (element.disabled && currentIndex > 0){
@@ -641,7 +640,7 @@ function addMarkLineToEchartsPlot(e, typeString, nameString){
 
 
 function changeLinePlotDisplay(name, displayType){
-    console.log(displayType)
+    //console.log(displayType)
     option.series.forEach(function(element, currentIndex) {
         if (element.name == name){
             element.type = displayType;
