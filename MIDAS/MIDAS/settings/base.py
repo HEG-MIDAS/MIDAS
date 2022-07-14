@@ -51,7 +51,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CSRF_TRUSTED_ORIGINS = ['https://midas.gexplore.ch','http://localhost']
+CSRF_TRUSTED_ORIGINS = ['https://www.gexplore.ch','https://gexplore.ch','http://localhost']
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_AGE = None
 CSRF_COOKIE_SAMESITE = 'Strict'
