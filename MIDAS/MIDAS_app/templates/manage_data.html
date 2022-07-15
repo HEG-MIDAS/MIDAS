@@ -34,12 +34,16 @@
                         <input type="hidden" name="updateOperation" value="files">
                         {% csrf_token %}
                         <div class="row align-items-end justify-content-center needs-validation my-2">
+                            {% if sources_input|length > 0 %}
                             {% for source in sources_input %}
                                 <div class="form-check col-md-3">
                                     <input class="form-check-input" name="source_list" id="{{ source.slug }}Input" type="checkbox" value="{{ source.slug }}" checked>
                                     <label class="form-check-label" for="{{ source.slug }}Input">{{ source.name }}</label>
                                 </div>
                             {% endfor%}
+                            {% else %}
+                            Aucune source disponible, utiliser le bouton de mise à jour pour remplir les données basiques.
+                            {% endif %}
                         </div>
                         <div class="row align-items-end needs-validation my-2">
                             <div class="col-md-6">
