@@ -21,7 +21,11 @@ import sys
 import numpy as np
 from merge_csv_by_date_package import merge_csv_by_date
 from pathlib import Path
+import pytz
 import shutil
+
+# Set timezone
+local = pytz.timezone('Europe/Zurich')
 
 
 def add_logs(start_date: datetime.datetime, end_date: datetime.datetime, __location__: str) -> None:
@@ -53,8 +57,9 @@ def extract_relevant_data(r: requests.Request) -> Array:
         # Get the data
         if data_beggining:
             infos_line = line.decode().split(',')
-            if infos_line[1] != '':
-                array_data.append(line.decode())
+            # print(infos_line)
+            # if infos_line[1] != '':
+            array_data.append(line.decode())
         # Get the data of the header
         elif header_beggining:
             data_beggining = True
@@ -110,7 +115,7 @@ def process_data(array_data: Array) -> Array:
             #print(array_mean_full)
             # Do the mean over all the columns of the data casted before, if there is no value for a column
             # an empty string is added
-            data_mean = [str(j) if j != np.nan else '' for j in np.nanmean(casted_data, axis=0)]
+            data_mean = [str(j) if not np.isnan(j) else '' for j in np.nanmean(casted_data, axis=0)]
 
             # Take the value max of the index that correspond to a header where the value max is used
             data_mean[index_to_find_max] = str(np.max(casted_data[:, index_to_find_max]))
@@ -123,7 +128,8 @@ def process_data(array_data: Array) -> Array:
         if not time_set:
             # Date with hour of the start of the new hour range
             hour_working = datetime.datetime.strptime(line_data[0], '%Y-%m-%d %H:%M:%S')
-            hour_gap = int((datetime.datetime.strptime(line_data[1], '%Y-%m-%d %H:%M:%S')-hour_working).seconds / 3600)
+            # Cast local hour to UTC to get the hour gap that can be different in summer or winter
+            hour_gap = int((local.localize(hour_working, is_dst=None).astimezone(pytz.utc).replace(tzinfo=None)-hour_working).seconds / 3600)
             # print((datetime.datetime.strptime(line_data[1], '%Y-%m-%d %H:%M:%S')-hour_working).seconds / 3600)
             # print(hour_gap)
             # print(hour_working)
