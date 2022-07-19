@@ -87,6 +87,7 @@ def process_data(array_data: Array) -> Array:
     """
     array_processed_data = []
     index_to_find_max = array_data[0][2:].index("Vv_Max")
+    del array_data[0][1]
     header_to_edit = {
         'PM25': 'PM2.5',
         'CS125_Vis': 'Dvis_Avg',
@@ -97,8 +98,6 @@ def process_data(array_data: Array) -> Array:
     hour_working = datetime.datetime.now()
     hour_working_until = datetime.datetime.now()
     time_set = False
-    # Winter hour gap
-    hour_gap = 1
     for i in range(1, len(array_data)):
         line_data = array_data[i].split(',')
         # Check if the line of data is still in the same range of hour or that the data ended
@@ -107,8 +106,8 @@ def process_data(array_data: Array) -> Array:
             # Ignore the firsts two values (that are dates) and cast the other ones into floats
             # when possible, if not into np.nan
             casted_data = np.array([[float(k) if k != '' else np.nan for k in j[2:]] for j in array_hour_data])
-            # Create a new array with mean values that starts by the hour GMT and the hour GMT+1 of the mean over the values
-            array_mean_full = [str(hour_working), str(hour_working+datetime.timedelta(hours=hour_gap))]
+            # Create a new array with mean values that starts by the hour at Geneva local time
+            array_mean_full = [str(hour_working)]
             #print(hour_gap)
             #print(datetime.timedelta(hours=hour_gap))
             #print(hour_working+datetime.timedelta(hours=hour_gap))
@@ -129,7 +128,6 @@ def process_data(array_data: Array) -> Array:
             # Date with hour of the start of the new hour range
             hour_working = datetime.datetime.strptime(line_data[0], '%Y-%m-%d %H:%M:%S')
             # Cast local hour to UTC to get the hour gap that can be different in summer or winter
-            hour_gap = int((local.localize(hour_working, is_dst=None).astimezone(pytz.utc).replace(tzinfo=None)-hour_working).seconds / 3600)
             # print((datetime.datetime.strptime(line_data[1], '%Y-%m-%d %H:%M:%S')-hour_working).seconds / 3600)
             # print(hour_gap)
             # print(hour_working)
