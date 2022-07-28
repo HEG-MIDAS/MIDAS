@@ -1,38 +1,3 @@
-.inscription-button {
-    margin-top: 10px;
-}
-
-.hack-text {
-    margin-top: 10px;
-    margin-left: 10%;
-    margin-right: 10%;
-    text-align: justify;
-}
-
-.display-projects {
-    --bs-gutter-x: 0 !important;
-}
-
 .card{
-    height: 100%; 
-}
-
-.project1 {
-    margin-left: 10%;
-    margin-right: 25px;
-}
-
-.project2 {
-    margin-right: 10%;
-    margin-left: 25px;
-}
-
-.projects {
-    padding-top: 25px;
-    padding-bottom: 25px;
-    background-color: #e7e5e6;
-}
-
-.faq {
-    margin-top: 10px;
+    cursor: pointer;
 }
