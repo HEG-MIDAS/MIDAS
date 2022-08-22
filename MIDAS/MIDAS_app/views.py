@@ -69,7 +69,7 @@ def index(request):
     # print(SearchView().post(new_request).data)
 
     context['sources'] = [{'name': source['name'], 'slug': source['slug']} for source in json.loads(requests.get('http://localhost:8000/api/sources/').content.decode())]
-    
+
 
     # csrftoken = django.middleware.csrf.get_token(request)
     # print(csrftoken)
@@ -296,21 +296,25 @@ def manage_data(request):
             return response
 
     else:
-        folder_files = {}
-        folder_flavours = {}
+        folder_tuples = []
         for e in listdir(media_path):
             if not isfile(join(media_path, e)):
-                folder_files[e] = False
+                t = e
                 if e == 'transformed':
-                    folder_flavours[e] = 'Données transformées'
+                    t = 'Données transformées'
                 elif e == 'original':
-                    folder_flavours[e] = 'Données originelles'
-                else:
-                    folder_flavours[e] = e
+                    t = 'Données originelles'
+                folder_tuples.append((t,e,False))
             elif splitext(e)[1] in [".csv", ".txt"]:
-                folder_files[e] = True
-                folder_flavours[e] = e
+                folder_tuples.append((e,e,True))
 
+        tup = folder_tuples
+        n = len(tup)
+        for i in range(n):
+            for j in range(n-i-1):
+                if tup[j][0] > tup[j + 1][0]:
+                    tup[j], tup[j + 1] = tup[j + 1], tup[j]
+        folder_tuples = tup
         path_redirect = ''
         if request.GET.get('origin', '') != '':
             if request.GET.get('source', '') != '':
@@ -324,8 +328,7 @@ def manage_data(request):
         form = DateSelection
         context = {
             'sources_input':sources_input,
-            'file': folder_files,
-            'file_flavour': folder_flavours,
+            'file': folder_tuples,
             'origin': request.GET.get('origin', ''),
             'origin_flavour': originFlavourText,
             'source': request.GET.get('source', ''),
