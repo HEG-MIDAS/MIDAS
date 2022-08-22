@@ -842,6 +842,7 @@ function drawChart(JSONdata) {
 
     // Initialize the echarts instance based on the prepared dom
     myChart = echarts.init(document.getElementById('main'));
+    myChart.showLoading();
 
     const colors = ['#5470C6', '#EE6666'];
 
@@ -900,6 +901,7 @@ function drawChart(JSONdata) {
         series: seriesData,
     };
 
+    myChart.hideLoading();
     // Display the chart using the configuration items and data just specified.
     myChart.setOption(option, true);
 
