@@ -33,3 +33,12 @@ div.midas-container{
 .midas-icon,.midas-delete-icon, *[data-bs-toggle="collapse"]{
     cursor: pointer;
 }
+
+p a {
+    color: #0d6efd !important;
+    text-decoration: none !important;
+}
+
+p a:hover {
+    color: #0b5ed7 !important;
+}

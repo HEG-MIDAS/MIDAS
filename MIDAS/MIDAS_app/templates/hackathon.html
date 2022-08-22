@@ -26,11 +26,12 @@
         <div class="col-1"></div>
         <div class="col-10">
             <p style="text-align:justify;">
-                Le Hackathon MIDAS s'inscrit dans le cadre du projet MIDAS (lien) (Microclimate DAta Stories) porté par la HEG et l'HEPIA
-                au sein de la HES-SO Genève. Celui-ci aura lieu en parrallèle du hackathon Smart City Xperience organisé par Open Geneva (lien),
-                lors duquel les participants auront 24 heures pour développer un prototype pour l'un des deux projets proposés par la HEG.
-                A la fin de celui-ci, nous souhaitons mettre en place un jury composé d'experts, internes, externes et neutres,
-                afin de sélectionner leur projets préférés qui seront récompensés.
+                Le Hackathon Smart City Xperience s'inscrit dans le cadre du projet <a href="https://www.hes-so.ch/la-hes-so/developpement-durable/projets/detail-projet/midas-un-projet-de-recherche-sur-le-climat-urbain-a-geneve">
+                MIDAS (MIcroclimate DAta Stories)</a>
+                porté par la HEG et l'HEPIA. Dans le cadre des deux challenges dédiés au projet MIDAS les participants auront
+                24 heures pour développer un prototype fonctionnel. A la fin du temps imparti,
+                un jury d’experts composés de membres du projet, de professionnels partenaires,
+                et d’enseignants de la HES-SO, sélectionneront les projets qui seront récompensés.
             </p>
         </div>
         <div class="col-1"></div>
@@ -46,8 +47,10 @@
             <div class="card" data-bs-toggle="modal" data-midas-challenge="0" data-bs-target="#challengeModal">
                 <img src="/static/img/green_color.png" class="card-img-top" alt="...">
                 <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                    <h5 class="card-title">AP(PL)I climat citoyens</h5>
+                    <p class="card-text">
+                        Créer une application interactive utilisant les données climatiques du Grand Genève à destination de ses citoyens.
+                    </p>
                     <p class="card-text text-center"><small class="text-muted"><i class="fa-solid fa-plus"></i> Voir plus</small></p>
                 </div>
             </div>
@@ -56,8 +59,11 @@
             <div class="card" data-bs-toggle="modal" data-midas-challenge="1" data-bs-target="#challengeModal">
                 <img src="/static/img/green_color.png" class="card-img-top" alt="...">
                 <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                    <h5 class="card-title">Imager les données climatiques</h5>
+                    <p class="card-text">
+                        Développer un vocabulaire visuel pour les données climatiques afin de créer un langage
+                        commun entre les professionnels et le grand public.
+                    </p>
                     <p class="card-text text-center"><small class="text-muted"><i class="fa-solid fa-plus"></i> Voir plus</small></p>
                 </div>
             </div>
@@ -75,13 +81,15 @@
             <div class="accordion" id="accordionExample">
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingOne">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                             Qui peut participer ?
                         </button>
                     </h2>
-                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                            <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                            <p>
+                                <strong>Tout le monde</strong> peut participer ! Étudiants, professeurs, professionnels ou particuliers sont les bienvenus !
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -93,7 +101,23 @@
                     </h2>
                     <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                            <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                            <p>
+                                L'objectif est d'utiliser les données microclimatiques du Grand Genève dans le but de les rendre accessibles à tous au travers d’applications interactives ou encore de développer un nouveau langage commun entre différents corps de métiers et le grand public.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingwhichData">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWhichData" aria-expanded="false" aria-controls="headingwhichData">
+                            Avec quelles données ?
+                        </button>
+                    </h2>
+                    <div id="collapseWhichData" class="accordion-collapse collapse" aria-labelledby="headingwhichData" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <p>
+                                Les participants pourront accéder à toutes les données collectées par GE'Xplore au travers de son <a href="https://gexplore.ch/api/doc/">API</a> ou grâce à des fichiers <a href="https://gexplore.ch/manage-data/">CSV</a>. Ceux-ci contiennent les données de différentes sources comme : <a href="http://www.climacity.org/Axis/">Climacity</a>, <a href="/">SABRA</a>, et <a href="https://www.meteosuisse.admin.ch/home/service-et-publications/conseil-et-service/portail-de-donnees-pour-l-enseignement-et-la-recherche.html">IDAWEB</a>.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -105,7 +129,11 @@
                     </h2>
                     <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                            <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                            <p>
+                                Le hackathon aura lieu dans les locaux de la HEG Genève au Campus Battelle. <strong>Campus Battelle, Rue de la Tambourine 17, 1227 Carouge</strong>
+                                <br><br>
+                                Le lieu de rencontre sera à l’aula au rez-de-chaussée du bâtiment B.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -117,7 +145,9 @@
                     </h2>
                     <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                            <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                            <p>
+                                Le hackathon se déroulera le <strong>11 et 12 novembre 2022</strong> à partir de <strong>14h00</strong>.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -141,27 +171,42 @@
                 <p id="modal-midas-description"></p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-primary">S'inscrire</button>
             </div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
+    const arr = [
+        [
+            'AP(LL)I climat citoyens',
+            'Créer une application interactive utilisant les données climatiques du Grand Genève à destination de ses citoyens.',
+            'Les données climatiques sont des données complexes et d’un volume considérable.\
+            Leur accès n\'est pas aisé et leur interprétation complexe.\
+            Le but de ce challenge est de créer une équipe pluridisciplinaire qui travaillera sur les aspects de design,\
+            d\'UX, d\'UI, et de développement afin de créer une application à destination des citoyens.\
+            \r\n\
+            Pour ce faire, une API ouverte regroupant plusieurs données climatiques fiables provenant du Grand Genève,\
+            sera  à votre disposition.Nous souhaitons permettre aux citoyens d\'interagir avec ces données au travers d\'interfaces\
+            et de visualisations simples, interactives, et innovantes.'
+        ],
+        [
+            'Imager les données climatiques',
+            'Développer un vocabulaire visuel pour les données climatiques afin de créer un langage commun entre les professionnels et le grand public.',
+            'Les données climatiques sont des données complexes, d\'un volume considérable et dont l\'interprétation demeure difficile.\
+            Le but de ce challenge est de créer une équipe pluridisciplinaire s\'intéressant à la visualisation des données climatiques\
+            afin qu\'elles soient correctement communiquées et comprises par les citoyens et les décideurs.\
+            \
+            Les participants seront invités à trouver des solutions innovantes pour mettre en image les données climatiques du Grand Genève.\
+            Vous pourrez, entre autres, explorer les thèmes de la data visualisation, des datas stories, et des data comics.\
+            Vous raconterez ainsi les histoires qui se cachent derrière les données afin d\'entraîner des changements de comportements\
+            de la part des citoyens et des actions concrètes de la part des décideurs.'
+        ]
+    ]
+
     let challengeModal = document.getElementById('challengeModal')
     challengeModal.addEventListener('show.bs.modal', (event) => {
-        const arr = [
-            [
-                'AP(LL)I climat citoyens',
-                'Résumé Challenge 1',
-                'Description Challenge 1'
-            ],
-            [
-                'Titre Challenge 2',
-                'Résumé Challenge 2',
-                'Description Challenge 2'
-            ]
-        ]
         let button = event.relatedTarget
         let number = parseInt(button.getAttribute('data-midas-challenge')) % 2
         let modalTitle = challengeModal.querySelector('.modal-title')
