@@ -173,6 +173,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <img src="" class="modal-img img-fluid" alt="...">
                 <p class="h5">Résumé du challenge</p>
                 <p id="modal-midas-summary"></p>
                 <p class="h5">Description du challenge</p>
@@ -188,7 +189,7 @@
 <script type="text/javascript">
     const arr = [
         [
-            'AP(LL)I climat citoyens',
+            'AP(PL)I climat citoyens',
             'Créer une application interactive utilisant les données climatiques du Grand Genève à destination de ses citoyens.',
             `Les données climatiques sont des données complexes et d'un volume considérable.
             Leur accès n'est pas aisé et leur interprétation complexe.
@@ -197,7 +198,8 @@
             <br><br>
             Pour ce faire, une API ouverte regroupant plusieurs données climatiques fiables provenant du Grand Genève,
             sera  à votre disposition.Nous souhaitons permettre aux citoyens d'interagir avec ces données au travers d'interfaces
-            et de visualisations simples, interactives, et innovantes.`
+            et de visualisations simples, interactives, et innovantes.`,
+            '/static/img/api_image.jpg'
         ],
         [
             'Imager les données climatiques',
@@ -209,21 +211,24 @@
             Les participants seront invités à trouver des solutions innovantes pour mettre en image les données climatiques du Grand Genève.
             Vous pourrez, entre autres, explorer les thèmes de la data visualisation, des datas stories, et des data comics.
             Vous raconterez ainsi les histoires qui se cachent derrière les données afin d'entraîner des changements de comportements
-            de la part des citoyens et des actions concrètes de la part des décideurs.`
+            de la part des citoyens et des actions concrètes de la part des décideurs.`,
+            '/static/img/imager_image.jpg'
         ]
     ]
 
-    let challengeModal = document.getElementById('challengeModal')
+    let challengeModal = document.getElementById('challengeModal');
     challengeModal.addEventListener('show.bs.modal', (event) => {
-        let button = event.relatedTarget
-        let number = parseInt(button.getAttribute('data-midas-challenge')) % 2
-        let modalTitle = challengeModal.querySelector('.modal-title')
-        let modalSummary = challengeModal.querySelector('#modal-midas-summary')
-        let modalDescription = challengeModal.querySelector('#modal-midas-description')
+        let button = event.relatedTarget;
+        let number = parseInt(button.getAttribute('data-midas-challenge')) % 2;
+        let modalTitle = challengeModal.querySelector('.modal-title');
+        let modalImage = challengeModal.querySelector('.modal-img');
+        let modalSummary = challengeModal.querySelector('#modal-midas-summary');
+        let modalDescription = challengeModal.querySelector('#modal-midas-description');
 
-        modalTitle.innerHTML = arr[number][0]
-        modalSummary.innerHTML = arr[number][1]
-        modalDescription.innerHTML = arr[number][2]
+        modalTitle.innerHTML = arr[number][0];
+        modalImage.src = arr[number][3];
+        modalSummary.innerHTML = arr[number][1];
+        modalDescription.innerHTML = arr[number][2];
     })
 
 </script>
