@@ -1,3 +1,24 @@
 .card{
     cursor: pointer;
+
 }
+
+.card-img-top {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+}
+
+.card-img-overlay {
+    font-size: 8px;
+    top: 465px !important;
+    right: 0 !important;
+    left: auto !important;
+}
+
+/* Bottom right text */
+.bottom-right {
+    position: absolute;
+    bottom: 8px;
+    right: 16px;
+  }

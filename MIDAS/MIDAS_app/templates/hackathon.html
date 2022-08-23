@@ -17,8 +17,8 @@
             <p class="h1">Hackathon MIDAS</p>
         </div>
         <div class="col-5 text-end">
-            <button type="button" class="btn btn-success fg-white btn-lg">Ajouter l'évènement</button>
-            <button type="button" class="btn btn-primary btn-lg">S'inscrire</button>
+            <a href="/static/ics/hackathon.ics" type="button" class="btn btn-success fg-white btn-lg" download>Ajouter l'évènement</a>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSesHK6nYo8wmWmkEW_z0MBWw-5klQ7TN23L6sROSNTTj-1ZDw/viewform" type="button" class="btn btn-primary btn-lg">S'inscrire</a>
         </div>
         <div class="col-1"></div>
     </div>
@@ -45,7 +45,12 @@
         <div class="col-1"></div>
         <div class="col-5">
             <div class="card" data-bs-toggle="modal" data-midas-challenge="0" data-bs-target="#challengeModal">
-                <img src="/static/img/green_color.png" class="card-img-top" alt="...">
+
+                <img src="/static/img/api_image.jpg" class="card-img-top" alt="...">
+                <div class="card-img-overlay">
+                    <p><a href='https://www.freepik.com/vectors/api-integration'>Api integration vector created by freepik - www.freepik.com</a></p>
+                </div>
+
                 <div class="card-body">
                     <h5 class="card-title">AP(PL)I climat citoyens</h5>
                     <p class="card-text">
@@ -57,7 +62,10 @@
         </div>
         <div class="col-5">
             <div class="card" data-bs-toggle="modal" data-midas-challenge="1" data-bs-target="#challengeModal">
-                <img src="/static/img/green_color.png" class="card-img-top" alt="...">
+                <img src="/static/img/imager_image.jpg" class="card-img-top" alt="...">
+                <div class="card-img-overlay">
+                    <p><a href='https://www.freepik.com/vectors/green-earth'>Green earth vector created by rawpixel.com - www.freepik.com</a></p>
+                </div>
                 <div class="card-body">
                     <h5 class="card-title">Imager les données climatiques</h5>
                     <p class="card-text">
@@ -102,7 +110,7 @@
                     <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
                             <p>
-                                L'objectif est d'utiliser les données microclimatiques du Grand Genève dans le but de les rendre accessibles à tous au travers d’applications interactives ou encore de développer un nouveau langage commun entre différents corps de métiers et le grand public.
+                                L'objectif est d'<strong>utiliser les données microclimatiques du Grand Genève</strong> dans le but de les <strong>rendre accessibles à tous</strong> au travers d’<strong>applications interactives</strong> ou encore de développer un nouveau <strong>langage commun</strong> entre différents corps de métiers et le grand public.
                             </p>
                         </div>
                     </div>
@@ -116,7 +124,7 @@
                     <div id="collapseWhichData" class="accordion-collapse collapse" aria-labelledby="headingwhichData" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
                             <p>
-                                Les participants pourront accéder à toutes les données collectées par GE'Xplore au travers de son <a href="https://gexplore.ch/api/doc/">API</a> ou grâce à des fichiers <a href="https://gexplore.ch/manage-data/">CSV</a>. Ceux-ci contiennent les données de différentes sources comme : <a href="http://www.climacity.org/Axis/">Climacity</a>, <a href="/">SABRA</a>, et <a href="https://www.meteosuisse.admin.ch/home/service-et-publications/conseil-et-service/portail-de-donnees-pour-l-enseignement-et-la-recherche.html">IDAWEB</a>.
+                                Les participants pourront accéder à toutes les <strong>données collectées par GE'Xplore</strong> au travers de son <a href="https://gexplore.ch/api/doc/">API</a> ou grâce à des fichiers <a href="https://gexplore.ch/manage-data/">CSV</a>. Ceux-ci contiennent les données de différentes sources comme : <a href="http://www.climacity.org/Axis/">Climacity</a>, <a href="/">SABRA</a>, et <a href="https://www.meteosuisse.admin.ch/home/service-et-publications/conseil-et-service/portail-de-donnees-pour-l-enseignement-et-la-recherche.html">IDAWEB</a>.
                             </p>
                         </div>
                     </div>
@@ -132,7 +140,7 @@
                             <p>
                                 Le hackathon aura lieu dans les locaux de la HEG Genève au Campus Battelle. <strong>Campus Battelle, Rue de la Tambourine 17, 1227 Carouge</strong>
                                 <br><br>
-                                Le lieu de rencontre sera à l’aula au rez-de-chaussée du bâtiment B.
+                                Le lieu de rencontre sera à l’<strong>Aula</strong> au rez-de-chaussée du bâtiment B.
                             </p>
                         </div>
                     </div>
@@ -158,7 +166,7 @@
 </div>
 
 <div class="modal fade" id="challengeModal" tabindex="-1" aria-labelledby="challengeModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="challengeModalLabel">Challenge 1</h5>
@@ -172,7 +180,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                <button type="button" class="btn btn-primary">S'inscrire</button>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSesHK6nYo8wmWmkEW_z0MBWw-5klQ7TN23L6sROSNTTj-1ZDw/viewform" type="button" class="btn btn-primary">S'inscrire</a>
             </div>
         </div>
     </div>
@@ -182,26 +190,26 @@
         [
             'AP(LL)I climat citoyens',
             'Créer une application interactive utilisant les données climatiques du Grand Genève à destination de ses citoyens.',
-            'Les données climatiques sont des données complexes et d’un volume considérable.\
-            Leur accès n\'est pas aisé et leur interprétation complexe.\
-            Le but de ce challenge est de créer une équipe pluridisciplinaire qui travaillera sur les aspects de design,\
-            d\'UX, d\'UI, et de développement afin de créer une application à destination des citoyens.\
-            \r\n\
-            Pour ce faire, une API ouverte regroupant plusieurs données climatiques fiables provenant du Grand Genève,\
-            sera  à votre disposition.Nous souhaitons permettre aux citoyens d\'interagir avec ces données au travers d\'interfaces\
-            et de visualisations simples, interactives, et innovantes.'
+            `Les données climatiques sont des données complexes et d'un volume considérable.
+            Leur accès n'est pas aisé et leur interprétation complexe.
+            Le but de ce challenge est de créer une équipe pluridisciplinaire qui travaillera sur les aspects de design,
+            d'UX, d'UI, et de développement afin de créer une application à destination des citoyens.
+            <br><br>
+            Pour ce faire, une API ouverte regroupant plusieurs données climatiques fiables provenant du Grand Genève,
+            sera  à votre disposition.Nous souhaitons permettre aux citoyens d'interagir avec ces données au travers d'interfaces
+            et de visualisations simples, interactives, et innovantes.`
         ],
         [
             'Imager les données climatiques',
             'Développer un vocabulaire visuel pour les données climatiques afin de créer un langage commun entre les professionnels et le grand public.',
-            'Les données climatiques sont des données complexes, d\'un volume considérable et dont l\'interprétation demeure difficile.\
-            Le but de ce challenge est de créer une équipe pluridisciplinaire s\'intéressant à la visualisation des données climatiques\
-            afin qu\'elles soient correctement communiquées et comprises par les citoyens et les décideurs.\
-            \
-            Les participants seront invités à trouver des solutions innovantes pour mettre en image les données climatiques du Grand Genève.\
-            Vous pourrez, entre autres, explorer les thèmes de la data visualisation, des datas stories, et des data comics.\
-            Vous raconterez ainsi les histoires qui se cachent derrière les données afin d\'entraîner des changements de comportements\
-            de la part des citoyens et des actions concrètes de la part des décideurs.'
+            `Les données climatiques sont des données complexes, d'un volume considérable et dont l'interprétation demeure difficile.
+            Le but de ce challenge est de créer une équipe pluridisciplinaire s'intéressant à la visualisation des données climatiques
+            afin qu'elles soient correctement communiquées et comprises par les citoyens et les décideurs.
+            <br><br>
+            Les participants seront invités à trouver des solutions innovantes pour mettre en image les données climatiques du Grand Genève.
+            Vous pourrez, entre autres, explorer les thèmes de la data visualisation, des datas stories, et des data comics.
+            Vous raconterez ainsi les histoires qui se cachent derrière les données afin d'entraîner des changements de comportements
+            de la part des citoyens et des actions concrètes de la part des décideurs.`
         ]
     ]
 
@@ -213,9 +221,9 @@
         let modalSummary = challengeModal.querySelector('#modal-midas-summary')
         let modalDescription = challengeModal.querySelector('#modal-midas-description')
 
-        modalTitle.textContent = arr[number][0]
-        modalSummary.textContent = arr[number][1]
-        modalDescription.textContent = arr[number][2]
+        modalTitle.innerHTML = arr[number][0]
+        modalSummary.innerHTML = arr[number][1]
+        modalDescription.innerHTML = arr[number][2]
     })
 
 </script>

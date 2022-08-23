@@ -1,0 +1,40 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//ical.marudot.com//iCal Event Maker
+CALSCALE:GREGORIAN
+BEGIN:VTIMEZONE
+TZID:Europe/Berlin
+LAST-MODIFIED:20201011T015911Z
+TZURL:http://tzurl.org/zoneinfo-outlook/Europe/Berlin
+X-LIC-LOCATION:Europe/Berlin
+BEGIN:DAYLIGHT
+TZNAME:CEST
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+DTSTART:19700329T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZNAME:CET
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+DTSTART:19701025T030000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+DTSTAMP:20220823T102152Z
+UID:1661250077323-18233@ical.marudot.com
+DTSTART;TZID=Europe/Berlin:20221111T140000
+DTEND;TZID=Europe/Berlin:20221112T180000
+SUMMARY:Hackathon Smart City Xperience
+URL:https://gexplore.ch/hackathon/
+DESCRIPTION:Le Hackathon Smart City Xperience s'inscrit dans le cadre du projet MIDAS (MIcroclimate DAta Stories) porté par la HEG et l'HEPIA. Dans le cadre des deux challenges dédiés au projet MIDAS les participants auront 24 heures pour développer un prototype fonctionnel. A la fin du temps imparti\, un jury d’experts composés de membres du projet\, de professionnels partenaires\, et d’enseignants de la HES-SO\, sélectionneront les projets qui seront récompensés.
+LOCATION:Campus Battelle\, Rue de la Tambourine 17\, 1227 Carouge
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Hackathon Smart City Xperience
+TRIGGER:-P1W
+END:VALARM
+END:VEVENT
+END:VCALENDAR
