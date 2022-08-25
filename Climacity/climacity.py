@@ -296,7 +296,7 @@ def main() -> None:
             add_logs(start_date, tmp_end_date, __location__)
             sys.exit(3)
 
-        print("--------------- Requesting data Climacity ended : {} ---------------".format(time.strftime("%Y-%m-%d %H:%M:%S")))
+        print("--------------- Requesting data Climacity from {} to {} ended ---------------".format(start_date, tmp_end_date))
 
         start_date = tmp_end_date
 
