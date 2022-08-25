@@ -1,3 +1,14 @@
+/* ----------- Non-Retina Screens ----------- */
+@media screen
+  and (min-device-width: 1200px) {
+      .modal-img {
+        margin-bottom: 10px;
+        height: 400px;
+        width: 100%;
+        object-fit: contain;
+      }
+}
+
 .card{
     cursor: pointer;
 
@@ -24,8 +35,5 @@
   }
 
   .modal-img {
-    margin-bottom: 10px;
-    height: 400px;
-    width: 100%;
-    object-fit: contain;
-  }
+    margin-bottom: 1em;
+}

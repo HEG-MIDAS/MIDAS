@@ -13,12 +13,15 @@
 <div class="d-flex w-100 flex-column align-items-center mt-4">
     <div class="row w-100">
         <div class="col-1"></div>
-        <div class="col-5">
+        <div class="col-10">
+        <div class="row">
+        <div class="col-sm-8">
             <p class="h1">Hackathon Smart City Xperience</p>
         </div>
-        <div class="col-5 text-end">
-            <a href="/static/ics/hackathon.ics" type="button" class="btn btn-success fg-white btn-lg" download>Ajouter l'évènement</a>
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSesHK6nYo8wmWmkEW_z0MBWw-5klQ7TN23L6sROSNTTj-1ZDw/viewform" type="button" class="btn btn-primary btn-lg">S'inscrire</a>
+        <div class="col-sm-4">
+            <a href="/static/ics/hackathon.ics" type="button" class="btn btn-success fg-white btn-lg mt-1" download>Ajouter l'évènement</a>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSesHK6nYo8wmWmkEW_z0MBWw-5klQ7TN23L6sROSNTTj-1ZDw/viewform" type="button" class="btn btn-primary btn-lg mt-1">S'inscrire</a>
+        </div>
         </div>
         <div class="col-1"></div>
     </div>
@@ -43,38 +46,43 @@
     </div>
     <div class="row w-100">
         <div class="col-1"></div>
-        <div class="col-5">
-            <div class="card" data-bs-toggle="modal" data-midas-challenge="0" data-bs-target="#challengeModal">
+        <div class="col-10">
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+            <div class="col">
+                <div class="card" data-bs-toggle="modal" data-midas-challenge="0" data-bs-target="#challengeModal">
 
-                <img src="/static/img/api_image.jpg" class="card-img-top" alt="...">
-                <div class="card-img-overlay">
-                    <p><a href='https://www.freepik.com/vectors/api-integration'>Api integration vector created by freepik - www.freepik.com</a></p>
+                    <img src="/static/img/api_image.jpg" class="card-img-top" alt="...">
+                    <div class="card-img-overlay">
+                        <p><a href='https://www.freepik.com/vectors/api-integration'>Api integration vector created by freepik - www.freepik.com</a></p>
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title">AP(PL)I climat citoyens</h5>
+                        <p class="card-text">
+                            Créer une application interactive utilisant les données climatiques du Grand Genève à destination de ses citoyens.
+                        </p>
+                        <p class="card-text text-center"><small class="text-muted"><i class="fa-solid fa-plus"></i> Voir plus</small></p>
+                    </div>
                 </div>
-
-                <div class="card-body">
-                    <h5 class="card-title">AP(PL)I climat citoyens</h5>
-                    <p class="card-text">
-                        Créer une application interactive utilisant les données climatiques du Grand Genève à destination de ses citoyens.
-                    </p>
-                    <p class="card-text text-center"><small class="text-muted"><i class="fa-solid fa-plus"></i> Voir plus</small></p>
+                </div>
+            <div class="col">
+                <div class="card" data-bs-toggle="modal" data-midas-challenge="1" data-bs-target="#challengeModal">
+                    <img src="/static/img/imager_image.jpg" class="card-img-top" alt="...">
+                    <div class="card-img-overlay">
+                        <p><a href='https://www.freepik.com/vectors/green-earth'>Green earth vector created by rawpixel.com - www.freepik.com</a></p>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Imager les données climatiques</h5>
+                        <p class="card-text">
+                            Développer un vocabulaire visuel pour les données climatiques afin de créer un langage
+                            commun entre les professionnels et le grand public.
+                        </p>
+                        <p class="card-text text-center"><small class="text-muted"><i class="fa-solid fa-plus"></i> Voir plus</small></p>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-5">
-            <div class="card" data-bs-toggle="modal" data-midas-challenge="1" data-bs-target="#challengeModal">
-                <img src="/static/img/imager_image.jpg" class="card-img-top" alt="...">
-                <div class="card-img-overlay">
-                    <p><a href='https://www.freepik.com/vectors/green-earth'>Green earth vector created by rawpixel.com - www.freepik.com</a></p>
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">Imager les données climatiques</h5>
-                    <p class="card-text">
-                        Développer un vocabulaire visuel pour les données climatiques afin de créer un langage
-                        commun entre les professionnels et le grand public.
-                    </p>
-                    <p class="card-text text-center"><small class="text-muted"><i class="fa-solid fa-plus"></i> Voir plus</small></p>
-                </div>
-            </div>
+
         </div>
         <div class="col-1"></div>
     </div>
@@ -195,32 +203,32 @@
 </div>
 <script type="text/javascript">
     const arr = [
-        [
-            'AP(PL)I climat citoyens',
-            'Créer une application interactive utilisant les données climatiques du Grand Genève à destination de ses citoyens.',
-            `Les données climatiques sont des données complexes et d'un volume considérable.
-            Leur accès n'est pas aisé et leur interprétation complexe.
-            Le but de ce challenge est de créer une équipe pluridisciplinaire qui travaillera sur les aspects de design,
-            d'UX, d'UI, et de développement afin de créer une application à destination des citoyens.
-            <br><br>
-            Pour ce faire, une API ouverte regroupant plusieurs données climatiques fiables provenant du Grand Genève,
-            sera  à votre disposition.Nous souhaitons permettre aux citoyens d'interagir avec ces données au travers d'interfaces
-            et de visualisations simples, interactives, et innovantes.`,
-            '/static/img/api_image.jpg'
-        ],
-        [
-            'Imager les données climatiques',
-            'Développer un vocabulaire visuel pour les données climatiques afin de créer un langage commun entre les professionnels et le grand public.',
-            `Les données climatiques sont des données complexes, d'un volume considérable et dont l'interprétation demeure difficile.
-            Le but de ce challenge est de créer une équipe pluridisciplinaire s'intéressant à la visualisation des données climatiques
-            afin qu'elles soient correctement communiquées et comprises par les citoyens et les décideurs.
-            <br><br>
-            Les participants seront invités à trouver des solutions innovantes pour mettre en image les données climatiques du Grand Genève.
-            Vous pourrez, entre autres, explorer les thèmes de la data visualisation, des datas stories, et des data comics.
-            Vous raconterez ainsi les histoires qui se cachent derrière les données afin d'entraîner des changements de comportements
-            de la part des citoyens et des actions concrètes de la part des décideurs.`,
-            '/static/img/imager_image.jpg'
-        ]
+    [
+    'AP(PL)I climat citoyens',
+    'Créer une application interactive utilisant les données climatiques du Grand Genève à destination de ses citoyens.',
+    `Les données climatiques sont des données complexes et d'un volume considérable.
+    Leur accès n'est pas aisé et leur interprétation complexe.
+    Le but de ce challenge est de créer une équipe pluridisciplinaire qui travaillera sur les aspects de design,
+    d'UX, d'UI, et de développement afin de créer une application à destination des citoyens.
+    <br><br>
+    Pour ce faire, une API ouverte regroupant plusieurs données climatiques fiables provenant du Grand Genève,
+    sera  à votre disposition.Nous souhaitons permettre aux citoyens d'interagir avec ces données au travers d'interfaces
+    et de visualisations simples, interactives, et innovantes.`,
+    '/static/img/api_image.jpg'
+    ],
+    [
+    'Imager les données climatiques',
+    'Développer un vocabulaire visuel pour les données climatiques afin de créer un langage commun entre les professionnels et le grand public.',
+    `Les données climatiques sont des données complexes, d'un volume considérable et dont l'interprétation demeure difficile.
+    Le but de ce challenge est de créer une équipe pluridisciplinaire s'intéressant à la visualisation des données climatiques
+    afin qu'elles soient correctement communiquées et comprises par les citoyens et les décideurs.
+    <br><br>
+    Les participants seront invités à trouver des solutions innovantes pour mettre en image les données climatiques du Grand Genève.
+    Vous pourrez, entre autres, explorer les thèmes de la data visualisation, des datas stories, et des data comics.
+    Vous raconterez ainsi les histoires qui se cachent derrière les données afin d'entraîner des changements de comportements
+    de la part des citoyens et des actions concrètes de la part des décideurs.`,
+    '/static/img/imager_image.jpg'
+    ]
     ]
 
     let challengeModal = document.getElementById('challengeModal');
