@@ -815,8 +815,8 @@ function generateData(JSONdata, currentIndex, nbOffset){
                                         },
                                         "data": arrayTemp,
                                         axisLabel: {
-                                            rotate: '45',
-                                            interval: 50
+
+                                            large: true
                                         },
                                 });
                             }
