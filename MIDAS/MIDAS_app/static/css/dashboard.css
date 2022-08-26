@@ -122,3 +122,27 @@
     margin-right: 10%;
     padding-right: 0.75rem;
 }
+
+.loader, .loader-with-main {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #0B5ED7; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    left: 50%;
+    position: absolute;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loader-with-main {
+    margin-top: 250px;
+}
+
+.opacity-low {
+    opacity: 0.3;
+}

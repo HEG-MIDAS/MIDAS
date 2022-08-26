@@ -125,6 +125,17 @@ window.addEventListener("load", addResearch);
 
 // Handles format the json body to send via the POST method to get the data requested
 async function requestData(){
+    // Create loader icon
+    loader = document.getElementById('loader');
+    if (myChart == null){
+        loader.classList.add("loader");
+    }
+    else {
+        loader.classList.add("loader-with-main");
+        document.getElementById('main').classList.add("opacity-low");
+    }
+    
+
     array_promises = [];
     for (var cnt=0; cnt < arrayCurrentIdx.length; cnt++) {
         var startingDateValue = document.getElementById('startingDate'+arrayCurrentIdx[cnt].toString()).value;
@@ -134,7 +145,7 @@ async function requestData(){
         if (startingDateValue != '' && endingDateValue != '' && sources[cnt].length > 0 && stations[cnt].length > 0 && parameters[cnt].length > 0) {
             // Format dates
             var startingDate = new Date(startingDateValue);
-            console.log(startingDate)
+            // console.log(startingDate)
             var startingDateString = startingDate.getFullYear() +"-"+ (startingDate.getMonth()+1) +"-"+ startingDate.getDate() + " " + startingDate.getHours() + ":" + startingDate.getMinutes() + ":" + startingDate.getSeconds();
             var endingDate = new Date(endingDateValue);
             var endingDateString = endingDate.getFullYear() +"-"+ (endingDate.getMonth()+1) +"-"+ endingDate.getDate() + " " + endingDate.getHours() + ":" + endingDate.getMinutes() + ":" + endingDate.getSeconds();
@@ -148,7 +159,10 @@ async function requestData(){
     };
 
     Promise.all([array_promises]).then((data) => {
+        // Remove loader icon
+        loader.className = '';
         document.getElementById("main").className = '';
+        document.getElementById('main').classList.remove("opacity-low");
         drawChart(data[0]);
     });
 }
@@ -563,7 +577,7 @@ function requestDataFetch(options){
     })
     .then(function(responseJSONData) {
         // Parse JSON response
-        console.log(responseJSONData);
+        // console.log(responseJSONData);
         jsonData = JSON.parse(responseJSONData);
         return jsonData;
     });
@@ -692,7 +706,7 @@ function addRuleOfEChartsParameters(echartSeriesNames){
     const medianLab = document.createElement("label");
     medianLab.className = "form-check-label lab-param-echarts";
     medianLab.setAttribute("for", "CheckMedian");
-    medianLab.innerText = "Afficher la medianne";
+    medianLab.innerText = "Afficher la médiane";
 
     divStats.appendChild(medianInp);
     divStats.appendChild(medianLab);
