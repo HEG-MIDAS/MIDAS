@@ -194,7 +194,7 @@ function fixedAccordeon(e){
 // Function lauched when a source is selected or deselected by the user
 // Adds or deletes the sources from the global array dedicated and enable the selection of stations
 // if there is at least one source selected
-function select_source(e, idx){
+async function select_source(e, idx){
     var index = arrayCurrentIdx.indexOf(idx);
     var stationsAccordeon = document.getElementById('headingStations'+idx.toString()).getElementsByTagName('button')[0];
     // Check if the user selected or deselected a source
@@ -249,10 +249,16 @@ function select_source(e, idx){
         else{
             // Prepare json body to POST request for the sources left
             options = {'sources': sources[index]};
-            requestStations(options, idx);
+            await requestStations(options, idx);
             if (!fixed) {
                 // Open accordeon of stations
                 var cs = document.getElementById('buttonStations'+idx.toString());
+                cs.click();
+            }
+        }
+        if (parameters[index].length == 0) {
+            var cs = document.getElementById('buttonDates'+idx.toString());
+            if (cs.getAttribute('aria-expanded') === 'true') {
                 cs.click();
             }
         }
@@ -382,10 +388,10 @@ function handleElementsSelection() {
 // Add CSRF into a constant to be used by the fetch requests
 const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value ;
 // Request all the stations available for the selected sources
-function requestStations(options, idx){
+async function requestStations(options, idx){
     // Request station-dashboard view
     var index = arrayCurrentIdx.indexOf(idx);
-    fetch('/stations-dashboard/',{
+    await fetch('/stations-dashboard/',{
         method: 'POST',
         headers: {
             'X-CSRFToken': csrf,
@@ -440,11 +446,6 @@ function requestStations(options, idx){
         if (stations[index].length > 0){
             for (var i = stations[index].length-1; i >= 0; --i) {
                 // Check if the station is still available to be selected
-                /*console.log(stations)
-                console.log(stationsSlug)
-                console.log(stations[i])
-                console.log(stationsSlug.includes(stations[i]))
-                */
                 if (stationsSlug.includes(stations[index][i])){
                     //console.log(stations[i])
                     // Select the station box
@@ -456,8 +457,6 @@ function requestStations(options, idx){
                     // If the code enter here, it means that the station was not in the request so it is deleted from our stations' array 
                     stations[index].splice(i, 1);
                 }
-                //console.log(stations)
-                //console.log(stationsSlug)
             }
         }
         // If there is no stations selected
