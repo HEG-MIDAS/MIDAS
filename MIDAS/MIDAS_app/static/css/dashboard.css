@@ -146,3 +146,8 @@
 .opacity-low {
     opacity: 0.3;
 }
+
+.popover-btn {
+    padding: 0 !important;
+    margin-left: 5px;
+}

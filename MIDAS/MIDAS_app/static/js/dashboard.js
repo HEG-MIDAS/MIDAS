@@ -451,7 +451,7 @@ async function requestStations(options, idx){
                     // Select the station box
                     document.getElementById("flexCheck"+stations[index][i]+idx.toString()).checked = true;
                     // Request for the parameters of the box selected and will do the same stuff
-                    requestParameters({'sources': sources[index], 'stations': stations[index][i]})
+                    requestParameters({'sources': sources[index], 'stations': stations[index][i]}, idx)
                 }
                 else {
                     // If the code enter here, it means that the station was not in the request so it is deleted from our stations' array 
@@ -522,10 +522,32 @@ function requestParameters(options, idx){
             accLab.className = "form-check-label";
             accLab.setAttribute("for", "flexCheck" + jsonData[i]['slug']+idx.toString());
             accLab.innerText = jsonData[i]['name'];
+            // Create information bouton
+            const accInf = document.createElement("button");
+            accInf.type = "button";
+            accInf.className = "btn popover-btn";
+            accInf.setAttribute("data-bs-container", "body");
+            accInf.setAttribute("data-bs-toggle", "popover");
+            accInf.setAttribute("data-bs-placement", "top");
+            accInf.setAttribute("data-bs-html", "true");
+            accInf.setAttribute("title", jsonData[i]['infos'])
+            accInf.setAttribute("data-bs-content",
+                
+                +"Source(s) : "+[...new Set(jsonData[i]['source'].split(","))].map(e => `<span class="badge bg-primary">`+e+`</span>`).join(' ')+"<br>"
+                +"Station(s) : "+[...new Set(jsonData[i]['station'].split(","))].map(e => `<span class="badge bg-primary">`+e+`</span>`).join(' ')+"<br>"
+                );
+            accInf.innerHTML = `<i class="fas fa-info-circle"></i>`;
+
             // Happen children
             accDiv.appendChild(accInp);
             accDiv.appendChild(accLab);
+            accDiv.appendChild(accInf);
             accordionParameters.appendChild(accDiv);
+
+            // Activate the popovers created
+            [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]')).map(function (tE) {
+                return new bootstrap.Popover(tE, {trigger: 'focus'});
+            });
 
             // Add slug of the current paramter to our current parameter array
             parametersSlug.push(jsonData[i]['slug'])
