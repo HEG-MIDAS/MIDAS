@@ -5,10 +5,10 @@
 <html lang="fr">
 <head>
     <meta charset="utf-8">
-    <title>{% block title %}GE'Xplore{% endblock %}</title>
+    <title>{% block title %}GExplore{% endblock %}</title>
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta property="og:title" content="GE'Xplore">
+    <meta property="og:title" content="GExplore">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{request.build_absolute_uri}}">
     <meta property="og:description" content="Project de collecte et d'analyse de données météorologiques">
@@ -24,9 +24,12 @@
     <script src="/static/lib/bootstrap/js/bootstrap.bundle.js" crossorigin="anonymous"></script>
     <script type="text/javascript">
     window.onload = () => {
+        [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]')).map(function (tE) {
+            return new bootstrap.Popover(tE, {trigger: 'focus'});
+        });
         [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).map(function (tE) {
-            return new bootstrap.Tooltip(tE)
-        })
+            return new bootstrap.Tooltip(tE);
+        });
         if(document.querySelector("div.midas-container") != null)document.querySelector("div.midas-container").style["min-height"] = (window.innerHeight - (document.querySelector("nav.navbar").offsetHeight)-1)+"px"
     }
     </script>

@@ -75,11 +75,15 @@ function addResearch(){
         Array.from(clone.querySelectorAll("[for*='0']")).map(element => element.setAttribute("for", element.getAttribute("for").replace("0", idxResearch.toString())));
         Array.from(clone.querySelectorAll("[onclick*='0']")).map(element => element.setAttribute("onclick", element.getAttribute("onclick").replace("0", idxResearch.toString())));
 
+        // Create a const containing the title of the new research created
         const titleOfFilter = clone.querySelector("#title"+idxResearch.toString())
-        titleOfFilter.innerHTML = titleOfFilter.innerHTML.replace("0", idxResearch.toString());
 
         // Add new index inside the array that will contain the current indexes
         arrayCurrentIdx.push(idxResearch);
+
+        // Edit the title of the new research by using the position in the array as displayed element
+        titleOfFilter.innerText = "Données : filtre " + (arrayCurrentIdx.indexOf(idxResearch)+1).toString();
+
         idxResearch++;
 
         // Create new arrays that will contain the data of the new research inside of the elements array
@@ -96,6 +100,7 @@ function addResearch(){
     if (document.getElementById("addResearchButton").getAttribute("disabled")==null && document.querySelectorAll("[id^='accordionDashboard']").length >= NBMAXPARALLELSEARCHS+1) {
         document.getElementById("addResearchButton").setAttribute("disabled", true);
     }
+    document.getElementById("addResearchButton").innerHTML = "Ajouter une recherche ("+(document.querySelectorAll("[id^='accordionDashboard']").length-1)+"/"+NBMAXPARALLELSEARCHS+`) <i class="fa-solid fa-circle-plus"></i>`;
 }
 
 function removeResearch(e, idx){
@@ -111,10 +116,17 @@ function removeResearch(e, idx){
     }
     handleSubmitButton();
 
+    for (let i = 0; i < arrayCurrentIdx.length; i++) {
+        const titleOfFilter = document.querySelector("#title"+arrayCurrentIdx[i].toString());
+        console.log(titleOfFilter)
+        titleOfFilter.innerText = "Données : filtre " + (arrayCurrentIdx.indexOf(arrayCurrentIdx[i])+1).toString();
+    }
+
     // Check if addResearchButton is already disable and if the number of simultaneous researchs are below the max
     if (document.getElementById("addResearchButton").getAttribute("disabled")!=null && document.querySelectorAll("[id^='accordionDashboard']").length < NBMAXPARALLELSEARCHS+1) {
         document.getElementById("addResearchButton").removeAttribute("disabled");
     }
+    document.getElementById("addResearchButton").innerHTML = "Ajouter une recherche ("+(document.querySelectorAll("[id^='accordionDashboard']").length-1)+"/"+NBMAXPARALLELSEARCHS+`) <i class="fa-solid fa-circle-plus"></i>`;
 }
 
 window.addEventListener("load", addResearch);
@@ -194,7 +206,7 @@ function fixedAccordeon(e){
 // Function lauched when a source is selected or deselected by the user
 // Adds or deletes the sources from the global array dedicated and enable the selection of stations
 // if there is at least one source selected
-function select_source(e, idx){
+async function select_source(e, idx){
     var index = arrayCurrentIdx.indexOf(idx);
     var stationsAccordeon = document.getElementById('headingStations'+idx.toString()).getElementsByTagName('button')[0];
     // Check if the user selected or deselected a source
@@ -249,10 +261,16 @@ function select_source(e, idx){
         else{
             // Prepare json body to POST request for the sources left
             options = {'sources': sources[index]};
-            requestStations(options, idx);
+            await requestStations(options, idx);
             if (!fixed) {
                 // Open accordeon of stations
                 var cs = document.getElementById('buttonStations'+idx.toString());
+                cs.click();
+            }
+        }
+        if (parameters[index].length == 0) {
+            var cs = document.getElementById('buttonDates'+idx.toString());
+            if (cs.getAttribute('aria-expanded') === 'true') {
                 cs.click();
             }
         }
@@ -382,10 +400,10 @@ function handleElementsSelection() {
 // Add CSRF into a constant to be used by the fetch requests
 const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value ;
 // Request all the stations available for the selected sources
-function requestStations(options, idx){
+async function requestStations(options, idx){
     // Request station-dashboard view
     var index = arrayCurrentIdx.indexOf(idx);
-    fetch('/stations-dashboard/',{
+    await fetch('/stations-dashboard/',{
         method: 'POST',
         headers: {
             'X-CSRFToken': csrf,
@@ -440,24 +458,17 @@ function requestStations(options, idx){
         if (stations[index].length > 0){
             for (var i = stations[index].length-1; i >= 0; --i) {
                 // Check if the station is still available to be selected
-                /*console.log(stations)
-                console.log(stationsSlug)
-                console.log(stations[i])
-                console.log(stationsSlug.includes(stations[i]))
-                */
                 if (stationsSlug.includes(stations[index][i])){
                     //console.log(stations[i])
                     // Select the station box
                     document.getElementById("flexCheck"+stations[index][i]+idx.toString()).checked = true;
                     // Request for the parameters of the box selected and will do the same stuff
-                    requestParameters({'sources': sources[index], 'stations': stations[index][i]})
+                    requestParameters({'sources': sources[index], 'stations': stations[index][i]}, idx)
                 }
                 else {
                     // If the code enter here, it means that the station was not in the request so it is deleted from our stations' array 
                     stations[index].splice(i, 1);
                 }
-                //console.log(stations)
-                //console.log(stationsSlug)
             }
         }
         // If there is no stations selected
@@ -523,10 +534,32 @@ function requestParameters(options, idx){
             accLab.className = "form-check-label";
             accLab.setAttribute("for", "flexCheck" + jsonData[i]['slug']+idx.toString());
             accLab.innerText = jsonData[i]['name'];
+            // Create information bouton
+            const accInf = document.createElement("button");
+            accInf.type = "button";
+            accInf.className = "btn popover-btn";
+            accInf.setAttribute("data-bs-container", "body");
+            accInf.setAttribute("data-bs-toggle", "popover");
+            accInf.setAttribute("data-bs-placement", "top");
+            accInf.setAttribute("data-bs-html", "true");
+            accInf.setAttribute("title", jsonData[i]['infos'])
+            accInf.setAttribute("data-bs-content",
+                
+                "Source(s) : "+[...new Set(jsonData[i]['source'].split(","))].map(e => `<span class="badge bg-primary">`+e+`</span>`).join(' ')+"<br>"
+                +"Station(s) : "+[...new Set(jsonData[i]['station'].split(","))].map(e => `<span class="badge bg-primary">`+e+`</span>`).join(' ')+"<br>"
+                );
+            accInf.innerHTML = `<i class="fas fa-info-circle"></i>`;
+
             // Happen children
             accDiv.appendChild(accInp);
             accDiv.appendChild(accLab);
+            accDiv.appendChild(accInf);
             accordionParameters.appendChild(accDiv);
+
+            // Activate the popovers created
+            [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]')).map(function (tE) {
+                return new bootstrap.Popover(tE, {trigger: 'focus'});
+            });
 
             // Add slug of the current paramter to our current parameter array
             parametersSlug.push(jsonData[i]['slug'])
