@@ -151,3 +151,13 @@
     padding: 0 !important;
     margin-left: 5px;
 }
+
+.change-animation {
+    border-radius: 5px;
+    animation-name: filterChange;
+    animation-duration: 3s;
+}
+
+@keyframes filterChange {
+    from {background-color: #ffe798;}
+}
