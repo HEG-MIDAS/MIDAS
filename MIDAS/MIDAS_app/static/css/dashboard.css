@@ -161,3 +161,7 @@
 @keyframes filterChange {
     from {background-color: #ffe798;}
 }
+
+#downloadButton {
+    margin-right: 5px;
+}

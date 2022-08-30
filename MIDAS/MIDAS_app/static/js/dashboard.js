@@ -140,7 +140,7 @@ window.addEventListener("load", addResearch(false));
 //////////////////////////////////////////////////////////////////////////////////////
 
 // Handles format the json body to send via the POST method to get the data requested
-async function requestData(){
+async function requestData(displayData = true){
     // Hide the error message if it's not already hidden
     document.getElementById("error-dashboard-message").hidden = true;
     // Create loader icon
@@ -181,13 +181,19 @@ async function requestData(){
         loader.className = '';
         document.getElementById("main").className = '';
         document.getElementById('main').classList.remove("opacity-low");
-        // If there is an error in the promises, diplay an error message in the dashboard, if not draw the chart
+        // If there is an error in the promises, display an error message in the dashboard, if not draw the chart
         if (data.some((value) => {return (value[0]==undefined)})){
             document.getElementById("error-dashboard-message").hidden = false;
         } else {
-            drawChart(data[0]);
+            if (displayData){
+                drawChart(data[0]);
+            }
+            else{
+                console.log(data[0])
+                downloadData(data[0]);
+            }
         }
-    }).catch(e => {document.getElementById("error-dashboard-message").hidden = false;});
+    }).catch(e => {console.log(e); document.getElementById("error-dashboard-message").hidden = false;});
 }
 
 // Modify the properties of the accordeon component to be always open or not in function of the dedicated box
@@ -638,9 +644,11 @@ function handleSubmitButton(){
     })
     if (wait4submit || domDates.length == 1){
         document.getElementById('submitButton').disabled = true;
+        document.getElementById('downloadButton').disabled = true;
     }
     else {
         document.getElementById('submitButton').disabled = false;
+        document.getElementById('downloadButton').disabled = false;
     }
 }
 
@@ -969,3 +977,52 @@ function drawChart(JSONdata) {
 }
 
 
+function downloadData(JSONDataToCSV) {
+    CSVHeader = []
+    data = []
+    for (var elementNumber in JSONDataToCSV) {
+        if (JSONDataToCSV.hasOwnProperty(elementNumber)) {
+            for (var source in JSONDataToCSV[elementNumber]) {
+                if (JSONDataToCSV[elementNumber].hasOwnProperty(source)) {
+                    for (var station in JSONDataToCSV[elementNumber][source]) {
+                        if (JSONDataToCSV[elementNumber][source].hasOwnProperty(station)) {
+                            for (var parameter in JSONDataToCSV[elementNumber][source][station]) {
+                                if (JSONDataToCSV[elementNumber][source][station].hasOwnProperty(parameter)) {
+                                    // If the header is empty
+                                    if (CSVHeader.length == 0){
+                                        // Create header with date and combination of source-station-parameter as name for the data
+                                        CSVHeader = ["date", source+"-"+station+"-"+parameter];
+                                        // Copy the 2d array
+                                        data = JSONDataToCSV[elementNumber][source][station][parameter]
+                                    }
+                                    else {
+                                        CSVHeader.push(source+"-"+station+"-"+parameter)
+                                        // Extract only the value of the parameter from the 2d array and create a new array
+                                        dataParameter = JSONDataToCSV[elementNumber][source][station][parameter].map(a => a[1]).flat(1)
+                                        // Add new value to already existing data
+                                        for (let i = 0; i < data.length; i++) {
+                                            data[i].push(dataParameter[i]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    let csv = CSVHeader.map(val => `'${val}'`).join(",")+"\n";
+    for (let i = 0; i < data.length; i++) {
+        csv += (data[i].map(val => `'${val}'`).join(",")+"\n");
+    }
+    console.log(csv)
+    let csvContent = "data:text/csv;charset=utf-8," + csv
+    var encodedUri = encodeURI(csvContent);
+    var link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "DataDashboard_"+new Date()+".csv");
+    document.body.appendChild(link); // Required for FF
+
+    link.click();
+}
