@@ -60,7 +60,7 @@ function disableOrNotParametersThatCanBeSelected(){
 // Handle research and parallel research
 //////////////////////////////////////////////////////////////////////////////////////
 
-function addResearch(){
+function addResearch(pageLoaded=true){
     // Check if it is possible to add a new research interface
     if (document.querySelectorAll("[id^='accordionDashboard']").length < NBMAXPARALLELSEARCHS+1) {
 
@@ -82,7 +82,12 @@ function addResearch(){
         arrayCurrentIdx.push(idxResearch);
 
         // Edit the title of the new research by using the position in the array as displayed element
-        titleOfFilter.innerHTML = "Données : <span class='change-animation'>filtre " + (arrayCurrentIdx.indexOf(idxResearch)+1).toString()+"</span>";
+        if (pageLoaded){
+            titleOfFilter.innerHTML = "Données : <span class='change-animation'>filtre " + (arrayCurrentIdx.indexOf(idxResearch)+1).toString()+"</span>";
+        }
+        else {
+            titleOfFilter.innerHTML = "Données : <span>filtre " + (arrayCurrentIdx.indexOf(idxResearch)+1).toString()+"</span>";
+        }
 
         idxResearch++;
 
@@ -128,7 +133,7 @@ function removeResearch(e, idx){
     document.getElementById("addResearchButton").innerHTML = "Ajouter une recherche ("+(document.querySelectorAll("[id^='accordionDashboard']").length-1)+"/"+NBMAXPARALLELSEARCHS+`) <i class="fa-solid fa-circle-plus"></i>`;
 }
 
-window.addEventListener("load", addResearch);
+window.addEventListener("load", addResearch(false));
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Elements Dashboard Selection
@@ -136,6 +141,8 @@ window.addEventListener("load", addResearch);
 
 // Handles format the json body to send via the POST method to get the data requested
 async function requestData(){
+    // Hide the error message if it's not already hidden
+    document.getElementById("error-dashboard-message").hidden = true;
     // Create loader icon
     loader = document.getElementById('loader');
     if (myChart == null){
@@ -164,8 +171,8 @@ async function requestData(){
             // Construct the json body of the POST method
             options = {'sources': sources[cnt], 'stations': stations[cnt], 'parameters': parameters[cnt], 'starting_date': startingDateString, 'ending_date': endingDateString}
 
-            let test = await requestDataFetch(options);
-            array_promises.push(test);
+            let promise = await requestDataFetch(options);
+            array_promises.push(promise);
         }
     };
 
@@ -174,7 +181,12 @@ async function requestData(){
         loader.className = '';
         document.getElementById("main").className = '';
         document.getElementById('main').classList.remove("opacity-low");
-        drawChart(data[0]);
+        // If there is an error in the promises, diplay an error message in the dashboard, if not draw the chart
+        if (data.some((value) => {return (value[0]==undefined)})){
+            document.getElementById("error-dashboard-message").hidden = false;
+        } else {
+            drawChart(data[0]);
+        }
     });
 }
 
@@ -593,8 +605,8 @@ function requestParameters(options, idx){
 }
 
 // Request data from the sources, stations, parameters, and date selected
-function requestDataFetch(options){
-    return fetch('/request-data-dashboard/',{
+async function requestDataFetch(options){
+    return await fetch('/request-data-dashboard/',{
         method: 'POST',
         headers: {
             'X-CSRFToken': csrf,
@@ -612,7 +624,7 @@ function requestDataFetch(options){
         // console.log(responseJSONData);
         jsonData = JSON.parse(responseJSONData);
         return jsonData;
-    });
+    }).catch(error => console.log(error));
 }
 
 
