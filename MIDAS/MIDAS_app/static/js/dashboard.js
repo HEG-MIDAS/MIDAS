@@ -82,7 +82,7 @@ function addResearch(){
         arrayCurrentIdx.push(idxResearch);
 
         // Edit the title of the new research by using the position in the array as displayed element
-        titleOfFilter.innerText = "Données : filtre " + (arrayCurrentIdx.indexOf(idxResearch)+1).toString();
+        titleOfFilter.innerHTML = "Données : <span class='change-animation'>filtre " + (arrayCurrentIdx.indexOf(idxResearch)+1).toString()+"</span>";
 
         idxResearch++;
 
@@ -118,8 +118,7 @@ function removeResearch(e, idx){
 
     for (let i = 0; i < arrayCurrentIdx.length; i++) {
         const titleOfFilter = document.querySelector("#title"+arrayCurrentIdx[i].toString());
-        console.log(titleOfFilter)
-        titleOfFilter.innerText = "Données : filtre " + (arrayCurrentIdx.indexOf(arrayCurrentIdx[i])+1).toString();
+        titleOfFilter.innerHTML = "Données : <span class='change-animation'>filtre " + (arrayCurrentIdx.indexOf(arrayCurrentIdx[i])+1).toString()+"</span>";
     }
 
     // Check if addResearchButton is already disable and if the number of simultaneous researchs are below the max
