@@ -75,11 +75,15 @@ function addResearch(){
         Array.from(clone.querySelectorAll("[for*='0']")).map(element => element.setAttribute("for", element.getAttribute("for").replace("0", idxResearch.toString())));
         Array.from(clone.querySelectorAll("[onclick*='0']")).map(element => element.setAttribute("onclick", element.getAttribute("onclick").replace("0", idxResearch.toString())));
 
+        // Create a const containing the title of the new research created
         const titleOfFilter = clone.querySelector("#title"+idxResearch.toString())
-        titleOfFilter.innerHTML = titleOfFilter.innerHTML.replace("0", idxResearch.toString());
 
         // Add new index inside the array that will contain the current indexes
         arrayCurrentIdx.push(idxResearch);
+
+        // Edit the title of the new research by using the position in the array as displayed element
+        titleOfFilter.innerText = "Données : filtre " + (arrayCurrentIdx.indexOf(idxResearch)+1).toString();
+
         idxResearch++;
 
         // Create new arrays that will contain the data of the new research inside of the elements array
@@ -96,6 +100,7 @@ function addResearch(){
     if (document.getElementById("addResearchButton").getAttribute("disabled")==null && document.querySelectorAll("[id^='accordionDashboard']").length >= NBMAXPARALLELSEARCHS+1) {
         document.getElementById("addResearchButton").setAttribute("disabled", true);
     }
+    document.getElementById("addResearchButton").innerHTML = "Ajouter une recherche ("+(document.querySelectorAll("[id^='accordionDashboard']").length-1)+"/"+NBMAXPARALLELSEARCHS+`) <i class="fa-solid fa-circle-plus"></i>`;
 }
 
 function removeResearch(e, idx){
@@ -111,10 +116,17 @@ function removeResearch(e, idx){
     }
     handleSubmitButton();
 
+    for (let i = 0; i < arrayCurrentIdx.length; i++) {
+        const titleOfFilter = document.querySelector("#title"+arrayCurrentIdx[i].toString());
+        console.log(titleOfFilter)
+        titleOfFilter.innerText = "Données : filtre " + (arrayCurrentIdx.indexOf(arrayCurrentIdx[i])+1).toString();
+    }
+
     // Check if addResearchButton is already disable and if the number of simultaneous researchs are below the max
     if (document.getElementById("addResearchButton").getAttribute("disabled")!=null && document.querySelectorAll("[id^='accordionDashboard']").length < NBMAXPARALLELSEARCHS+1) {
         document.getElementById("addResearchButton").removeAttribute("disabled");
     }
+    document.getElementById("addResearchButton").innerHTML = "Ajouter une recherche ("+(document.querySelectorAll("[id^='accordionDashboard']").length-1)+"/"+NBMAXPARALLELSEARCHS+`) <i class="fa-solid fa-circle-plus"></i>`;
 }
 
 window.addEventListener("load", addResearch);
@@ -533,7 +545,7 @@ function requestParameters(options, idx){
             accInf.setAttribute("title", jsonData[i]['infos'])
             accInf.setAttribute("data-bs-content",
                 
-                +"Source(s) : "+[...new Set(jsonData[i]['source'].split(","))].map(e => `<span class="badge bg-primary">`+e+`</span>`).join(' ')+"<br>"
+                "Source(s) : "+[...new Set(jsonData[i]['source'].split(","))].map(e => `<span class="badge bg-primary">`+e+`</span>`).join(' ')+"<br>"
                 +"Station(s) : "+[...new Set(jsonData[i]['station'].split(","))].map(e => `<span class="badge bg-primary">`+e+`</span>`).join(' ')+"<br>"
                 );
             accInf.innerHTML = `<i class="fas fa-info-circle"></i>`;
