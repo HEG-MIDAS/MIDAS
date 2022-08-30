@@ -187,7 +187,7 @@ async function requestData(){
         } else {
             drawChart(data[0]);
         }
-    });
+    }).catch(e => {document.getElementById("error-dashboard-message").hidden = false;});
 }
 
 // Modify the properties of the accordeon component to be always open or not in function of the dedicated box
@@ -837,7 +837,7 @@ function generateData(JSONdata, currentIndex, nbOffset){
                             arrayTemp = []
                             JSONdata[source][station][parameter].forEach(element => arrayTemp.push(element[0]))
                             //console.log(arrayData);
-                            nameOfParam = String(parameter)+" ("+String(station)+" - "+String(source)+") Filtre " + String(arrayCurrentIdx[currentIndex]);
+                            nameOfParam = String(parameter)+" ("+String(station)+" - "+String(source)+") Filtre " + (arrayCurrentIdx.indexOf(arrayCurrentIdx[currentIndex])+1).toString();
                             jsonSeriesData.push({
                                 "name": nameOfParam,
                                 "xAxisIndex": currentIndex,
