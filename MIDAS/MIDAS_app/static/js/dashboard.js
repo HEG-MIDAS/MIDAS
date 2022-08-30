@@ -978,9 +978,10 @@ function drawChart(JSONdata) {
 
 
 function downloadData(JSONDataToCSV) {
-    CSVHeader = []
-    data = []
+   
     for (var elementNumber in JSONDataToCSV) {
+        CSVHeader = []
+        data = []
         if (JSONDataToCSV.hasOwnProperty(elementNumber)) {
             for (var source in JSONDataToCSV[elementNumber]) {
                 if (JSONDataToCSV[elementNumber].hasOwnProperty(source)) {
@@ -1010,19 +1011,18 @@ function downloadData(JSONDataToCSV) {
                     }
                 }
             }
+            let csv = CSVHeader.map(val => `'${val}'`).join(",")+"\n";
+            for (let i = 0; i < data.length; i++) {
+                csv += (data[i].map(val => `'${val}'`).join(",")+"\n");
+            }
+            let csvContent = "data:text/csv;charset=utf-8," + csv
+            var encodedUri = encodeURI(csvContent);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "DataDashboard_Filter"+(parseInt(elementNumber)+1)+"_"+new Date()+".csv");
+            document.body.appendChild(link); // Required for FF
+
+            link.click();
         }
     }
-    let csv = CSVHeader.map(val => `'${val}'`).join(",")+"\n";
-    for (let i = 0; i < data.length; i++) {
-        csv += (data[i].map(val => `'${val}'`).join(",")+"\n");
-    }
-    console.log(csv)
-    let csvContent = "data:text/csv;charset=utf-8," + csv
-    var encodedUri = encodeURI(csvContent);
-    var link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "DataDashboard_"+new Date()+".csv");
-    document.body.appendChild(link); // Required for FF
-
-    link.click();
 }
