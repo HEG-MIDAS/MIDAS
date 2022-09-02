@@ -1,21 +1,47 @@
 {% extends 'layouts/base.html' %}
 {% block extracss %}
 <link rel="stylesheet" type="text/css" href="/static/lib/swagger/css/swagger-ui.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/apidoc.css" />
 {% endblock %}
 {% block extrajs %}
 <script src="/static/lib/swagger/js/swagger-ui-bundle.js"></script>
 {% endblock %}
 {% block body_content %}
     <div class="midas-container container-fluid">
-        <div class="container-fluid">
-            <div class="m-3">
-                <h3>Autentification</h3>
-                Pour vous authentifier sur l'api, vous devez générer un jeton API via <a href="/manage-token/">cette page</a> que vous utiliserez ensuite dans le header de votree requête sous la forme:
-                <code>Authorization: Midas &lt;nom d&apos;utilisateur&gt; &lt;jeton&gt;</code>
+        <div class="row w-100">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <p class="h1">Documentation API</p>
             </div>
+            <div class="col-1"></div>
         </div>
-        <div id="swagger-ui">
-
+        <div class="row w-100">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <h3>Autentification</h3>
+                <p>Pour vous authentifier sur l'api, vous devez générer un jeton API via
+                <a href="/manage-token/">cette page</a>.</p>
+                <p>Vous l'utiliserez ensuite dans le header de votre requête sous la forme:
+                <code>Authorization: Midas &lt;nom d&apos;utilisateur&gt; &lt;jeton&gt;</code>.</p>
+            </div>
+            <div class="col-1"></div>
+        </div>
+        <div class="row w-100">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <h3>Exemple</h3>
+                <p>Un exemple en python est disponible <a href="/static/doc/api_call_python_example.py">ici</a>.</p>
+            </div>
+            <div class="col-1"></div>
+        </div>
+        <div class="row w-100">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <h3>Routes</h3>
+                <p>L'url de base pour l'api est <a href="{{ request.get_host }}">{{ request.get_host }}</a>.</p>
+                <div id="swagger-ui"></div>
+            </div>
+            <div class="col-1"></div>
         </div>
     </div>
     <script>
