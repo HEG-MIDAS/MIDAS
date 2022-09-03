@@ -50,7 +50,7 @@ class LocalPerm(BasePermission):
 
 class StatusView(views.APIView):
     """
-    Return the status of the website, more precisely, if the sources of the website are all available, some, or none of them.
+    Return the status of the website.
 
     Returns
     -------
@@ -70,7 +70,7 @@ class StatusView(views.APIView):
 
 class StatusThirdPartyView(views.APIView):
     """
-    Return the status of the website, more precisely, if the sources of the website are all available, some, or none of them.
+    Return the status of the websites used by GExplore, more precisely, if the sources of the website are all available, some, or none of them.
 
     Returns
     -------
