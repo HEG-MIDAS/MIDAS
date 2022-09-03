@@ -17,7 +17,7 @@ import json
 # Replace username by the username you use on the website
 # Replace token by a token that you create on the website
 headers = {
-    'Authorization': 'Midas username token',
+    'Authorization': 'Midas admin 4yQ[[?$b(7O&FFv2,v:R',
     'Content-Type': 'application/json'
 }
 

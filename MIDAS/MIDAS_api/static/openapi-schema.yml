@@ -20,8 +20,7 @@ paths:
   /api/status/third-party/:
     get:
       operationId: listStatusThirdPartys
-      summary: 'Return the status of the websites used by GExplore, more precisely,
-        if the sources of the website are all available, some, or none of them.'
+      summary: 'Return a global status of all websites needed for the system to work'
       parameters: []
       responses:
         '200':
@@ -51,7 +50,7 @@ paths:
   /api/sources/{id}/:
     get:
       operationId: retrieveSource
-      summary: Retrieve a specific Source by the slug or the id
+      summary: Retrieve a specific Source by the id
       parameters:
       - name: id
         in: path
@@ -71,12 +70,12 @@ paths:
   /api/sources/{slug}/:
     get:
       operationId: retrieveSourceSlug
-      summary: Retrieve a specific Source by the slug or the id
+      summary: Retrieve a specific Source by the slug
       parameters:
       - name: slug
         in: path
         required: true
-        description: ''
+        description: A unique string value identifying this source.
         schema:
           type: string
       responses:
@@ -107,7 +106,7 @@ paths:
   /api/stations/{id}/:
     get:
       operationId: retrieveStation
-      summary: Retrieve a specific Station by the slug
+      summary: Retrieve a specific Station by the id
       parameters:
       - name: id
         in: path
@@ -132,7 +131,7 @@ paths:
       - name: slug
         in: path
         required: true
-        description: ''
+        description: A unique string value identifying this station.
         schema:
           type: string
       responses:
@@ -163,7 +162,7 @@ paths:
   /api/parameters/{id}/:
     get:
       operationId: retrieveParameter
-      summary: Retrieve a specific Parameter by the slug  or the id
+      summary: Retrieve a specific Parameter by the id
       parameters:
       - name: id
         in: path
@@ -183,12 +182,12 @@ paths:
   /api/parameters/{slug}/:
     get:
       operationId: retrieveParameterSlug
-      summary: Retrieve a specific Parameter by the slug  or the id
+      summary: Retrieve a specific Parameter by the slug
       parameters:
       - name: slug
         in: path
         required: true
-        description: ''
+        description: A unique string value identifying this parameter.
         schema:
           type: string
       responses:
@@ -203,7 +202,7 @@ paths:
   /api/favorites-group/:
     get:
       operationId: listGroupOfFavorites
-      summary: List all Parameters
+      summary: List all Favorites
       parameters: []
       responses:
         '200':
@@ -219,7 +218,7 @@ paths:
   /api/favorites-group/{id}/:
     get:
       operationId: retrieveGroupOfFavorite
-      summary: Retrieve a specific Parameter by the slug  or the id
+      summary: Retrieve a specific Favorite by the id
       parameters:
       - name: id
         in: path
@@ -239,12 +238,12 @@ paths:
   /api/favorites-group/{slug}/:
     get:
       operationId: retrieveGroupOfFavoriteSlug
-      summary: Retrieve a specific Parameter by the slug  or the id
+      summary: Retrieve a specific Favorite by the slug
       parameters:
       - name: slug
         in: path
         required: true
-        description: ''
+        description: A unique string value identifying this group of favorite.
         schema:
           type: string
       responses:
@@ -259,10 +258,18 @@ paths:
   /api/filter/:
     post:
       operationId: createFilter
-      summary: "Filter data. If stations, filter params, if sources, filter stations"
+      summary: "Filter data. If sources and stations given, return corresponding parameters. Else if sources given, return corresponding stations"
       parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Filter'
+            example:
+              sources: [sabra]
+              stations: [foron]
       responses:
-        '201':
+        '200':
           content:
             application/json:
               schema: {}
@@ -277,16 +284,34 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: {}
-          application/x-www-form-urlencoded:
-            schema: {}
-          multipart/form-data:
-            schema: {}
+            schema:
+              $ref: '#/components/schemas/Search'
+            example:
+              sources: [sabra]
+              stations: [foron]
+              parameters: [pm2_5]
+              start_date: "2022-06-10 00:00:00"
+              end_date: "2022-06-20 00:00:00"
+              limit: 1
+              order: DESC
       responses:
-        '201':
+        '200':
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                  source_name:
+                    type: object
+                    properties:
+                      station_name:
+                        type: object
+                        properties:
+                          timestamp_value:
+                            type: object
+                            properties:
+                                parameter_name:
+                                    type: string
           description: ''
       tags:
       - Search
@@ -452,3 +477,46 @@ components:
             - Parameters_of_station
       required:
       - Favorites_list
+    Filter:
+      type: object
+      properties:
+        sources:
+          type: array
+          required: true
+          items:
+            type: string
+        stations:
+          type: array
+          items:
+            type: string
+    Search:
+      type: object
+      properties:
+        sources :
+          type: array
+          required: true
+          items:
+            type: string
+        stations :
+          type: array
+          required: true
+          items:
+            type: string
+        parameters :
+          type: array
+          required: true
+          items:
+            type: string
+        start_date:
+            type: string
+            format: date
+        end_date:
+            type: string
+            format: date
+        limit:
+            type: number
+            minimum: 1
+            maximum: 100
+        order:
+            type: string
+            enum: [ASC, DESC]

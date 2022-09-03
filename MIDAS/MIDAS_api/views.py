@@ -57,7 +57,7 @@ class StatusView(views.APIView):
     json -> Response
     """
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
-    permission_classes = [IsAuthenticated|LocalPerm]
+
 
     def get(self, request):
         data = {}
@@ -77,7 +77,7 @@ class StatusThirdPartyView(views.APIView):
     json -> Response
     """
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
-    permission_classes = [IsAuthenticated|LocalPerm]
+
 
     def get(self, request):
         data = {}
@@ -105,7 +105,7 @@ class StatusThirdPartyView(views.APIView):
 
 class SearchView(views.APIView):
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
-    permission_classes = [IsAuthenticated|LocalPerm]
+    
 
     def post(self, request):
         """Search datas in files
@@ -256,7 +256,7 @@ class SearchView(views.APIView):
 
 class FilterView(views.APIView):
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
-    permission_classes = [IsAuthenticated|LocalPerm]
+
 
     def post(self, request):
         """Filter data. If stations, filter params, if sources, filter stations
@@ -317,7 +317,7 @@ class SourceList(generics.ListAPIView):
     queryset = Source.objects.all()
     serializer_class = SourceSerializer
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
-    permission_classes = [IsAuthenticated|LocalPerm]
+
 
 
 class SourceDetail(generics.RetrieveAPIView):
@@ -326,7 +326,7 @@ class SourceDetail(generics.RetrieveAPIView):
     queryset = Source.objects.all()
     serializer_class = SourceSerializer
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
-    permission_classes = [IsAuthenticated|LocalPerm]
+
 
 class StationList(generics.ListAPIView):
     """List all Stations
@@ -334,7 +334,7 @@ class StationList(generics.ListAPIView):
     queryset = Station.objects.all()
     serializer_class = StationSerializer
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
-    permission_classes = [IsAuthenticated|LocalPerm]
+
 
 class StationDetail(generics.RetrieveAPIView):
     """Retrieve a specific Station by the slug
@@ -342,7 +342,7 @@ class StationDetail(generics.RetrieveAPIView):
     queryset = Station.objects.all()
     serializer_class = StationSerializer
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
-    permission_classes = [IsAuthenticated|LocalPerm]
+
 
 class ParameterList(generics.ListAPIView):
     """List all Parameters
@@ -350,7 +350,7 @@ class ParameterList(generics.ListAPIView):
     queryset = Parameter.objects.all()
     serializer_class = ParameterSerializer
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
-    permission_classes = [IsAuthenticated|LocalPerm]
+
 
 class ParameterDetail(generics.RetrieveAPIView):
     """Retrieve a specific Parameter by the slug  or the id
@@ -358,7 +358,7 @@ class ParameterDetail(generics.RetrieveAPIView):
     queryset = Parameter.objects.all()
     serializer_class = ParameterSerializer
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
-    permission_classes = [IsAuthenticated|LocalPerm]
+
 
 class FavoriteGroupList(generics.ListAPIView):
     """List all Parameters
