@@ -557,6 +557,7 @@ function requestParameters(options, idx){
             accInf.className = "btn popover-btn";
             accInf.setAttribute("data-bs-container", "body");
             accInf.setAttribute("data-bs-toggle", "popover");
+            accInf.setAttribute("data-bs-trigger", "hover focus");
             accInf.setAttribute("data-bs-placement", "top");
             accInf.setAttribute("data-bs-html", "true");
             accInf.setAttribute("title", jsonData[i]['infos'])
@@ -575,7 +576,7 @@ function requestParameters(options, idx){
 
             // Activate the popovers created
             [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]')).map(function (tE) {
-                return new bootstrap.Popover(tE, {trigger: 'focus'});
+                return new bootstrap.Popover(tE, {trigger: 'hover focus'});
             });
 
             // Add slug of the current paramter to our current parameter array

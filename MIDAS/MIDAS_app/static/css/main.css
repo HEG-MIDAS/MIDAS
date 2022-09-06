@@ -1,3 +1,12 @@
+@font-face {
+    font-family: "Poppins";
+    src: url("/static/font/Poppins-Regular.ttf");
+   }
+
+* {
+    font-family: "Poppins";
+}
+
 /* General */
 html,body{
     min-height: 100vh;
