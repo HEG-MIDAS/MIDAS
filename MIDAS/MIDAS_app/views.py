@@ -305,7 +305,7 @@ def manage_data(request):
                 elif e == 'original':
                     t = 'Données originelles'
                 folder_tuples.append((t,e,False))
-            elif splitext(e)[1] in [".csv", ".txt"]:
+            elif splitext(e)[1] in [".csv", ".txt",".zip"]:
                 folder_tuples.append((e,e,True))
 
         tup = folder_tuples
