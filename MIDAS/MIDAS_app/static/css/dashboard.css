@@ -3,7 +3,6 @@
     margin-right: 10%;
     margin-bottom: 1em;
 }
-
 .sources {
     align-items: center;
 }
@@ -35,7 +34,9 @@
 }
 
 .title {
-    margin-left: 1em;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 1em;
 }
 
 #EchartsParameters {
