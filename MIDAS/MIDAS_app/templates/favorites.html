@@ -4,7 +4,11 @@
 {% endblock %}
 {% block body_content %}
 <div class="midas-container container-fluid">
-    <p class="h1">Favoris</p>
+    <div class="row w-100  mt-5">
+        <div class="col-1"></div>
+        <div class="col-10"><p class="h1">Favoris</p></div>
+        <div class="col-1"></div>
+    </div>
     <div class="d-flex w-100 flex-column align-items-center">
         {% if list|length == 0%}
         <div class="card mb-3 w-50">
