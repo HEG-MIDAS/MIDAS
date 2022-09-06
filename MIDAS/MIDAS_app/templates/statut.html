@@ -2,30 +2,41 @@
 {% block body_content %}
 {% load sources %}
 {% autoescape off %}
-<div class="midas-container container-fluid">
-    <p class="h1">Statut</p>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Nom</th>
-                <th scope="col">Statut</th>
-                <th scope="col">Badge</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th scope="row">ClimaCity</th>
-                <td>{% status 'climacity' %}</td>
-                <td><img src="/statut/climacity.svg" alt=""></td>
-            </tr>
-            <tr>
-                <th scope="row">SABRA</th>
-                <td>{% status 'sabra' %}</td>
-                <td><img src="/statut/sabra.svg" alt=""></td>
-            </tr>
-        </tbody>
-    </table>
+<div class="d-flex w-100 flex-column align-items-center mt-5">
+    <div class="row w-100">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <p class="h1">Statut</p>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row w-100">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Statut</th>
+                        <th scope="col">Badge</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">ClimaCity</th>
+                        <td>{% status 'climacity' %}</td>
+                        <td><img src="/statut/climacity.svg" alt=""></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">SABRA</th>
+                        <td>{% status 'sabra' %}</td>
+                        <td><img src="/statut/sabra.svg" alt=""></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-1"></div>
+    </div>
 </div>
 {% endautoescape %}
 {% endblock %}
