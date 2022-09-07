@@ -743,6 +743,7 @@ function addRuleOfEChartsParameters(echartSeriesNames){
     }
 
     const div = document.createElement("div");
+    div.classList.add("container");
     div.id = "EchartsViewParameters";
 
     const title = document.createElement("h4");
@@ -752,8 +753,11 @@ function addRuleOfEChartsParameters(echartSeriesNames){
     // Creates some buttons that allow to show statistical values on the echarts graph
 
     const divStats = document.createElement("div");
+    divStats.classList.add("row");
     divStats.id = "EchartsViewParametersStatistics";
 
+    const averageDiv = document.createElement("div");
+    averageDiv.classList.add("col");
     const averageInp = document.createElement("input");
     averageInp.className = "form-check-input ";
     averageInp.type = "checkbox";
@@ -764,10 +768,14 @@ function addRuleOfEChartsParameters(echartSeriesNames){
     averageLab.setAttribute("for", "CheckAverage");
     averageLab.innerText = "Afficher la moyenne";
 
-    divStats.appendChild(averageInp);
-    divStats.appendChild(averageLab);
+    averageDiv.appendChild(averageInp);
+    averageDiv.appendChild(averageLab);
+
+    divStats.appendChild(averageDiv);
 
     // Median button
+    const medianDiv = document.createElement("div");
+    medianDiv.classList.add("col");
     const medianInp = document.createElement("input");
     medianInp.className = "form-check-input";
     medianInp.type = "checkbox";
@@ -778,24 +786,14 @@ function addRuleOfEChartsParameters(echartSeriesNames){
     medianLab.setAttribute("for", "CheckMedian");
     medianLab.innerText = "Afficher la médiane";
 
-    divStats.appendChild(medianInp);
-    divStats.appendChild(medianLab);
+    medianDiv.appendChild(medianInp);
+    medianDiv.appendChild(medianLab);
 
-    // Min button
-    const minInp = document.createElement("input");
-    minInp.className = "form-check-input";
-    minInp.type = "checkbox";
-    minInp.id = "CheckMin";
-    minInp.setAttribute("onclick", "addMarkLineToEchartsPlot(this, 'min', 'Min')");
-    const minLab = document.createElement("label");
-    minLab.className = "form-check-label lab-param-echarts";
-    minLab.setAttribute("for", "CheckMin");
-    minLab.innerText = "Afficher le minimum";
-
-    divStats.appendChild(minInp);
-    divStats.appendChild(minLab);
+    divStats.appendChild(medianDiv);
 
     // Max button
+    const maxDiv = document.createElement("div");
+    maxDiv.classList.add("col");
     const maxInp = document.createElement("input");
     maxInp.className = "form-check-input";
     maxInp.type = "checkbox";
@@ -806,16 +804,40 @@ function addRuleOfEChartsParameters(echartSeriesNames){
     maxLab.setAttribute("for", "CheckMax");
     maxLab.innerText = "Afficher le maximum";
 
-    divStats.appendChild(maxInp);
-    divStats.appendChild(maxLab);
+    maxDiv.appendChild(maxInp);
+    maxDiv.appendChild(maxLab);
+
+    divStats.appendChild(maxDiv);
+
+    // Min button
+    const minDiv = document.createElement("div");
+    minDiv.classList.add("col");
+    const minInp = document.createElement("input");
+    minInp.className = "form-check-input";
+    minInp.type = "checkbox";
+    minInp.id = "CheckMin";
+    minInp.setAttribute("onclick", "addMarkLineToEchartsPlot(this, 'min', 'Min')");
+    const minLab = document.createElement("label");
+    minLab.className = "form-check-label lab-param-echarts";
+    minLab.setAttribute("for", "CheckMin");
+    minLab.innerText = "Afficher le minimum";
+
+    minDiv.appendChild(minInp);
+    minDiv.appendChild(minLab);
+
+    divStats.appendChild(minDiv);
     
     div.appendChild(divStats);
+
+    const separationStatsFilters = document.createElement("hr");
+    separationStatsFilters.classList.add("solid");
+
+    div.appendChild(separationStatsFilters);
 
     // Create a select for each element displayed that allow to change the line to bar or bar to line
 
     const divPlot = document.createElement("div");
     divPlot.id = "EchartsViewParametersPlot";
-    divPlot.classList.add("container");
 
     for (var i=0; i<echartSeriesNames.length; i++){
 
@@ -825,6 +847,7 @@ function addRuleOfEChartsParameters(echartSeriesNames){
 
         const divColLabel = document.createElement("div");
         divColLabel.classList.add("col-auto");
+        divColLabel.classList.add("label-display-parameters");
 
         const labelElement = document.createElement("p");
         labelElement.innerHTML = echartSeriesNames[i]+" :";
@@ -834,7 +857,7 @@ function addRuleOfEChartsParameters(echartSeriesNames){
 
 
         const divColSelect = document.createElement("div");
-        divColSelect.classList.add("col");
+        divColSelect.classList.add("col-auto");
 
         const labelSelect = document.createElement("label");
         labelSelect.classList.add("label-select-type-display");
@@ -904,6 +927,14 @@ function addRuleOfEChartsParameters(echartSeriesNames){
         divRow.appendChild(divMinInput);
 
         divPlot.appendChild(divRow);
+
+        if (i+1 < echartSeriesNames.length){
+            const separationFilterFilter = document.createElement("hr");
+            separationFilterFilter.classList.add("dashed");
+            console.log(separationFilterFilter)
+
+            divPlot.appendChild(separationFilterFilter);
+        }
     }
 
     div.appendChild(divPlot);
