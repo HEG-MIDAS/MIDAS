@@ -736,7 +736,7 @@ function changeXtremeValuesDisplayYAxis(value, filterWorkingOn, changeMax=true){
 
 
 function addRuleOfEChartsParameters(echartSeriesNames){
-    var baseDiv = document.getElementById("EchartsParameters");
+    const baseDiv = document.getElementById("EchartsParameters");
     
     while (baseDiv.firstChild) {
         baseDiv.removeChild(baseDiv.firstChild);
@@ -815,12 +815,30 @@ function addRuleOfEChartsParameters(echartSeriesNames){
 
     const divPlot = document.createElement("div");
     divPlot.id = "EchartsViewParametersPlot";
+    divPlot.classList.add("container");
 
     for (var i=0; i<echartSeriesNames.length; i++){
 
+        const divRow = document.createElement("div");
+        divRow.classList.add("row");
+
+
+        const divColLabel = document.createElement("div");
+        divColLabel.classList.add("col-auto");
+
+        const labelElement = document.createElement("p");
+        labelElement.innerHTML = echartSeriesNames[i]+" :";
+
+        divColLabel.appendChild(labelElement);
+        divRow.appendChild(divColLabel);
+
+
+        const divColSelect = document.createElement("div");
+        divColSelect.classList.add("col");
+
         const labelSelect = document.createElement("label");
         labelSelect.classList.add("label-select-type-display");
-        labelSelect.innerHTML = echartSeriesNames[i]+" :";
+        //labelSelect.innerHTML = echartSeriesNames[i]+" :";
 
         const select = document.createElement("select");
         select.classList.add("form-select");
@@ -836,11 +854,15 @@ function addRuleOfEChartsParameters(echartSeriesNames){
         });
 
         labelSelect.appendChild(select);
+        divColSelect.appendChild(labelSelect);
+        divRow.appendChild(divColSelect);
 
         // Handles creation of input group to modify max value
 
         const divMaxInput = document.createElement("div");
         divMaxInput.classList.add("input-group");
+        divMaxInput.classList.add("mb-3");
+        divMaxInput.classList.add("col");
 
         const spanMax = document.createElement("span");
         spanMax.classList.add("input-group-text");
@@ -856,12 +878,14 @@ function addRuleOfEChartsParameters(echartSeriesNames){
 
         divMaxInput.appendChild(maxInput);
 
-        labelSelect.appendChild(divMaxInput);
+        divRow.appendChild(divMaxInput);
 
         // Handles creation of input group to modify min value
 
         const divMinInput = document.createElement("div");
         divMinInput.classList.add("input-group");
+        divMinInput.classList.add("col");
+        divMinInput.classList.add("mb-3");
 
         const spanMin = document.createElement("span");
         spanMin.classList.add("input-group-text");
@@ -877,9 +901,9 @@ function addRuleOfEChartsParameters(echartSeriesNames){
 
         divMinInput.appendChild(minInput);
 
-        labelSelect.appendChild(divMinInput);
+        divRow.appendChild(divMinInput);
 
-        divPlot.appendChild(labelSelect);
+        divPlot.appendChild(divRow);
     }
 
     div.appendChild(divPlot);
