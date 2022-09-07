@@ -170,3 +170,12 @@
 .fa-info-circle {
     color: #0D6EFD;
 }
+
+.label-display-parameters{
+    margin-top: 5px;
+}
+
+hr.dashed {
+    border-top: 3px dashed #BBBBBB;
+    background-color: transparent;
+}
