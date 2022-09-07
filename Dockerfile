@@ -22,6 +22,8 @@ COPY static /app/static
 COPY media /app/media
 ## DB Update Default value
 COPY sources.csv /app/sources.csv
+## Folder zipper
+COPY zip-folder.sh /app/zip-folder.sh
 
 # Root Directory
 WORKDIR /app
