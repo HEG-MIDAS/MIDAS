@@ -40,7 +40,7 @@
             <div class="col-1"></div>
             <div class="col-10">
                 <h3>Routes</h3>
-                <p>L'url de base pour l'api est <a href="{{ request.get_host }}">{{ request.get_host }}</a>.</p>
+                <p>L'url de base pour l'api est <a href="{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}">{{ request.get_host }}</a>.</p>
                 <div id="swagger-ui"></div>
             </div>
             <div class="col-1"></div>
