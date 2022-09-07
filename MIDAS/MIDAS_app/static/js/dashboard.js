@@ -717,6 +717,23 @@ function changeLinePlotDisplay(name, displayType){
     resetEchartsPlot();
 }
 
+// Change the display of the extremes values on Y axis
+function changeXtremeValuesDisplayYAxis(value, filterWorkingOn, changeMax=true){
+    console.log(value)
+    if (value.length == 0){
+        value = undefined;
+    }
+    console.log(value)
+    if (changeMax){
+        option.yAxis[filterWorkingOn].max = value;
+    }
+    else {
+        option.yAxis[filterWorkingOn].min = value;
+    }
+
+    resetEchartsPlot();
+}
+
 
 function addRuleOfEChartsParameters(echartSeriesNames){
     var baseDiv = document.getElementById("EchartsParameters");
@@ -808,7 +825,7 @@ function addRuleOfEChartsParameters(echartSeriesNames){
         const select = document.createElement("select");
         select.classList.add("form-select");
         select.classList.add("select-type-display");
-        select.setAttribute("onchange", "changeLinePlotDisplay('"+echartSeriesNames[i]+"', this.value)")
+        select.setAttribute("onchange", "changeLinePlotDisplay('"+echartSeriesNames[i]+"', this.value)");
 
         TYPESPLOTGRAPH.forEach(function(element){
             const optionSelectLine = document.createElement("option")
@@ -819,6 +836,48 @@ function addRuleOfEChartsParameters(echartSeriesNames){
         });
 
         labelSelect.appendChild(select);
+
+        // Handles creation of input group to modify max value
+
+        const divMaxInput = document.createElement("div");
+        divMaxInput.classList.add("input-group");
+
+        const spanMax = document.createElement("span");
+        spanMax.classList.add("input-group-text");
+        spanMax.innerHTML = "Max";
+
+        divMaxInput.appendChild(spanMax);
+
+        const maxInput = document.createElement("input");
+        maxInput.classList.add("form-input");
+        maxInput.classList.add("form-control");
+        maxInput.setAttribute("type", "number");
+        maxInput.setAttribute("oninput", "changeXtremeValuesDisplayYAxis(this.value, "+i+")");
+
+        divMaxInput.appendChild(maxInput);
+
+        labelSelect.appendChild(divMaxInput);
+
+        // Handles creation of input group to modify min value
+
+        const divMinInput = document.createElement("div");
+        divMinInput.classList.add("input-group");
+
+        const spanMin = document.createElement("span");
+        spanMin.classList.add("input-group-text");
+        spanMin.innerHTML = "Min";
+
+        divMinInput.appendChild(spanMin);
+
+        const minInput = document.createElement("input");
+        minInput.classList.add("form-input");
+        minInput.classList.add("form-control");
+        minInput.setAttribute("type", "number");
+        minInput.setAttribute("oninput", "changeXtremeValuesDisplayYAxis(this.value, "+i+", false)");
+
+        divMinInput.appendChild(minInput);
+
+        labelSelect.appendChild(divMinInput);
 
         divPlot.appendChild(labelSelect);
     }
@@ -874,6 +933,8 @@ function generateData(JSONdata, currentIndex, nbOffset){
                                 });
                             }
                             jsonyAxisData.push({
+                                "max": undefined,
+                                "min": undefined,
                                 "type": 'value',
                                 "name": String(parameter),
                                 "position": currentIndex>0 ? 'right' : cnt>0 ? 'right' : 'left',
