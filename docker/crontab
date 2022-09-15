@@ -11,7 +11,7 @@ PYTHONPATH=/usr/local/lib/python3.9/site-packages
 #0 1 * * * /usr/local/bin/python /app/SABRA/sabra.py -s $YDate > /proc/1/fd/1 2>/proc/1/fd/2
 
 # Script calling Climacity and SABRA
-0 13 * * * /app/sources.py > /proc/1/fd/1 2>/proc/1/fd/2
+0 0 * * * /app/sources.py > /proc/1/fd/1 2>/proc/1/fd/2
 
 # Handling logs
 0 2 * * * /usr/local/bin/python /app/logs/logs_handler.py > /proc/1/fd/1 2>/proc/1/fd/2

@@ -1,5 +1,6 @@
 FROM python:3.9.11-buster
-
+RUN rm /usr/bin/python3
+RUN ln -s /usr/local/bin/python3.9 /usr/bin/python3
 # Update all
 RUN apt-get update && apt-get upgrade -y
 # Install crontab firefox (for scraper)
