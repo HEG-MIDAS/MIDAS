@@ -2,13 +2,16 @@
 
 # Get yesterday date
 YDate=$(date -d "yesterday" +'%Y-%m-%d')
+SHELL=/bin/bash
+PYTHONPATH=/usr/local/lib/python3.9/site-packages
 
 # Climacity
 #0 0 * * * /usr/local/bin/python /app/Climacity/climacity.py -s $YDate > /proc/1/fd/1 2>/proc/1/fd/2
 # Need to get yesterday value for SABRA or we're gonna skip a lot of datas > /proc/1/fd/1 2>/proc/1/fd/2
 #0 1 * * * /usr/local/bin/python /app/SABRA/sabra.py -s $YDate > /proc/1/fd/1 2>/proc/1/fd/2
 
-0 0 * * * /app/sources.py
+# Script calling Climacity and SABRA
+0 13 * * * /app/sources.py > /proc/1/fd/1 2>/proc/1/fd/2
 
 # Handling logs
 0 2 * * * /usr/local/bin/python /app/logs/logs_handler.py > /proc/1/fd/1 2>/proc/1/fd/2
