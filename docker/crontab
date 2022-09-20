@@ -11,3 +11,6 @@ YDate=$(date -d "yesterday" +'%Y-%m-%d')
 
 # Handling logs
 0 2 * * * /usr/local/bin/python /app/logs/logs_handler.py
+
+# Handling logs
+0 3 * * * /app/zip-folder.sh
