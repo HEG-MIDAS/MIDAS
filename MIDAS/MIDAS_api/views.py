@@ -232,12 +232,15 @@ class SearchView(views.APIView):
                                 lines = reversed(lines)
                             for line in lines:
                                 l = line.strip().split(",")
+                                
                                 # If the start and end date exist and the line date isn't between them
                                 if(start_date != None and end_date != None and not start_date <= datetime.datetime.strptime(l[0],"%Y-%m-%d %H:%M:%S") <= end_date):
                                     continue
-                                results[sourceData["name"]][station["name"]][l[0]] = {}
                                 for index in headerIndex:
-                                    results[sourceData["name"]][station["name"]][l[0]][header[index]] = np.double(l[index]) if(l[index] != "" and l[index] != " ") else l[index]
+                                    if(l[index] != "" and l[index] != " "):
+                                        if l[0] not in results[sourceData["name"]][station["name"]]:
+                                            results[sourceData["name"]][station["name"]][l[0]] = {}
+                                        results[sourceData["name"]][station["name"]][l[0]][header[index]] = np.double(l[index])
                                 limit += 1
                                 if(limitMax != None and limit == limitMax):
                                     break
