@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html' %}
 {% load dict %}
-
+{% load folder %}
 {% block body_content %}
 <div class="midas-container container-fluid">
     <div class="row w-100 mt-5">
@@ -90,7 +90,7 @@
                 <div class="row">
                     {% if value.2 %}
                     <div class="col-sm-6 my-1">
-                        <i class=" fas fa-file"></i>
+                        <i class=" fas {% check_type value.0 %}"></i>
                         <span>{{ value.0 }}</span>
                     </div>
                     <form class="col-sm-6 text-end" action="/manage-data/" method="post">
