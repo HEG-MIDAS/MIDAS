@@ -117,7 +117,8 @@ def process_data(array_data: Array) -> Array:
             data_mean = [str(j) if not np.isnan(j) else '' for j in np.nanmean(casted_data, axis=0)]
 
             # Take the value max of the index that correspond to a header where the value max is used
-            data_mean[index_to_find_max] = str(np.max(casted_data[:, index_to_find_max]))
+            vv_max = (np.nanmax(casted_data[:, index_to_find_max]))
+            data_mean[index_to_find_max] = str(np.where(np.isnan(vv_max), '', vv_max))
 
             array_processed_data.append(array_mean_full + data_mean)
             array_hour_data = []
