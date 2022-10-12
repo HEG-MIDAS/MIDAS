@@ -7,8 +7,8 @@
 
 
     <!-- The ApplicationDefaults element is where most of Shibboleth's SAML bits are defined. -->
-    <ApplicationDefaults entityID="https://localhost/shibboleth"
-                         homeURL="http://localhost/Session"
+    <ApplicationDefaults entityID="https://gexplore.ch/idp"
+                         homeURL="http://localhost/Shibboleth.sso/Session"
                          REMOTE_USER="persistent-id uniqueID"
                          cipherSuites="DEFAULT:!EXP:!LOW:!aNULL:!eNULL:!DES:!IDEA:!SEED:!RC4:!3DES:!kRSA:!SSLv2:!SSLv3:!TLSv1:!TLSv1.1">
 
@@ -26,7 +26,6 @@
                   checkAddress="false"
                   consistentAddress="true"
                   handlerSSL="false"
-                  handlerURL="http://localhost/"
                   redirectLimit="host"
                   cookieProps="http">
 
