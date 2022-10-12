@@ -1,5 +1,7 @@
 FROM ubuntu:jammy
 ENV TZ="Europe/Zurich"
+
+RUN echo "$TZ" > /etc/timezone
 RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y apache2
 RUN apt-get install -y libapache2-mod-shib shibboleth-sp-common shibboleth-sp-utils curl nano
