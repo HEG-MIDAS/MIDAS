@@ -11,7 +11,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from os import listdir
 from os.path import isfile, join, splitext
-from .forms import DateSelection, TokenForm
+from .forms import DateSelection, TokenForm, RegisterForm
 from .models import GroupOfFavorite, Favorite, Token, Source
 from MIDAS_app.models import Favorite, User
 from django.middleware import csrf
@@ -71,6 +71,9 @@ def index(request):
 
     context['sources'] = [{'name': source['name'], 'slug': source['slug']} for source in json.loads(requests.get('http://localhost:8000/api/sources/').content.decode())]
 
+    if request.session.get('accountCreated'):
+        context['accountCreated'] = True
+        del request.session['accountCreated']
 
     # csrftoken = django.middleware.csrf.get_token(request)
     # print(csrftoken)
@@ -378,3 +381,17 @@ def about(request):
 
 def hackathon(request):
     return render(request, 'hackathon.html')
+
+
+def register(request):
+    if request.method == "POST":
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            request.session['accountCreated'] = True
+
+            return redirect("/")
+    else:
+        form = RegisterForm()
+
+    return render(request, "registration/registration.html", {"form":form})

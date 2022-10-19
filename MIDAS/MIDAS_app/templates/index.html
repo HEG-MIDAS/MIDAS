@@ -8,6 +8,17 @@
     <script src="/static/lib/echarts/echarts.js" charset="utf-8"></script>
 {% endblock %}
 
+{% block body_alert %}
+    {% if accountCreated == True %}
+        <div class="container-fluid justify-content-center mt-2">
+            <div class="alert alert-success alert-dismissible text-center balise-infos" role="alert">
+                Votre compte a bien été créé !
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block body_content %}
 
 {% csrf_token %}

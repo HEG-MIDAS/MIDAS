@@ -1,10 +1,12 @@
 from django import forms
 import django.forms.widgets
-from .models import Token
+from .models import Token, User
 import datetime
 import string
 import random
 from dateutil.relativedelta import relativedelta
+from django.contrib.auth.forms import UserCreationForm
+from captcha.fields import CaptchaField, CaptchaTextInput
 
 
 def get_token(length:int)->str:
@@ -73,3 +75,16 @@ class TokenForm(forms.ModelForm):
 
         token.save()
         return tk
+
+
+class CustomCaptchaTextInput(CaptchaTextInput):
+    template_name = 'captcha.html'
+
+
+class RegisterForm(UserCreationForm):
+    email = forms.EmailField()
+    captcha = CaptchaField(widget=CustomCaptchaTextInput)
+
+    class Meta:
+        model = User
+        fields = ["username", "email", "password1", "password2", "captcha"]
