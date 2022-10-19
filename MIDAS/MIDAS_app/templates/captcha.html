@@ -1,0 +1,11 @@
+{% load i18n %}
+{% spaceless %}
+
+<div class="mb-3 row justify-content-center">
+    <img src="{{ image }}" alt="captcha" class="captcha col-sm-5" />
+    <div class="col-sm-7">
+        <input type="hidden" class="form-control" name="captcha_0">
+        <input type="text" class="form-control" name="captcha_1">
+    </div>
+</div>
+{% endspaceless %}

@@ -21,4 +21,5 @@ urlpatterns = [
     path('', include('django.contrib.auth.urls')),
     path('', include('MIDAS_app.urls')),
     path('api/', include('MIDAS_api.urls')),
+    path('captcha', include('captcha.urls')),
 ]
