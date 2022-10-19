@@ -78,7 +78,7 @@ class TokenForm(forms.ModelForm):
 
 
 class CustomCaptchaTextInput(CaptchaTextInput):
-    template_name = 'captcha.html'
+    template_name = 'forms/captcha.html'
 
 
 class RegisterForm(UserCreationForm):
