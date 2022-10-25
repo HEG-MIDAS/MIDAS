@@ -2,10 +2,13 @@
 {% spaceless %}
 
 <div class="mb-3 row justify-content-center">
-    <img src="{{ image }}" alt="captcha" class="captcha col-sm-5" />
+    <div class="col-sm-5 d-flex align-items-center">Captcha</div>
     <div class="col-sm-7">
         <input type="hidden"value="{{ widget.subwidgets.0.value }}" class="form-control" name="captcha_0">
-        <input type="text" class="form-control" name="captcha_1">
+        <div class="input-group">
+          <span class="input-group-text bg-light p-0" id="simple-captcha"><img src="{{ image }}" alt="captcha" class="captcha" /></span>
+            <input type="text" class="form-control" name="captcha_1" aria-describedby="simple-captcha">
+        </div>
     </div>
 </div>
 {% endspaceless %}
