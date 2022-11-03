@@ -14,4 +14,4 @@ python MIDAS/manage.py collectstatic --noinput
 echo "Creating super user"
 DJANGO_SUPERUSER_USERNAME=$admin_username DJANGO_SUPERUSER_PASSWORD=$admin_password DJANGO_SUPERUSER_EMAIL=$admin_email python3 MIDAS/manage.py createsuperuser --noinput
 echo "Runing server"
-python MIDAS/manage.py runserver 0.0.0.0:8000 --noreload
+python -u MIDAS/manage.py runserver 0.0.0.0:8000 --noreload
