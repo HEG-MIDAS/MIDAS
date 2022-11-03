@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'captcha',
+    'geoip2'
 ]
 
 MIDDLEWARE = [
@@ -150,3 +151,5 @@ CLIMACITY_ROOT = os.path.join(BASE_DIR, '../Climacity')
 SABRA_ROOT = os.path.join(BASE_DIR, '../SABRA')
 
 AUTH_USER_MODEL = 'MIDAS_app.User'
+
+GEOIP_PATH =os.path.join(BASE_DIR,'geoip')
