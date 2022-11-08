@@ -313,6 +313,7 @@ def main() -> None:
     print("--------------- Starting requests to Climacity : {} ---------------".format(today))
 
     thread_array = []
+    # Iterates until it reaches the end_date
     while start_date < end_date:
         # tmp_end_date = datetime.datetime.strftime(datetime.datetime.strptime(start_date, '%Y-%m-%d').date() + relativedelta(years=gap_years), '%Y-%m-%d')
         year_working_on = str(datetime.datetime.strptime(start_date, '%Y-%m-%d').year)

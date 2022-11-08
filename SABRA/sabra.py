@@ -406,7 +406,26 @@ def main(argv):
         print('The end date is inferior to the start date !')
         exit(1)
 
-    if(end_date - start_date > timedelta(days=365)):
+    start_date = start_date.strftime('%Y-%m-%d')
+    end_date = end_date.strftime('%Y-%m-%d')
+
+    while start_date < end_date:
+        year_working_on = str(datetime.strptime(start_date, '%Y-%m-%d').year)
+        tmp_end_date = year_working_on + "-12-31"
+        if tmp_end_date > end_date:
+            tmp_end_date = end_date
+
+        print('Getting Datas from '+ start_date +' to '+ tmp_end_date)
+        try:
+            operation(start_date, tmp_end_date, browser)
+        except:
+            print('An error occured for ' + start_date + '/' + tmp_end_date)
+            exit_code += 1
+            logs('-s ' + start_date + ' -e ' + tmp_end_date + '\n')
+
+        start_date = datetime.strftime(datetime.strptime(tmp_end_date, '%Y-%m-%d') + timedelta(days=1), '%Y-%m-%d')
+
+    """if(end_date - start_date > timedelta(days=365)):
         print('The time difference is greater than 365 days !')
         timeDiff = (end_date - start_date)
         reducedDiff = np.intc(np.ceil(timeDiff/timedelta(days=365)))
@@ -437,7 +456,7 @@ def main(argv):
             logs('-s '+start_date.strftime('%Y-%m-%d')+' -e '+end_date.strftime('%Y-%m-%d')+'\n')
     # Clean folder (in case of)
     clean()
-    # Print Debug for End
+    # Print Debug for End"""
     print("Done "+time.strftime("%Y-%m-%d %H:%M:%S"))
     exit(exit_code)
 
