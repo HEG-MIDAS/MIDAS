@@ -212,12 +212,13 @@ def write_request_in_tmp_file(r: requests.Request, path_tmp_file: str) -> None:
 
 
 class myThread (threading.Thread):
-    def __init__(self, start_date, tmp_end_date, url, path_tmp_file, path_original_data, year_working_on, original_data_filename, path_transformed_data, transformed_data_filename):
+    def __init__(self, start_date, tmp_end_date, url, path_tmp, tmp_filename, path_original_data, year_working_on, original_data_filename, path_transformed_data, transformed_data_filename):
         threading.Thread.__init__(self)
         self.start_date = start_date
         self.tmp_end_date = tmp_end_date
         self.url = url
-        self.path_tmp_file = path_tmp_file
+        self.path_tmp = path_tmp
+        self.tmp_filename = tmp_filename
         self.path_original_data = path_original_data
         self.year_working_on = year_working_on
         self.original_data_filename = original_data_filename
@@ -239,24 +240,24 @@ class myThread (threading.Thread):
         if r.ok:
             start_time = time.time()
             # Create a temporary file containing the data requested to climacity (original data)
-            write_request_in_tmp_file(r, self.path_tmp_file)
+            write_request_in_tmp_file(r, self.path_tmp + self.year_working_on + "_" + self.tmp_filename)
             # Merge temporary file with the file containing all the original data
             print("--------------- Merging new data --------------")
-            merge_csv_by_date.merge_csv_by_date(self.path_original_data + self.year_working_on + '_' + self.original_data_filename, self.path_tmp_file, '%Y-%m-%d %H:%M:%S')
+            merge_csv_by_date.merge_csv_by_date(self.path_original_data + self.year_working_on + '_' + self.original_data_filename, self.path_tmp + self.year_working_on + "_" + self.tmp_filename, '%Y-%m-%d %H:%M:%S')
             if Path(self.path_original_data + self.year_working_on + '_' + self.original_data_filename).is_file():
-                edit_original_header(self.path_original_data + self.year_working_on + '_' + self.original_data_filename, self.path_tmp_file)
+                edit_original_header(self.path_original_data + self.year_working_on + '_' + self.original_data_filename, self.path_tmp + self.year_working_on + "_" + self.tmp_filename)
             # Remove the temporary file created
-            os.remove(self.path_tmp_file)
+            os.remove(self.path_tmp + self.year_working_on + "_" + self.tmp_filename)
 
             print("--------------- Processing data ---------------")
 
             array_data = extract_relevant_data(r)
             array_data = process_data(array_data)
-            write_array_in_tmp_file(array_data, self.path_tmp_file)
+            write_array_in_tmp_file(array_data, self.path_tmp + self.year_working_on + "_" + self.tmp_filename)
 
             print("--------------- Merging processed data ---------------")
-            merge_csv_by_date.merge_csv_by_date(self.path_transformed_data + self.year_working_on + '_' + self.transformed_data_filename, self.path_tmp_file, '%Y-%m-%d %H:%M:%S')
-            os.remove(self.path_tmp_file)
+            merge_csv_by_date.merge_csv_by_date(self.path_transformed_data + self.year_working_on + '_' + self.transformed_data_filename, self.path_tmp + self.year_working_on + "_" + self.tmp_filename, '%Y-%m-%d %H:%M:%S')
+            os.remove(self.path_tmp + self.year_working_on + "_" + self.tmp_filename)
             print(time.time()-start_time)
 
         else:
@@ -297,7 +298,8 @@ def main() -> None:
     start_date = start_date.strftime('%Y-%m-%d')
     end_date = end_date.strftime('%Y-%m-%d')
 
-    path_tmp_file = '{}/tmp_data_request.csv'.format(__location__)
+    path_tmp = '{}/'.format(__location__)
+    tmp_filename = 'tmp_data_request.csv'
     path_original_data = '{}/../media/original/Climacity/Prairie/'.format(__location__)
     original_data_filename = 'climacity_original_merged.csv'
 
@@ -322,7 +324,7 @@ def main() -> None:
             """h_Tsv=on&h_Gh_Avg=on&h_Dh_Avg=on&h_Tamb_Avg=on&h_HRamb_Avg=on&h_Prec_Tot=on&h_Vv_Avg=on&h_Vv_Avg=on&""" \
             """h_Vv_Max=on&h_Dv_Avg=on&h_Baro=on&h_CS125_Vis=on&h_PM25=on&h_PM10=on&h_Hc=on&h_Az=on""".format(start_date, tmp_end_date)
 
-        thread = myThread(start_date, tmp_end_date, url, path_tmp_file, path_original_data, year_working_on, original_data_filename, path_transformed_data, transformed_data_filename)
+        thread = myThread(start_date, tmp_end_date, url, path_tmp, tmp_filename, path_original_data, year_working_on, original_data_filename, path_transformed_data, transformed_data_filename)
         thread_array.append(thread)
         thread.start()
 
