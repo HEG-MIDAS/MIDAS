@@ -9,6 +9,7 @@
 #python_version  :3.9.2
 
 from ctypes import Array
+import threading
 from urllib import request, response
 import requests
 import time
@@ -26,6 +27,9 @@ import shutil
 
 # Set timezone
 local = pytz.timezone('Europe/Zurich')
+
+__location__ = os.path.realpath(
+    os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 
 def add_logs(start_date: datetime.datetime, end_date: datetime.datetime, __location__: str) -> None:
@@ -207,6 +211,62 @@ def write_request_in_tmp_file(r: requests.Request, path_tmp_file: str) -> None:
     f.close()
 
 
+class myThread (threading.Thread):
+    def __init__(self, start_date, tmp_end_date, url, path_tmp_file, path_original_data, year_working_on, original_data_filename, path_transformed_data, transformed_data_filename):
+        threading.Thread.__init__(self)
+        self.start_date = start_date
+        self.tmp_end_date = tmp_end_date
+        self.url = url
+        self.path_tmp_file = path_tmp_file
+        self.path_original_data = path_original_data
+        self.year_working_on = year_working_on
+        self.original_data_filename = original_data_filename
+        self.path_original_data = path_original_data
+        self.path_transformed_data = path_transformed_data
+        self.transformed_data_filename = transformed_data_filename
+
+    def run(self):
+        print("--------------- Requesting data Climacity : from {} to {} ---------------".format(self.start_date, self.tmp_end_date))
+
+        # Request data to download
+        #start_time = time.time()
+        r = None
+        try:
+            r = requests.get(self.url)
+        except:
+            sys.exit(2)
+        #print(time.time()-start_time)
+        if r.ok:
+            start_time = time.time()
+            # Create a temporary file containing the data requested to climacity (original data)
+            write_request_in_tmp_file(r, self.path_tmp_file)
+            # Merge temporary file with the file containing all the original data
+            print("--------------- Merging new data --------------")
+            merge_csv_by_date.merge_csv_by_date(self.path_original_data + self.year_working_on + '_' + self.original_data_filename, self.path_tmp_file, '%Y-%m-%d %H:%M:%S')
+            if Path(self.path_original_data + self.year_working_on + '_' + self.original_data_filename).is_file():
+                edit_original_header(self.path_original_data + self.year_working_on + '_' + self.original_data_filename, self.path_tmp_file)
+            # Remove the temporary file created
+            os.remove(self.path_tmp_file)
+
+            print("--------------- Processing data ---------------")
+
+            array_data = extract_relevant_data(r)
+            array_data = process_data(array_data)
+            write_array_in_tmp_file(array_data, self.path_tmp_file)
+
+            print("--------------- Merging processed data ---------------")
+            merge_csv_by_date.merge_csv_by_date(self.path_transformed_data + self.year_working_on + '_' + self.transformed_data_filename, self.path_tmp_file, '%Y-%m-%d %H:%M:%S')
+            os.remove(self.path_tmp_file)
+            print(time.time()-start_time)
+
+        else:
+            print("--------------- Error at request adding logs --------------")
+            add_logs(self.start_date, self.tmp_end_date, __location__)
+            sys.exit(3)
+
+        print("--------------- Requesting data Climacity from {} to {} ended ---------------".format(self.start_date, self.tmp_end_date))
+
+
 def main() -> None:
     
     # Deal with arguments
@@ -237,11 +297,12 @@ def main() -> None:
     start_date = start_date.strftime('%Y-%m-%d')
     end_date = end_date.strftime('%Y-%m-%d')
 
-    __location__ = os.path.realpath(
-        os.path.join(os.getcwd(), os.path.dirname(__file__)))
     path_tmp_file = '{}/tmp_data_request.csv'.format(__location__)
-    path_original_data_file = '{}/../media/original/Climacity/climacity_original_merged.csv'.format(__location__)
-    path_transformed_data_file = '{}/../media/transformed/Climacity/Prairie_Urbain.csv'.format(__location__)
+    path_original_data = '{}/../media/original/Climacity/Prairie/'.format(__location__)
+    original_data_filename = 'climacity_original_merged.csv'
+
+    path_transformed_data = '{}/../media/transformed/Climacity/Prairie/'.format(__location__)
+    transformed_data_filename = 'Prairie.csv'
 
     today = time.strftime("%Y-%m-%d %H:%M:%S")
     # Indicates the interval of years for a request
@@ -249,8 +310,11 @@ def main() -> None:
 
     print("--------------- Starting requests to Climacity : {} ---------------".format(today))
 
-    while start_date <= end_date:
-        tmp_end_date = datetime.datetime.strftime(datetime.datetime.strptime(start_date, '%Y-%m-%d').date() + relativedelta(years=gap_years), '%Y-%m-%d')
+    thread_array = []
+    while start_date < end_date:
+        # tmp_end_date = datetime.datetime.strftime(datetime.datetime.strptime(start_date, '%Y-%m-%d').date() + relativedelta(years=gap_years), '%Y-%m-%d')
+        year_working_on = str(datetime.datetime.strptime(start_date, '%Y-%m-%d').year)
+        tmp_end_date = year_working_on + "-12-31"
         if tmp_end_date > end_date:
             tmp_end_date = end_date
 
@@ -258,51 +322,14 @@ def main() -> None:
             """h_Tsv=on&h_Gh_Avg=on&h_Dh_Avg=on&h_Tamb_Avg=on&h_HRamb_Avg=on&h_Prec_Tot=on&h_Vv_Avg=on&h_Vv_Avg=on&""" \
             """h_Vv_Max=on&h_Dv_Avg=on&h_Baro=on&h_CS125_Vis=on&h_PM25=on&h_PM10=on&h_Hc=on&h_Az=on""".format(start_date, tmp_end_date)
 
+        thread = myThread(start_date, tmp_end_date, url, path_tmp_file, path_original_data, year_working_on, original_data_filename, path_transformed_data, transformed_data_filename)
+        thread_array.append(thread)
+        thread.start()
 
-        print("--------------- Requesting data Climacity : from {} to {} ---------------".format(start_date, tmp_end_date))
+        start_date = datetime.datetime.strftime(datetime.datetime.strptime(tmp_end_date, '%Y-%m-%d') + datetime.timedelta(days=1), '%Y-%m-%d')
 
-        # Request data to download
-        #start_time = time.time()
-        r = None
-        try:
-            r = requests.get(url)
-        except:
-            sys.exit(2)
-        #print(time.time()-start_time)
-        if r.ok:
-            start_time = time.time()
-            # Create a temporary file containing the data requested to climacity (original data)
-            write_request_in_tmp_file(r, path_tmp_file)
-            # Merge temporary file with the file containing all the original data
-            print("--------------- Merging new data --------------")
-            merge_csv_by_date.merge_csv_by_date(path_original_data_file, path_tmp_file, '%Y-%m-%d %H:%M:%S')
-            if Path(path_original_data_file).is_file():
-                edit_original_header(path_original_data_file, path_tmp_file)
-            # Remove the temporary file created
-            os.remove(path_tmp_file)
-
-            print("--------------- Processing data ---------------")
-
-            array_data = extract_relevant_data(r)
-            array_data = process_data(array_data)
-            write_array_in_tmp_file(array_data, path_tmp_file)
-
-            print("--------------- Merging processed data ---------------")
-            merge_csv_by_date.merge_csv_by_date(path_transformed_data_file, path_tmp_file, '%Y-%m-%d %H:%M:%S')
-            os.remove(path_tmp_file)
-            #print(time.time()-start_time)
-
-        else:
-            print("--------------- Error at request adding logs --------------")
-            add_logs(start_date, tmp_end_date, __location__)
-            sys.exit(3)
-
-        print("--------------- Requesting data Climacity from {} to {} ended ---------------".format(start_date, tmp_end_date))
-
-        start_date = tmp_end_date
-
-        if start_date == end_date:
-            break
+    for thread in thread_array:
+        thread.join()
 
     print("--------------- Ending requests to Climacity : {} ---------------".format(today))
 
