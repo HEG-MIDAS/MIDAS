@@ -3,3 +3,13 @@
     background-repeat: no-repeat;
     background-size: cover;
 }
+
+.captcha{
+  cursor: pointer;
+}
+.captcha:hover {
+  border: 1px solid #CED4DA;
+  border-radius: 5px;
+  height: 200% !important;
+  z-index: 5;
+}

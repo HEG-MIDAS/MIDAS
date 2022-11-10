@@ -1,0 +1,50 @@
+{% extends 'layouts/registration.html' %}
+
+{% block registration_title %}Inscription{% endblock %}
+
+{% block registration_content %}
+{% if user.is_authenticated%}
+<div class="mb-3 row justify-content-center">
+    <p class="col-sm-12 text-center">Vous êtes déjà connecté. Souhaitez-vous vous <a href="/logout">déconnecter</a>?</p>
+</div>
+{% else %}
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3 row justify-content-center">
+        <label for="id_username" class="col-sm-5 col-form-label">Nom d'utilisateur</label>
+        <div class="col-sm-7">
+            <input type="text" class="form-control" name="username" id="id_username">
+        </div>
+    </div>
+    <div class="mb-3 row justify-content-center">
+        <label for="id_email" class="col-sm-5 col-form-label">Email</label>
+        <div class="col-sm-7">
+            <input type="text" class="form-control" name="email" id="id_email">
+        </div>
+    </div>
+    <div class="mb-3 row justify-content-center">
+        <label for="id_password" class="col-sm-5 col-form-label">Mot de passe</label>
+        <div class="col-sm-7">
+            <input type="password" class="form-control" name="password1">
+        </div>
+    </div>
+    <div class="mb-3 row justify-content-center">
+        <label for="id_password" class="col-sm-5 col-form-label">Répéter le mot de passe</label>
+        <div class="col-sm-7">
+            <input type="password" class="form-control" name="password2">
+        </div>
+    </div>
+
+    {{form.captcha}}
+
+    <div class="mb-3 row justify-content-center">
+        <div class="col-sm-12">
+            <a href="/login">Vous avez déjà un compte ? Connectez-vous !</a>
+        </div>
+    </div>
+    <div class="mb-3 row justify-content-center">
+        <button type="submit" class="col-sm-3 btn btn-primary">S'inscrire</button>
+    </div>
+</form>
+{% endif %}
+{% endblock %}

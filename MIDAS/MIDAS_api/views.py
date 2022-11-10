@@ -14,13 +14,41 @@ from django.conf import settings
 from .serializers import StatusSerializer, SourceSerializer, StationSerializer, ParameterSerializer, ParametersOfStationSerializer, FavoriteGroupSerializer, ParametersOfStationStationsSerializer
 from MIDAS_app.models import Source, Station, Parameter, ParametersOfStation, GroupOfFavorite, Token
 from rest_framework import exceptions
+from django.contrib.gis.geoip2 import GeoIP2
 
-# Create your views here.
-def status(request):
-    return True
+def get_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+
+    g = GeoIP2()
+    try:
+        location = g.city(ip)
+        location_country = location["country_name"]
+        location_city = location["city"]
+    except:
+        location_country = "Couldn't determine country"
+        location_city = "Couldn't determine city"
+    auth = request.headers.get("Authorization")
+    if auth == None:
+        auth = "No Authentification provided"
+    else:
+        list_auth = auth.split()
+        if len(list_auth) == 3 and list_auth[0] == "Midas":
+            try:
+                token = list_auth[2]
+                hash = sha256(token.encode()).hexdigest()
+                token = Token.objects.get(hash=hash)
+                auth = token.user
+            except:
+                pass
+    print(f"User IP Address : {''.join(ip)} | Country : {location_country} | City : {location_city} | User/Authentification: {auth} | Path : {request.path} | Method : {request.method}")
 
 class MidasTokenAuthentication(authentication.BaseAuthentication):
     def authenticate(self, request):
+        get_ip(request)
         auth = request.headers.get("Authorization")
         if not auth:
             return None
@@ -60,6 +88,7 @@ class StatusView(views.APIView):
 
 
     def get(self, request):
+
         data = {}
 
         data['status'] = "MIDAS Service running"
@@ -80,6 +109,7 @@ class StatusThirdPartyView(views.APIView):
 
 
     def get(self, request):
+
         data = {}
         sources = Source.objects.all()
         urls = [source.url for source in sources]
@@ -105,9 +135,10 @@ class StatusThirdPartyView(views.APIView):
 
 class SearchView(views.APIView):
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
-    
+
 
     def post(self, request):
+
         """Search datas in files
 
         POST Parameters
@@ -232,7 +263,7 @@ class SearchView(views.APIView):
                                 lines = reversed(lines)
                             for line in lines:
                                 l = line.strip().split(",")
-                                
+
                                 # If the start and end date exist and the line date isn't between them
                                 if(start_date != None and end_date != None and not start_date <= datetime.datetime.strptime(l[0],"%Y-%m-%d %H:%M:%S") <= end_date):
                                     continue
@@ -262,6 +293,7 @@ class FilterView(views.APIView):
 
 
     def post(self, request):
+
         """Filter data. If stations, filter params, if sources, filter stations
 
         POST Parameters

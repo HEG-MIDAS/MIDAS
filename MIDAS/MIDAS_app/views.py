@@ -11,7 +11,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from os import listdir
 from os.path import isfile, join, splitext
-from .forms import DateSelection, TokenForm
+from .forms import DateSelection, TokenForm, RegisterForm
 from .models import GroupOfFavorite, Favorite, Token, Source
 from MIDAS_app.models import Favorite, User
 from django.middleware import csrf
@@ -23,10 +23,30 @@ from rest_framework.request import Request
 from django.contrib import messages
 from . import update_db
 import time
+from django.contrib.gis.geoip2 import GeoIP2
+
+def get_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+
+    g = GeoIP2()
+    try:
+        location = g.city(ip)
+        location_country = location["country_name"]
+        location_city = location["city"]
+    except:
+        location_country = "Couldn't determine country"
+        location_city = "Couldn't determine city"
+
+    print(f"User IP Address : {''.join(ip)} | Country : {location_country} | City : {location_city} | Path : {request.path} | User : {request.user} | Method : {request.method}")
 
 @csrf_protect
 @require_http_methods(["POST"])
 def test(request):
+    get_ip(request)
     data = requests.post('http://localhost:8000/api/filter/')
     print(request.session.session_key)
     if(request.user.is_anonymous == False):
@@ -35,6 +55,7 @@ def test(request):
         return HttpResponse('{"data":"error"}')
 
 def index(request):
+    get_ip(request)
     # user = User.objects.first()
     # groupfav = user.group_of_favorite.all()
     # print(groupfav)
@@ -73,7 +94,10 @@ def index(request):
         context['sources'] = [{'name': source['name'], 'slug': source['slug']} for source in json.loads(requests.get('http://localhost:8000/api/sources/').content.decode())]
     except:
         pass
-            
+
+    if request.session.get('accountCreated'):
+        context['accountCreated'] = True
+        del request.session['accountCreated']
 
     # csrftoken = django.middleware.csrf.get_token(request)
     # print(csrftoken)
@@ -83,6 +107,7 @@ def index(request):
 
 @require_http_methods(["POST"])
 def stations_dashboard(request):
+    get_ip(request)
     data = []
 
     jsonData = json.loads(request.body)
@@ -106,6 +131,7 @@ def stations_dashboard(request):
 
 @require_http_methods(["POST"])
 def parameters_dashboard(request):
+    get_ip(request)
     data = []
 
     jsonData = json.loads(request.body)
@@ -137,6 +163,7 @@ def parameters_dashboard(request):
 
 @require_http_methods(["POST"])
 def request_data_dasboard(request):
+    get_ip(request)
     data = []
 
     jsonData = json.loads(request.body)
@@ -174,7 +201,7 @@ def request_data_dasboard(request):
                         print("If : " + hour)
                     else:
                         #if formatted_data_station[str(parameter)][-1] != [] and (datetime.datetime.strptime(hour, '%Y-%m-%d %H:%M:%S')-datetime.datetime.strptime(formatted_data_station[str(parameter)][-1][0], '%Y-%m-%d %H:%M:%S')) == datetime.timedelta(hours=1):
-                        while (datetime.datetime.strptime(last_hour, '%Y-%m-%d %H:%M:%S') + datetime.timedelta(hours=1) < datetime.datetime.strptime(hour, '%Y-%m-%d %H:%M:%S')): 
+                        while (datetime.datetime.strptime(last_hour, '%Y-%m-%d %H:%M:%S') + datetime.timedelta(hours=1) < datetime.datetime.strptime(hour, '%Y-%m-%d %H:%M:%S')):
                             last_hour = (datetime.datetime.strptime(last_hour, '%Y-%m-%d %H:%M:%S') + datetime.timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
                             formatted_data_station[str(parameter)].append([last_hour, ""])
                             print(last_hour)
@@ -191,6 +218,7 @@ def request_data_dasboard(request):
 
 
 def statut(request):
+    get_ip(request)
     context = {}
     return render(request, 'statut.html', context)
 
@@ -222,6 +250,7 @@ def favorite_deletion(request,slug):
 
 @login_required
 def manage_favorite(request):
+    get_ip(request)
     user_favorites_group = GroupOfFavorite.objects.filter(user=request.user.id)
     list = {}
     i = 0
@@ -261,6 +290,7 @@ def token_deletion(request,slug):
 
 @login_required
 def manage_token(request):
+    get_ip(request)
     tokens = Token.objects.filter(user=request.user.id)
     context = {
         'form': TokenForm,
@@ -295,6 +325,7 @@ def manage_token(request):
 
 @login_required
 def manage_data(request):
+    get_ip(request)
 
     media_path = join(settings.MEDIA_ROOT, join(request.GET.get('origin', ''), request.GET.get('source', '')))
     sources_input = Source.objects.all()
@@ -354,6 +385,7 @@ def manage_data(request):
 @user_passes_test(lambda u: u.is_superuser)
 @require_http_methods(["POST"])
 def harvest_data(request):
+    get_ip(request)
     if 'updateOperation' in request.POST and request.POST['updateOperation'] == 'files':
         if 'starting_date' in request.POST and 'ending_date' in request.POST and request.POST['starting_date'] != "" and request.POST['ending_date'] != "":
             source_dict = {
@@ -376,8 +408,25 @@ def harvest_data(request):
 
 
 def about(request):
+    get_ip(request)
     return render(request, 'about.html')
 
 
 def hackathon(request):
+    get_ip(request)
     return render(request, 'hackathon.html')
+
+
+def register(request):
+    get_ip(request)
+    if request.method == "POST":
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            request.session['accountCreated'] = True
+
+            return redirect("/")
+    else:
+        form = RegisterForm()
+
+    return render(request, "registration/registration.html", {"form":form})
