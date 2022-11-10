@@ -68,9 +68,12 @@ def index(request):
     # new_request.user = request.user
 
     # print(SearchView().post(new_request).data)
-
-    context['sources'] = [{'name': source['name'], 'slug': source['slug']} for source in json.loads(requests.get('http://localhost:8000/api/sources/').content.decode())]
-
+    context['sources'] = []
+    try:
+        context['sources'] = [{'name': source['name'], 'slug': source['slug']} for source in json.loads(requests.get('http://localhost:8000/api/sources/').content.decode())]
+    except:
+        pass
+            
 
     # csrftoken = django.middleware.csrf.get_token(request)
     # print(csrftoken)
