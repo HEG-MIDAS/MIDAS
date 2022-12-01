@@ -61,7 +61,7 @@ def sortByDate(data: dict) -> OrderedDict:
     return ordered_data
 
 # Function to write files
-def dataToFiles(data: dict):
+def dataToFiles(data: dict, year_working_on: str):
     """Write a Dictionary into files
 
     Parameters
@@ -116,13 +116,19 @@ def dataToFiles(data: dict):
             f.write(text)
         # Close file
         f.close()
+
+        if not k in os.listdir(os.path.join(media_path,'transformed/SABRA/')):
+            os.mkdir(os.path.join(media_path,'transformed/SABRA/{}'.format(k)))
+
         # Logs in terminal
         print("Written "+os.path.join(scraper_path,"temp-"+k+".csv"))
         # At the end, use merge to create final file
-        merge_csv_by_date.merge_csv_by_date(os.path.join(media_path,'transformed/SABRA/{0}.csv'.format(k)),os.path.join(scraper_path,"temp-{0}.csv".format(k)), '%Y-%m-%d %H:%M:%S')
-        print('Written {0}\n'.format(os.path.join(media_path,'transformed/SABRA/{0}.csv'.format(k))))
+        merge_csv_by_date.merge_csv_by_date(os.path.join(media_path,'transformed/SABRA/{}/{}_{}.csv'.format(k, year_working_on, k)),os.path.join(scraper_path,"temp-{0}.csv".format(k)), '%Y-%m-%d %H:%M:%S')
+        print('Written {0}\n'.format(os.path.join(media_path, 'transformed/SABRA/{}/{}_{}.csv'.format(k, year_working_on, k))))
+
+
 # Function to manipulate the downloaded files
-def manipulate():
+def manipulate(year_working_on: str):
     """Take the downloaded file and apply and sort it into a Dictionary
 
     """
@@ -162,7 +168,7 @@ def manipulate():
                     # Pop first element which is the date
                     stations.pop(0)
                     # Format it with the 'Typologie'
-                    stations = ['{0}_{1}'.format(element,typologie) for element in stations]
+                    stations = ['{0}'.format(element) for element in stations]
                     # Set the dataTable
                     for i in range(0,len(stations)):
                         if stations[i] not in dataTable:
@@ -193,10 +199,10 @@ def manipulate():
                 format_date = '%Y-%m-%d'
 
             # Write the data in the original files
-            merge_csv_by_date.merge_csv_by_date(os.path.join(media_path,'original/SABRA/{0}_{1}.csv'.format(typologie,polluant)),os.path.join(scraper_path,f), format_date)
-            print('Written {0}'.format(os.path.join(media_path,'original/SABRA/{0}_{1}.csv'.format(typologie,polluant))))
+            merge_csv_by_date.merge_csv_by_date(os.path.join(media_path,'original/SABRA/{0}_{1}_{2}.csv'.format(year_working_on,typologie,polluant)),os.path.join(scraper_path,f), format_date)
+            print('Written {0}'.format(os.path.join(media_path,'original/SABRA/{0}_{1}_{2}.csv'.format(year_working_on,typologie,polluant))))
     print('')
-    dataToFiles(dataTable)
+    dataToFiles(dataTable, year_working_on)
 # Clean Folder Script
 def clean():
     """Clean folders
@@ -295,6 +301,7 @@ def firefoxDriver():
     elif platform == "linux" or platform == "linux2":
         service = Service(os.path.join(scraper_path,'geckodriver_linux'))
     # Create Driver
+    print(webdriver.Firefox(options=options,service=service))
     return webdriver.Firefox(options=options,service=service)
 
 def chromeDriver():
@@ -338,6 +345,7 @@ def download(s:str,e:str,b:str):
         try:
             print("Trying Firefox")
             driver = firefoxDriver()
+            print("DONE")
         except:
             print("Couldn't download with Firefox trying Chrome")
             driver = chromeDriver()
@@ -364,9 +372,9 @@ def operation(sD:str,eD:str,b:str):
         Browser Value (firefox or chrome)
     """
     # Download for current time diff
-    download(sD,eD,b)
+    download(datetime.strftime(datetime.strptime(sD,'%Y-%m-%d'), '%d.%m.%Y'), datetime.strftime(datetime.strptime(eD,'%Y-%m-%d'), '%d.%m.%Y'),b)
     # Manipulating
-    manipulate()
+    manipulate(str(datetime.strptime(sD, '%Y-%m-%d').year))
     # Clean folder
     clean()
 
@@ -406,7 +414,27 @@ def main(argv):
         print('The end date is inferior to the start date !')
         exit(1)
 
-    if(end_date - start_date > timedelta(days=365)):
+    start_date = start_date.strftime('%Y-%m-%d')
+    end_date = end_date.strftime('%Y-%m-%d')
+
+    while start_date <= end_date:
+        year_working_on = str(datetime.strptime(start_date, '%Y-%m-%d').year)
+        tmp_end_date = year_working_on + "-12-31"
+        if tmp_end_date > end_date:
+            tmp_end_date = end_date
+
+        print('Getting Datas from '+ start_date +' to '+ tmp_end_date)
+        try:            
+            operation(start_date, tmp_end_date, browser)
+        except Exception as e:
+            print(e)
+            print('An error occured for ' + start_date + '/' + tmp_end_date)
+            exit_code += 1
+            logs('-s ' + start_date + ' -e ' + tmp_end_date + '\n')
+
+        start_date = datetime.strftime(datetime.strptime(tmp_end_date, '%Y-%m-%d') + timedelta(days=1), '%Y-%m-%d')
+
+    """if(end_date - start_date > timedelta(days=365)):
         print('The time difference is greater than 365 days !')
         timeDiff = (end_date - start_date)
         reducedDiff = np.intc(np.ceil(timeDiff/timedelta(days=365)))
@@ -437,7 +465,7 @@ def main(argv):
             logs('-s '+start_date.strftime('%Y-%m-%d')+' -e '+end_date.strftime('%Y-%m-%d')+'\n')
     # Clean folder (in case of)
     clean()
-    # Print Debug for End
+    # Print Debug for End"""
     print("Done "+time.strftime("%Y-%m-%d %H:%M:%S"))
     exit(exit_code)
 
