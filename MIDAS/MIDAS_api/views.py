@@ -15,6 +15,7 @@ from .serializers import StatusSerializer, SourceSerializer, StationSerializer, 
 from MIDAS_app.models import Source, Station, Parameter, ParametersOfStation, GroupOfFavorite, Token
 from rest_framework import exceptions
 from django.contrib.gis.geoip2 import GeoIP2
+from rest_framework.throttling import BaseThrottle, UserRateThrottle,AnonRateThrottle
 
 def get_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -72,9 +73,13 @@ class LocalPerm(BasePermission):
     def has_permission(self, request, view):
         if(request.META['REMOTE_ADDR'] == '127.0.0.1'):
             return True
-
         return False
 
+class LocalThrottle(AnonRateThrottle):
+    def allow_request(self, request, view):
+        if(request.META['REMOTE_ADDR'] == '127.0.0.1'):
+            return True
+        return super().allow_request(request, view)
 
 class StatusView(views.APIView):
     """
@@ -85,7 +90,7 @@ class StatusView(views.APIView):
     json -> Response
     """
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
-
+    throttle_classes = [LocalThrottle,UserRateThrottle]
 
     def get(self, request):
 
@@ -106,7 +111,7 @@ class StatusThirdPartyView(views.APIView):
     json -> Response
     """
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
-
+    throttle_classes = [LocalThrottle,UserRateThrottle]
 
     def get(self, request):
 
@@ -135,7 +140,7 @@ class StatusThirdPartyView(views.APIView):
 
 class SearchView(views.APIView):
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
-
+    throttle_classes = [LocalThrottle,UserRateThrottle]
 
     def post(self, request):
 
@@ -290,6 +295,7 @@ class SearchView(views.APIView):
 
 class FilterView(views.APIView):
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
+    throttle_classes = [LocalThrottle,UserRateThrottle]
 
 
     def post(self, request):
@@ -352,7 +358,7 @@ class SourceList(generics.ListAPIView):
     queryset = Source.objects.all()
     serializer_class = SourceSerializer
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
-
+    throttle_classes = [LocalThrottle,UserRateThrottle]
 
 
 class SourceDetail(generics.RetrieveAPIView):
@@ -361,6 +367,7 @@ class SourceDetail(generics.RetrieveAPIView):
     queryset = Source.objects.all()
     serializer_class = SourceSerializer
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
+    throttle_classes = [LocalThrottle,UserRateThrottle]
 
 
 class StationList(generics.ListAPIView):
@@ -369,6 +376,7 @@ class StationList(generics.ListAPIView):
     queryset = Station.objects.all()
     serializer_class = StationSerializer
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
+    throttle_classes = [LocalThrottle,UserRateThrottle]
 
 
 class StationDetail(generics.RetrieveAPIView):
@@ -377,6 +385,7 @@ class StationDetail(generics.RetrieveAPIView):
     queryset = Station.objects.all()
     serializer_class = StationSerializer
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
+    throttle_classes = [LocalThrottle,UserRateThrottle]
 
 
 class ParameterList(generics.ListAPIView):
@@ -385,6 +394,7 @@ class ParameterList(generics.ListAPIView):
     queryset = Parameter.objects.all()
     serializer_class = ParameterSerializer
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
+    throttle_classes = [LocalThrottle,UserRateThrottle]
 
 
 class ParameterDetail(generics.RetrieveAPIView):
@@ -393,6 +403,7 @@ class ParameterDetail(generics.RetrieveAPIView):
     queryset = Parameter.objects.all()
     serializer_class = ParameterSerializer
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
+    throttle_classes = [LocalThrottle,UserRateThrottle]
 
 
 class FavoriteGroupList(generics.ListAPIView):
@@ -401,6 +412,7 @@ class FavoriteGroupList(generics.ListAPIView):
     queryset = GroupOfFavorite.objects.all()
     serializer_class = FavoriteGroupSerializer
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
+    throttle_classes = [LocalThrottle,UserRateThrottle]
     permission_classes = [IsAuthenticated]
 
 class FavoriteGroupDetail(generics.RetrieveAPIView):
@@ -409,4 +421,5 @@ class FavoriteGroupDetail(generics.RetrieveAPIView):
     queryset = GroupOfFavorite.objects.all()
     serializer_class = FavoriteGroupSerializer
     authentication_classes = [SessionAuthentication,MidasTokenAuthentication]
+    throttle_classes = [LocalThrottle,UserRateThrottle]
     permission_classes = [IsAuthenticated]
