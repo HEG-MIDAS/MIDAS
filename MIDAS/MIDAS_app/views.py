@@ -327,8 +327,9 @@ def manage_token(request):
 def manage_data(request):
     get_ip(request)
 
-    media_path = join(settings.MEDIA_ROOT, join(request.GET.get('origin', ''), request.GET.get('source', '')))
+    media_path = join(settings.MEDIA_ROOT, join(request.GET.get('origin', ''), request.GET.get('source', ''), request.GET.get('station', '')))
     sources_input = Source.objects.all()
+    # Download file if request is passed in POST
     if request.method == 'POST':
         if request.POST.get('filename', '') != '':
             media_path = join(settings.MEDIA_ROOT, join(request.POST.get('origin', ''), request.POST.get('source', '')))
@@ -341,28 +342,30 @@ def manage_data(request):
 
     else:
         folder_tuples = []
+        # Iterate over each element of the media path and create tuple (name, True if file else False)
         for e in listdir(media_path):
+            # If it's not a file and the name is transformed or original, rename it, otherwise keep the same name
             if not isfile(join(media_path, e)):
                 t = e
                 if e == 'transformed':
                     t = 'Données transformées'
                 elif e == 'original':
                     t = 'Données originelles'
-                folder_tuples.append((t,e,False))
+                folder_tuples.append((t,False))
             elif splitext(e)[1] in [".csv", ".txt",".zip"]:
-                folder_tuples.append((e,e,True))
+                folder_tuples.append((e,True))
+        
+        # Filter the tuples by alphabetical order
+        folder_tuples.sort(key=lambda tup: tup[0])
 
-        tup = folder_tuples
-        n = len(tup)
-        for i in range(n):
-            for j in range(n-i-1):
-                if tup[j][0] > tup[j + 1][0]:
-                    tup[j], tup[j + 1] = tup[j + 1], tup[j]
-        folder_tuples = tup
+        # Create the path redirect
         path_redirect = ''
         if request.GET.get('origin', '') != '':
             if request.GET.get('source', '') != '':
-                pass
+                # /!\ condition inverted to don't have a : else: pass
+                # Continue after this statement if the path is deeper (don't forget to invert condition and add an else with the path_redirect)
+                if request.GET.get('station', '') == '':
+                    path_redirect = '?origin={}&source={}&station='.format(request.GET.get('origin', ''), request.GET.get('source', ''))
             else:
                 path_redirect = '?origin={}&source='.format(request.GET.get('origin', ''))
         else:
