@@ -325,14 +325,21 @@ def manage_token(request):
 
 @login_required
 def manage_data(request):
-    get_ip(request)
-    
-    media_path = join(settings.MEDIA_ROOT, join(request.GET.get('origin', ''), request.GET.get('source', ''), request.GET.get('station', '')))
+    # Create path for media_path and create path redirect for url
+    path_redirect = ''
+    path = ''
+    for i, p in enumerate(request.GET.getlist('path')):
+        path = join(path, p)
+        if i==0:
+            path_redirect += '?path={}'.format(p)
+        else:
+            path_redirect += '&path={}'.format(p)
+
+    media_path = join(settings.MEDIA_ROOT, path)
     sources_input = Source.objects.all()
     # Download file if request is passed in POST
     if request.method == 'POST':
         if request.POST.get('filename', '') != '':
-            media_path = join(settings.MEDIA_ROOT, join(request.POST.get('origin', ''), request.POST.get('source', '')))
             file_path = join(media_path, request.POST.get('filename', ''))
             data_file = open(file_path, 'r')
             mime_type, _ = mimetypes.guess_type(file_path)
@@ -353,17 +360,10 @@ def manage_data(request):
         folder_tuples.sort(key=lambda tup: tup[0])
 
         # Create the path redirect
-        path_redirect = ''
-        if request.GET.get('origin', '') != '':
-            if request.GET.get('source', '') != '':
-                # /!\ condition inverted to don't have a : else: pass
-                # Continue after this statement if the path is deeper (don't forget to invert condition and add an else with the path_redirect)
-                if request.GET.get('station', '') == '':
-                    path_redirect = '?origin={}&source={}&station='.format(request.GET.get('origin', ''), request.GET.get('source', ''))
-            else:
-                path_redirect = '?origin={}&source='.format(request.GET.get('origin', ''))
+        if request.GET.get('path', '') == '':
+            path_redirect += '?path='
         else:
-            path_redirect = '?origin='
+            path_redirect += '&path='
 
         originFlavourText = 'Données transformées' if request.GET.get('origin', '') == 'transformed' else 'Données originelles'
         form = DateSelection
@@ -374,6 +374,7 @@ def manage_data(request):
             'origin_flavour': originFlavourText,
             'source': request.GET.get('source', ''),
             'path_redirect': path_redirect,
+            'path': path,
             'form': form,
         }
         return render(request, 'manage_data.html', context)
