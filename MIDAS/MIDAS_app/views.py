@@ -326,7 +326,7 @@ def manage_token(request):
 @login_required
 def manage_data(request):
     get_ip(request)
-
+    
     media_path = join(settings.MEDIA_ROOT, join(request.GET.get('origin', ''), request.GET.get('source', ''), request.GET.get('station', '')))
     sources_input = Source.objects.all()
     # Download file if request is passed in POST
@@ -344,14 +344,8 @@ def manage_data(request):
         folder_tuples = []
         # Iterate over each element of the media path and create tuple (name, True if file else False)
         for e in listdir(media_path):
-            # If it's not a file and the name is transformed or original, rename it, otherwise keep the same name
             if not isfile(join(media_path, e)):
-                t = e
-                if e == 'transformed':
-                    t = 'Données transformées'
-                elif e == 'original':
-                    t = 'Données originelles'
-                folder_tuples.append((t,False))
+                folder_tuples.append((e,False))
             elif splitext(e)[1] in [".csv", ".txt",".zip"]:
                 folder_tuples.append((e,True))
         

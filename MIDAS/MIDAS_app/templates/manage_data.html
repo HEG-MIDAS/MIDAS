@@ -89,19 +89,25 @@
                 {% for value in file %}
                 <div class="row">
                     {% if value.1 %}
-                    <div class="col-sm-6 my-1">
-                        <i class=" fas {% check_type value.0 %}"></i>
-                        <span>{{ value.0 }}</span>
-                    </div>
-                    <form class="col-sm-6 text-end" action="/manage-data/" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" id="filename" name="filename" value="{{ value.0 }}">
-                        <input type="hidden" id="origin" name="origin" value="{{ origin }}">
-                        <input type="hidden" id="source" name="source" value="{{ source }}">
-                        <button class="btn btn-success">Télécharger le fichier</button>
-                    </form>
+                        <div class="col-sm-6 my-1">
+                            <i class=" fas {% check_type value.0 %}"></i>
+                            <span>{{ value.0 }}</span>
+                        </div>
+                        <form class="col-sm-6 text-end" action="/manage-data/" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" id="filename" name="filename" value="{{ value.0 }}">
+                            <input type="hidden" id="origin" name="origin" value="{{ origin }}">
+                            <input type="hidden" id="source" name="source" value="{{ source }}">
+                            <button class="btn btn-success">Télécharger le fichier</button>
+                        </form>
                     {% else %}
-                    <a class="col my-1" href="{{ path_redirect }}{{ value.0 }}"><i class="fas fa-folder"></i> <span>{{ value.0}}</span></a>
+                        {% if value.0 == 'transformed' %}
+                            <a class="col my-1" href="{{ path_redirect }}{{ value.0}}"><i class="fas fa-folder"></i> <span>Données transformées</span></a>
+                        {% elif value.0 == 'original' %}
+                            <a class="col my-1" href="{{ path_redirect }}{{ value.0}}"><i class="fas fa-folder"></i> <span>Données originelles</span></a>
+                        {% else %}
+                            <a class="col my-1" href="{{ path_redirect }}{{ value.0 }}"><i class="fas fa-folder"></i> <span>{{ value.0}}</span></a>
+                        {% endif %}
                     {% endif %}
                 </div>
                 {% endfor %}
