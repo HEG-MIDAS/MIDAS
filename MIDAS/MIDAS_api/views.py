@@ -264,7 +264,8 @@ class SearchView(views.APIView):
                                 end_year = max(map(lambda x:x.split('_')[0],listdir(stationFolder)))
                                 end_date = datetime.datetime(int(end_year),12,31,23,59,59)
                             # Filter file list
-                            fileList = list(filter(lambda x: int(x.split('_')[0])>=int(start_year) and int(x.split('_')[0]) <= int(end_year),listdir(stationFolder)))
+                            listFiles = [f for f in listdir(stationFolder) if not f.startswith('.')]
+                            fileList = list(filter(lambda x: int(x.split('_')[0])>=int(start_year) and int(x.split('_')[0]) <= int(end_year),listFiles))
                             # Reverse file order if order id DESC
                             if order == "DESC":
                                 fileList = list(reversed(fileList))
