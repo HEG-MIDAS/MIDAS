@@ -197,8 +197,12 @@ class SearchView(views.APIView):
         order = order if (order in ['ASC','DESC']) else orderDefault
         # Date
         try:
+            # Cinvert Date and retrieve only the year
             start_date = datetime.datetime.strptime(request.data["start_date"],"%Y-%m-%d %H:%M:%S") if ('start_date' in request.data) else None
             end_date = datetime.datetime.strptime(request.data["end_date"],"%Y-%m-%d %H:%M:%S") if ('end_date' in request.data) else None
+            start_year = start_date.year if start_date != None else None
+            end_year = end_date.year if end_date != None else None
+            # Deal with limit and order depending on the dates
             if(start_date != None and end_date != None):
                 # Don't use the limit if both start and end date exists
                 limitMax = None
@@ -252,35 +256,49 @@ class SearchView(views.APIView):
                             for param in paramStationData:
                                 p = list(filter(lambda p: p["id"] == param["parameter"],parameterData))
                                 paramList.append(p[0]["name"])
+                            # Complete date depending on files found
+                            if(start_year == None):
+                                start_year = min(map(lambda x:x.split('_')[0],listdir(stationFolder)))
+                                start_date = datetime.datetime(int(start_year),1,1,0,0,0)
+                            if(end_year == None):
+                                end_year = max(map(lambda x:x.split('_')[0],listdir(stationFolder)))
+                                end_date = datetime.datetime(int(end_year),12,31,23,59,59)
+                            # Filter file list
+                            fileList = list(filter(lambda x: int(x.split('_')[0])>=int(start_year) and int(x.split('_')[0]) <= int(end_year),listdir(stationFolder)))
+                            # Reverse file order if order id DESC
+                            if order == "DESC":
+                                fileList = list(reversed(fileList))
                             # FILE MANIPULATION
-                            file = open(stationFolder)
-                            # Filter Header to retrieve the index when we split
-                            header = file.readline().strip().split(",")
-                            headerIndex = []
-                            for i in range(1,len(header)):
-                                p = header[i].strip('*')
-                                if(p in paramList):
-                                    headerIndex.append(i)
-                            limit = 0
-                            lines = file.readlines()
-                            # Reverse the file
-                            if(order == 'DESC'):
-                                lines = reversed(lines)
-                            for line in lines:
-                                l = line.strip().split(",")
+                            for file in fileList:
+                                file = open(join(stationFolder,file))
+                                # Filter Header to retrieve the index when we split
+                                header = file.readline().strip().split(",")
+                                headerIndex = []
+                                for i in range(1,len(header)):
+                                    p = header[i].strip('*')
+                                    if(p in paramList):
+                                        headerIndex.append(i)
+                                limit = 0
+                                lines = file.readlines()
+                                # Reverse the file
+                                if(order == 'DESC'):
+                                    lines = reversed(lines)
+                                for line in lines:
+                                    l = line.strip().split(",")
 
-                                # If the start and end date exist and the line date isn't between them
-                                if(start_date != None and end_date != None and not start_date <= datetime.datetime.strptime(l[0],"%Y-%m-%d %H:%M:%S") <= end_date):
-                                    continue
-                                for index in headerIndex:
-                                    if(l[index] != "" and l[index] != " "):
-                                        if l[0] not in results[sourceData["name"]][station["name"]]:
-                                            results[sourceData["name"]][station["name"]][l[0]] = {}
-                                        results[sourceData["name"]][station["name"]][l[0]][header[index]] = np.double(l[index])
-                                limit += 1
-                                if(limitMax != None and limit == limitMax):
-                                    break
-                            file.close()
+                                    # If the start and end date exist and the line date isn't between them
+                                    t = datetime.datetime.strptime(l[0],"%Y-%m-%d %H:%M:%S")
+                                    if(start_date != None and end_date != None and not start_date <= datetime.datetime.strptime(l[0],"%Y-%m-%d %H:%M:%S") <= end_date):
+                                        continue
+                                    for index in headerIndex:
+                                        if(l[index] != "" and l[index] != " "):
+                                            if l[0] not in results[sourceData["name"]][station["name"]]:
+                                                results[sourceData["name"]][station["name"]][l[0]] = {}
+                                            results[sourceData["name"]][station["name"]][l[0]][header[index]] = np.double(l[index])
+                                            limit += 1
+                                    if(limitMax != None and limit == limitMax):
+                                        break
+                                file.close()
                         else:
                             return Response({"error":"No matching station found"}, status=400)
             except:
