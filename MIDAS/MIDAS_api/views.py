@@ -307,6 +307,9 @@ class SearchView(views.APIView):
                 #return Response({"error":"An error occured"}, status=500)
 
         if(len(results)>0):
+            for source in results:
+                for station in results[source]:
+                    results[source][station] =dict(sorted(results[source][station].items(), key=lambda item: datetime.datetime.strptime(item[0], "%Y-%m-%d %H:%M:%S")))
             return Response(results, status=200)
 
         return Response({"error":"No Data found"}, status=400)
