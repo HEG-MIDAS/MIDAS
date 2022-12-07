@@ -307,6 +307,7 @@ class SearchView(views.APIView):
                 #return Response({"error":"An error occured"}, status=500)
 
         if(len(results)>0):
+            results = dict(sorted(results.items(), key=lambda item: item[0][0]))
             return Response(results, status=200)
 
         return Response({"error":"No Data found"}, status=400)
