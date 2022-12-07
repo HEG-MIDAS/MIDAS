@@ -301,8 +301,9 @@ def firefoxDriver():
     elif platform == "linux" or platform == "linux2":
         service = Service(os.path.join(scraper_path,'geckodriver_linux'))
     # Create Driver
-    print(webdriver.Firefox(options=options,service=service))
-    return webdriver.Firefox(options=options,service=service)
+    driver = webdriver.Firefox(options=options,service=service)
+    # print(driver)
+    return driver
 
 def chromeDriver():
     """Create and return a driver
