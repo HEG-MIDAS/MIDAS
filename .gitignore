@@ -3,6 +3,7 @@
 env/
 *__pycache__*
 *migrations*
+env.py
 
 # Env
 .vscode
