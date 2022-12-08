@@ -11,7 +11,7 @@ from env import *
 server = "vhg.ch"
 page = "/io/web_service_json.php"
 
-dossier_id = 49001
+dossier_id = 50955
 
 username = env_username
 encrypted_password = env_encrypted_password
