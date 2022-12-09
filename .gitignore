@@ -8,6 +8,7 @@ env/
 .vscode
 .DS_Store
 geckodriver.log
+config.ini
 
 # Files
 *.csv
