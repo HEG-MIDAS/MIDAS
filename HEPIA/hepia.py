@@ -1,10 +1,10 @@
 from influxdb_client import InfluxDBClient, Point
 from influxdb_client.client.write_api import SYNCHRONOUS
-
+import os
 database = "midas"
 retention_policy = 'autogen'
 bucket = f'{database}/{retention_policy}'
-with InfluxDBClient.from_config_file("config.ini") as client:
+with InfluxDBClient.from_config_file(f'{os.path.join(os.getcwd(), os.path.dirname(__file__))}/config.ini') as client:
     print('*** Query Points ***')
 
     query_api = client.query_api()
