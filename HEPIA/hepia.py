@@ -14,14 +14,21 @@ def queryTest(device = None):
         # Initiate Query API
         query_api = client.query_api()
         # Create Query
+        ## Filter by Device if one is provided
         devicetoadd = f'|> filter(fn: (r) => r["end device"] == "{device}")' if device != None else ""
+        ## range specify timestamp, can include a start and stop
+        ## lowestAverage takes all lines in DB with same timestamp,
+        ### measurements and device and average them so it returns only 1
+        ## keep only show specified columns
+        ## pivot allows us to have 1 line with all measurements
+        ## sort sort the response by provided columns
         query = f'''from(bucket: "{bucket}")
         |> range(start: -1y)
         |> lowestAverage(n: 1000, groupColumns: ["_start","_field","end device"])
         |> keep(columns: ["_start","_field","_value","end device"])
         |> pivot(rowKey: ["_start","end device"], columnKey: ["_field"], valueColumn: "_value")
+        |> sort(columns: ["end device","_start"])
         {devicetoadd}'''
-        # |> pivot(rowKey: ["_start","_value"], columnKey: ["_field"], valueColumn: "_value")
         tables = query_api.query_csv(query)
         for row in tables:
             print(row[3:])
