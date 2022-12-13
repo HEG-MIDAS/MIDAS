@@ -14,17 +14,18 @@ def queryTest(device = None):
         # Initiate Query API
         query_api = client.query_api()
         # Create Query
-        ## range determine start of query
         devicetoadd = f'|> filter(fn: (r) => r["end device"] == "{device}")' if device != None else ""
         query = f'''from(bucket: "{bucket}")
         |> range(start: -1y)
-        |> keep(columns: ["_field"])
-        |> unique(column: "_field")
+        |> lowestAverage(n: 1000, groupColumns: ["_start","_field","end device"])
+        |> keep(columns: ["_start","_field","_value","end device"])
+        |> pivot(rowKey: ["_start","end device"], columnKey: ["_field"], valueColumn: "_value")
         {devicetoadd}'''
+        # |> pivot(rowKey: ["_start","_value"], columnKey: ["_field"], valueColumn: "_value")
         tables = query_api.query_csv(query)
         for row in tables:
-            if(len(row)):
-                print(row[-1])
+            print(row[3:])
+
         return data
 
 def query(device = None):
