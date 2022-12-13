@@ -23,13 +23,15 @@ def queryTest(device = None):
         ## pivot allows us to have 1 line with all measurements
         ## sort sort the response by provided columns
         query = f'''from(bucket: "{bucket}")
-        |> range(start: -1y)
+        |> range(start: 2020-01-01T00:00:00.00Z)
         |> lowestAverage(n: 1000, groupColumns: ["_start","_field","end device"])
         |> keep(columns: ["_start","_field","_value","end device"])
         |> pivot(rowKey: ["_start","end device"], columnKey: ["_field"], valueColumn: "_value")
         |> sort(columns: ["end device","_start"])
         {devicetoadd}'''
         tables = query_api.query_csv(query)
+        print(tables.to_values())
+        # Have to extract data correcty before writing
         f = open("temp.csv","w")
         for row in tables:
             line = row[3:]
@@ -101,9 +103,7 @@ def connectToDB():
     return InfluxDBClient.from_config_file(f'{os.path.join(os.getcwd(), os.path.dirname(__file__))}/config.ini')
 
 def main():
-    data = queryTest()
-    print(data)
-    # Missing write to file
+    queryTest()
 
 if __name__ == "__main__":
     main()
