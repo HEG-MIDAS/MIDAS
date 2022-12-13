@@ -30,9 +30,18 @@ def queryTest(device = None):
         |> sort(columns: ["end device","_start"])
         {devicetoadd}'''
         tables = query_api.query_csv(query)
+        f = open("temp.csv","w")
         for row in tables:
-            print(row[3:])
+            line = row[3:]
+            if(len(line)>0):
+                if(line[0] == "_start"):
+                    f.write("gmt,device,"+",".join(line[2:]))
+                    f.write("\n")
+                elif(len(line[0].split("."))==2):
+                    f.write(",".join(line))
+                    f.write("\n")
 
+        f.close()
         return data
 
 def query(device = None):
