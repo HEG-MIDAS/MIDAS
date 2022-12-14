@@ -86,14 +86,37 @@ def request_data(starting_date:str, ending_date:str, metering_code: str, measure
 
 
 def format_data(data:dict, measures:str) -> list:
-    data_formatted = []
+    data_formatted = {}
+    array_data_formatted = []
     for m in measures:
         # Cast string array of dicts to an array of dicts
         casted_data = ast.literal_eval(data[m])
         for e in casted_data:
-            print(e)
-            date = datetime.datetime.fromtimestamp(int(e['timestamp'])).strftime('%Y-%m-%d %H:%m:%s')
-            data_formatted[str(e['timestamp'])] = str(e['value'])
+            t = datetime.datetime.fromtimestamp(int(e['timestamp'])).strftime('%Y-%m-%d %H') + ":00:00"
+            if not t in data_formatted.keys():
+                data_formatted[t] = {}
+            data_formatted[t][m] = str(e['value'])
+    
+    # Check if there is data to format
+    if not data_formatted == {}: 
+        # Get first element of data to have a first date for later check
+        previous_date = list(data_formatted.keys())[0]
+        for e in data_formatted:
+            # Loop until we catch up previous date with current date creating empty data between
+            # As each measure is done at 1h of interval we keep this gap
+            while (datetime.datetime.strptime(e, '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime(previous_date, '%Y-%m-%d %H:%M:%S')) > datetime.timedelta(hours=1):
+                previous_date = ((datetime.datetime.strptime(previous_date, '%Y-%m-%d %H:%M:%S'))+datetime.timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
+                array_data_formatted.append([previous_date, '', ''])
+
+            val = [e]
+            for v in data_formatted[e]:
+                val.append(data_formatted[e][v])
+            array_data_formatted.append(val)
+            previous_date = e
+
+    return array_data_formatted
+
+
 
 
 def create_original_tmp_file(data:dict, tmp_filename:str, path_original_data:str, measures:list) -> None:
@@ -107,8 +130,12 @@ def create_original_tmp_file(data:dict, tmp_filename:str, path_original_data:str
             measures_str += ","+e
     f = open(path_original_data+tmp_filename, "w")
     f.write("localtime,"+measures_str)
-    print("DEB : " + str(len(ast.literal_eval(data["DEB"]))) + " HLM : " + str(len(ast.literal_eval(data["HLM"]))))
-    format_data(data, measures)
+    data_formatted = format_data(data, measures)
+    for line in data_formatted:
+        # Make sure that the line is not empty
+        if not line == []:
+            f.write(','.join(line))
+            f.write('\n')
     f.close()
 
 
