@@ -7,6 +7,7 @@ import time
 import getopt
 import sys
 import os
+import ast
 # DO NOT FORGET TO CREATE env.py FILE WITH
 # env_username = with username
 # env_encrypted_password = with encrypted password
@@ -84,6 +85,17 @@ def request_data(starting_date:str, ending_date:str, metering_code: str, measure
     return r.content.decode('utf-8')
 
 
+def format_data(data:dict, measures:str) -> list:
+    data_formatted = []
+    for m in measures:
+        # Cast string array of dicts to an array of dicts
+        casted_data = ast.literal_eval(data[m])
+        for e in casted_data:
+            print(e)
+            date = datetime.datetime.fromtimestamp(int(e['timestamp'])).strftime('%Y-%m-%d %H:%m:%s')
+            data_formatted[str(e['timestamp'])] = str(e['value'])
+
+
 def create_original_tmp_file(data:dict, tmp_filename:str, path_original_data:str, measures:list) -> None:
     measures_str = ""
     first = True
@@ -95,6 +107,8 @@ def create_original_tmp_file(data:dict, tmp_filename:str, path_original_data:str
             measures_str += ","+e
     f = open(path_original_data+tmp_filename, "w")
     f.write("localtime,"+measures_str)
+    print("DEB : " + str(len(ast.literal_eval(data["DEB"]))) + " HLM : " + str(len(ast.literal_eval(data["HLM"]))))
+    format_data(data, measures)
     f.close()
 
 
