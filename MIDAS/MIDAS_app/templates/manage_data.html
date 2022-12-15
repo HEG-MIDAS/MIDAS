@@ -119,19 +119,7 @@
             <div class="card-footer">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
-                        {% if origin == '' and source == ''%}
-                        <li class="breadcrumb-item">Données</li>
-                        {% else %}
-                        <li class="breadcrumb-item"><a href="/manage-data/">Données</a></li>
-                        {% endif %}
-                        {% if origin != '' and source != ''%}
-                        <li class="breadcrumb-item"><a href="/manage-data/?origin={{ origin }}">{{ origin_flavour }}</a></li>
-                        {% elif origin != '' %}
-                        <li class="breadcrumb-item">{{ origin_flavour }}</li>
-                        {% endif %}
-                        {% if source != '' %}
-                        <li class="breadcrumb-item">{{ source }}</li>
-                        {% endif %}
+                        {% autoescape off %}{% breadcrumb path %}{% endautoescape %}
                     </ol>
                 </nav>
             </div>
