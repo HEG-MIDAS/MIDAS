@@ -5,7 +5,7 @@ import django
 import datetime
 from wsgiref import headers
 import requests
-from django.http import HttpRequest, HttpResponse, Http404, JsonResponse
+from django.http import HttpRequest, HttpResponse, FileResponse, Http404, JsonResponse
 from django.shortcuts import redirect, render
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -341,12 +341,8 @@ def manage_data(request):
     if request.method == 'POST':
         if request.POST.get('filename', '') != '':
             file_path = join(media_path, request.POST.get('filename', ''))
-            data_file = open(file_path, 'r')
-            mime_type, _ = mimetypes.guess_type(file_path)
-            response = HttpResponse(data_file, content_type=mime_type)
-            response['Content-Disposition'] = "attachment; filename={}".format(request.POST['filename'])
-            return response
-
+            data_file = open(file_path, 'rb')
+            return FileResponse(data_file)
     else:
         folder_tuples = []
         # Iterate over each element of the media path and create tuple (name, True if file else False)
@@ -355,7 +351,7 @@ def manage_data(request):
                 folder_tuples.append((e,False))
             elif splitext(e)[1] in [".csv", ".txt",".zip"]:
                 folder_tuples.append((e,True))
-        
+
         # Filter the tuples by alphabetical order
         folder_tuples.sort(key=lambda tup: tup[0])
 
