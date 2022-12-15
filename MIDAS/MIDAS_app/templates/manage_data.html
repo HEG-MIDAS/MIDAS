@@ -95,7 +95,11 @@
                         </div>
                         <form class="col-sm-6 text-end" action="/manage-data/" method="post">
                             {% csrf_token %}
-                            <input type="hidden" id="filename" name="filename" value="{{ path }}/{{ value.0 }}">
+                            {% if path == '' %}
+                              <input type="hidden" id="filename" name="filename" value="{{ value.0 }}">
+                            {% else %}
+                              <input type="hidden" id="filename" name="filename" value="{{ path }}/{{ value.0 }}">
+                            {% endif %}
                             <input type="hidden" id="origin" name="origin" value="{{ origin }}">
                             <input type="hidden" id="source" name="source" value="{{ source }}">
                             <button class="btn btn-success">Télécharger le fichier</button>
