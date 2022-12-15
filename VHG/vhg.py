@@ -82,10 +82,34 @@ def request_data(starting_date:str, ending_date:str, metering_code: str, measure
     # print("------------------------Response------------------------")
     # print(str(r)+"\n"+str(r.headers)+"\n"+str(r.content))
     # print(data)
+    print(r.content.decode('utf-8'))
     return r.content.decode('utf-8')
 
 
-def format_data(data:dict, measures:str) -> list:
+def format_data_original(data:dict, measures:str) -> list:
+    data_formatted_original = {}
+    array_data_formatted_original = []
+    for m in measures:
+        # Cast string array of dicts to an array of dicts
+        casted_data = ast.literal_eval(data[m])
+        for e in casted_data:
+            t = int(e['timestamp'])
+            if not t in data_formatted_original.keys():
+                data_formatted_original[t] = {}
+            data_formatted_original[t][m] = str(e['value'])
+    
+    # Check if there is data to format
+    if not data_formatted_original == {}:
+        for e in data_formatted_original:
+            val = [str(e)]
+            for v in data_formatted_original[e]:
+                val.append(data_formatted_original[e][v])
+            array_data_formatted_original.append(val)
+
+    return array_data_formatted_original
+
+
+def format_data_transformed(data:dict, measures:str) -> list:
     data_formatted = {}
     array_data_formatted = []
     for m in measures:
@@ -117,9 +141,7 @@ def format_data(data:dict, measures:str) -> list:
     return array_data_formatted
 
 
-
-
-def create_original_tmp_file(data:dict, tmp_filename:str, path_original_data:str, measures:list) -> None:
+def create_original_file(data:dict, tmp_filename:str, path_original_data:str, measures:list) -> None:
     measures_str = ""
     first = True
     for e in measures:
@@ -128,10 +150,36 @@ def create_original_tmp_file(data:dict, tmp_filename:str, path_original_data:str
             first = False
         else:
             measures_str += ","+e
+
     f = open(path_original_data+tmp_filename, "w")
-    f.write("localtime,"+measures_str)
-    data_formatted = format_data(data, measures)
-    for line in data_formatted:
+    f.write("localtime,"+measures_str+"\n")
+    format_data_original(data, measures)
+
+    data_formatted_original = format_data_original(data, measures)
+    for line in data_formatted_original:
+        # Make sure that the line is not empty
+        if not line == []:
+            f.write(','.join(line))
+            f.write('\n')
+    f.close()
+
+
+def create_transformed_file(data:dict, tmp_filename:str, path_original_data:str, measures:list) -> None:
+    measures_str = ""
+    first = True
+    for e in measures:
+        if first:
+            measures_str += e
+            first = False
+        else:
+            measures_str += ","+e
+
+    f = open(path_original_data+tmp_filename, "w")
+    f.write("localtime,"+measures_str+"\n")
+    format_data_original(data, measures)
+
+    data_formatted_transformed = format_data_transformed(data, measures)
+    for line in data_formatted_transformed:
         # Make sure that the line is not empty
         if not line == []:
             f.write(','.join(line))
@@ -145,16 +193,21 @@ def manage_data(data: dict, metering_code: str, measures: list) -> None:
     it will automatically create the folder. Then it will merge the tmp original data file with the orginal data file. And repeat the same steps for the transformed datas
     transforming obviously the data if needed.
     """
-    tmp_filename = 'tmp_data_request_{}.csv'.format(metering_code)
     # Check if dir already exists if it's not the case, create new dir
     if(not os.path.isdir("{}/../media/original/VHG/{}".format(__location__, metering_code[:-1]))):
         os.mkdir("{}/../media/original/VHG/{}".format(__location__, metering_code[:-1]))
     path_original_data = '{}/../media/original/VHG/{}/'.format(__location__, metering_code[:-1])
-    original_data_filename = '{}_original_merged.csv'.format(metering_code)
+    original_data_filename = '{}_original_merged.csv'.format(metering_code[:-1])
 
-    create_original_tmp_file(data, tmp_filename, path_original_data, measures)
+    create_original_file(data, original_data_filename, path_original_data, measures)
 
+    # Check if dir already exists if it's not the case, create new dir
+    if(not os.path.isdir("{}/../media/transformed/VHG/{}".format(__location__, metering_code[:-1]))):
+        os.mkdir("{}/../media/transformed/VHG/{}".format(__location__, metering_code[:-1]))
+    path_transformed_data = '{}/../media/transformed/VHG/{}/'.format(__location__, metering_code[:-1])
+    transformed_data_filename = '{}_transformed_merged.csv'.format(metering_code[:-1])
 
+    create_transformed_file(data, transformed_data_filename, path_transformed_data, measures)
 
 
 def main() -> None:
@@ -211,5 +264,29 @@ def main() -> None:
     print("--------------- Ending requests to VHG : {} ---------------".format(time.strftime("%Y-%m-%d %H:%M:%S")))
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
+
+
+challenge_txt = str(int(time.time()))
+challenge_password = sha256((encrypted_password+challenge_txt).encode('utf-8')).hexdigest()
+
+headers = {
+    "Content-Type": "application/json",
+    "user_agent": "tetraedre/TDS",
+    "method": "POST",
+}
+data = {
+    "operation": "check_access",
+    "username": username,
+    "challenge": challenge_txt,
+    "dossier_id": dossier_id,
+    "challenge_password": challenge_password
+}
+
+
+r = requests.post(url, data=json.dumps(data), headers=headers, verify=False)
+# print("------------------------Response------------------------")
+# print(str(r)+"\n"+str(r.headers)+"\n"+str(r.content))
+# print(data)
+print(r.content.decode('utf-8'))
