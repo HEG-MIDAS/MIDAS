@@ -4,13 +4,16 @@ RUN ln -s /usr/local/bin/python3.9 /usr/bin/python3
 # Update all
 RUN apt-get update && apt-get upgrade -y
 # Install crontab firefox (for scraper)
-#RUN apt-get install cron zip firefox-esr -y
-RUN apt-get install zip firefox-esr=102.5.0esr-1 -y
-RUN apt-mark hold firefox-esr
+RUN apt-get install zip -y
 
 # Copy essential files to docker env
 ## Docker Env
 COPY docker /app/docker
+
+## Install and Hold Docker (102.6.0esr-1)
+RUN dpkg -f /app/docker/firefox-esr.deb
+RUN apt-mark hold firefox-esr
+
 COPY MIDAS_docker_launcher.sh /app/MIDAS_docker_launcher.sh
 ## Python Env
 COPY requirements.txt /app/requirements.txt
