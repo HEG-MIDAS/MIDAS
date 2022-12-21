@@ -1,19 +1,12 @@
 FROM python:3.9.11-buster
+
+# Python3 is 3.7, Changing that by redoing link
 RUN rm /usr/bin/python3
 RUN ln -s /usr/local/bin/python3.9 /usr/bin/python3
-# Update all
-RUN apt-get update && apt-get upgrade -y
-# Install crontab firefox (for scraper)
-RUN apt-get install zip -y
 
 # Copy essential files to docker env
 ## Docker Env
 COPY docker /app/docker
-
-## Install and Hold Docker (102.6.0esr-1)
-RUN dpkg -f /app/docker/firefox-esr.deb
-RUN apt-mark hold firefox-esr
-
 COPY MIDAS_docker_launcher.sh /app/MIDAS_docker_launcher.sh
 ## Python Env
 COPY requirements.txt /app/requirements.txt
@@ -33,8 +26,18 @@ COPY sources.py /app/sources.py
 ## Folder zipper
 COPY zip-folder.sh /app/zip-folder.sh
 
+# APT installation
+## Update all
+RUN apt-get update && apt-get upgrade -y
+## Install zip
+RUN apt-get install zip -y
+## Install and Hold Firefox (102.6.0esr-1)
+RUN dpkg -f /app/docker/firefox-esr.deb
+RUN apt-mark hold firefox-esr
+
 # Root Directory
 WORKDIR /app
+
 # Env variables
 ARG DJANGO_SETTINGS_MODULE=MIDAS.settings.prod
 ENV DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
