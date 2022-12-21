@@ -5,14 +5,27 @@ services:
     restart: unless-stopped
     volumes:
       - media:/app/media
-      - backup:/app/backup
     ports:
       - "8000:8000"
     environment:
       - admin_username=admin
       - admin_password=pw
       - admin_email=midas@midas.ch
+  runner:
+    image: ghcr.io/heg-midas/midas:master
+    volumes:
+      - media:/app/media
+    command: bash /app/docker/jobrunner.sh
+  scheduler:
+    image: mcuadros/ofelia:latest
+    depends_on:
+      - midas
+    command: daemon --docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      ofelia.job-run.uname.schedule: "@daily"
+      ofelia.job-run.uname.container: "midas-runner-1"
 
 volumes:
   media:
-  backup:

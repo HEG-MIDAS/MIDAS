@@ -5,6 +5,8 @@ services:
       context: .
       network: host
       args: [ "DJANGO_SETTINGS_MODULE=MIDAS.settings.base" ]
+    volumes:
+      - media:/app/media
     environment:
       - DJANGO_SETTINGS_MODULE=MIDAS.settings.base
       - admin_username=admin
@@ -12,3 +14,27 @@ services:
       - admin_email=midas@midas.ch
     ports:
       - "8000:8000"
+      
+  runner:
+    build:
+      context: .
+      network: host
+      args: [ "DJANGO_SETTINGS_MODULE=MIDAS.settings.base" ]
+    volumes:
+      - media:/app/media
+      - /home/amir/Git/MIDAS/docker/jobrunner.sh:/app/docker/jobrunner.sh
+    command: bash /app/docker/jobrunner.sh
+
+  scheduler:
+    image: mcuadros/ofelia:latest
+    depends_on:
+      - midas
+    command: daemon --docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      ofelia.job-run.uname.schedule: "@every 5s"
+      ofelia.job-run.uname.container: "midas-runner-1"
+
+volumes:
+  media:
