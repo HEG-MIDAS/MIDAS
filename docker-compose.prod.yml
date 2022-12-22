@@ -31,7 +31,7 @@ services:
   scheduler:
     image: mcuadros/ofelia:latest
     depends_on:
-      - midas
+      - server
     command: daemon --docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
