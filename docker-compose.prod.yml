@@ -1,18 +1,30 @@
 version: '3.9'
 services:
-  midas:
+  server:
     image: ghcr.io/heg-midas/midas:master
     restart: unless-stopped
     volumes:
+      - nginx_conf:/app/docker/nginx/conf
+      - static:/app/static
       - media:/app/media
+      - backup:/app/backup
     ports:
       - "8000:8000"
     environment:
       - admin_username=admin
       - admin_password=pw
       - admin_email=midas@midas.ch
+  static:
+      image: nginx
+      depends_on:
+        - server
+      volumes:
+        - static:/var/www:ro
+        - nginx_conf:/etc/nginx/conf.d
+      restart: unless-stopped
   runner:
     image: ghcr.io/heg-midas/midas:master
+    restart: "no"
     volumes:
       - media:/app/media
     command: bash /app/docker/jobrunner.sh
@@ -28,4 +40,7 @@ services:
       ofelia.job-run.uname.container: "midas-runner-1"
 
 volumes:
+  nginx_conf:
+  static:
   media:
+  backup:

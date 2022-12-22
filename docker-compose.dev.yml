@@ -5,6 +5,7 @@ services:
       context: .
       network: host
       args: [ "DJANGO_SETTINGS_MODULE=MIDAS.settings.base" ]
+    restart: unless-stopped
     volumes:
       - media:/app/media
     environment:
@@ -14,12 +15,13 @@ services:
       - admin_email=midas@midas.ch
     ports:
       - "8000:8000"
-      
+
   runner:
     build:
       context: .
       network: host
       args: [ "DJANGO_SETTINGS_MODULE=MIDAS.settings.base" ]
+    restart: "no"
     volumes:
       - media:/app/media
       - /home/amir/Git/MIDAS/docker/jobrunner.sh:/app/docker/jobrunner.sh
