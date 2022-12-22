@@ -224,10 +224,14 @@ def orderManipulation():
 
 
     # Order Files loading
-    order_data_files = list(filter(lambda f: f.startswith('order_') and f.endswith('data.txt'),os.listdir(temp_path)))
-    order_legend_files = list(filter(lambda f: f.startswith('order_') and f.endswith('legend.txt'),os.listdir(temp_path)))
-    order_data_files = sortFileListByStation(order_data_files)
-    order_legend_files = sortFileListByStation(order_legend_files)
+    try:
+        order_data_files = list(filter(lambda f: f.startswith('order_') and f.endswith('data.txt'),os.listdir(temp_path)))
+        order_legend_files = list(filter(lambda f: f.startswith('order_') and f.endswith('legend.txt'),os.listdir(temp_path)))
+        order_data_files = sortFileListByStation(order_data_files)
+        order_legend_files = sortFileListByStation(order_legend_files)
+    except:
+        print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Order files not found. Exiting...")
+        return 1
 
     station_abbr = {}
     print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Retrieving station abbreviation to full name")
@@ -337,7 +341,8 @@ def main(argv):
             exit_code = 1
             print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] The headers file doesn't exist. Please launch this script with the -i option to create it")
 
-    print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Done")
+    if(exit_code == 0):
+        print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Done")
     sys.exit(exit_code)
 
 if __name__ == "__main__":
