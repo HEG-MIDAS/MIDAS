@@ -1,6 +1,6 @@
 version: '3.9'
 services:
-  midas:
+  server:
     build:
       context: .
       network: host
@@ -30,12 +30,12 @@ services:
   scheduler:
     image: mcuadros/ofelia:latest
     depends_on:
-      - midas
+      - server
     command: daemon --docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
-      ofelia.job-run.uname.schedule: "@every 5s"
+      ofelia.job-run.uname.schedule: "@daily"
       ofelia.job-run.uname.container: "midas-runner-1"
 
 volumes:
