@@ -100,15 +100,21 @@ def format_data_original(data:dict, measures:str) -> list:
 
 def format_data_transformed(data:dict, measures:str) -> list:
     array_data_formatted = []
-    for i,e in enumerate(data):
+    # Iterate over the data
+    for e in data:
+        # Create variable that will contain the data of the measures for a timestamp/date
         val = [datetime.datetime.fromtimestamp(int(e)).strftime('%Y-%m-%d %H') + ":00:00"]
+        # Iterate over the measures keys
         for m in measures:
+            # Add value if there is one, otherwise add empty string
             if m in data[e].keys():
                 val.append(data[e][m])
             else:
                 val.append("")
+        # Check that the array is not empty as we try to access the last added value
         if array_data_formatted != []:
             previous_date = array_data_formatted[-1][0]
+            # Iterate creating timestamps with empty values if there is a jump between the last and the next timestamp
             while (datetime.datetime.strptime(val[0], '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime(previous_date, '%Y-%m-%d %H:%M:%S')) > datetime.timedelta(hours=1):
                 previous_date = ((datetime.datetime.strptime(previous_date, '%Y-%m-%d %H:%M:%S'))+datetime.timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
                 array_data_formatted.append([previous_date, '', ''])
@@ -117,7 +123,12 @@ def format_data_transformed(data:dict, measures:str) -> list:
     return array_data_formatted
 
 
-def create_original_file(data:dict, tmp_filename:str, path_original_data:str, measures:list) -> None:
+def create_data_file(data:dict, tmp_filename:str, path_original_data:str, measures:list, transformed:bool=False) -> None:
+    """
+    Create a file with the data of the request. Will format the data (editing it or not) at some point to be able to write it into a file
+    """
+    data_formatted = []
+     # Create header
     measures_str = ""
     first = True
     for e in measures:
@@ -127,35 +138,15 @@ def create_original_file(data:dict, tmp_filename:str, path_original_data:str, me
         else:
             measures_str += ","+e
 
+    # Open and write in file
     f = open(path_original_data+tmp_filename, "w")
     f.write("localtime,"+measures_str+"\n")
-    # format_data_original(data, measures)
 
-    data_formatted_original = format_data_original(data, measures)
-    for line in data_formatted_original:
-        # Make sure that the line is not empty
-        if not line == []:
-            f.write(','.join(line))
-            f.write('\n')
-    f.close()
-
-
-def create_transformed_file(data:dict, tmp_filename:str, path_original_data:str, measures:list) -> None:
-    measures_str = ""
-    first = True
-    for e in measures:
-        if first:
-            measures_str += e
-            first = False
-        else:
-            measures_str += ","+e
-
-    f = open(path_original_data+tmp_filename, "w")
-    f.write("localtime,"+measures_str+"\n")
-    format_data_original(data, measures)
-
-    data_formatted_transformed = format_data_transformed(data, measures)
-    for line in data_formatted_transformed:
+    if transformed:
+        data_formatted = format_data_transformed(data, measures)
+    else:
+        data_formatted = format_data_original(data, measures)
+    for line in data_formatted:
         # Make sure that the line is not empty
         if not line == []:
             f.write(','.join(line))
@@ -175,7 +166,7 @@ def manage_data(data: dict, metering_code: str, measures: list) -> None:
     path_original_data = '{}/../media/original/VHG/{}/'.format(__location__, metering_code[:-1])
     original_data_filename = '{}_original_merged.csv'.format(metering_code[:-1])
 
-    create_original_file(data, original_data_filename, path_original_data, measures)
+    create_data_file(data, original_data_filename, path_original_data, measures)
 
     # Check if dir already exists if it's not the case, create new dir
     if(not os.path.isdir("{}/../media/transformed/VHG/{}".format(__location__, metering_code[:-1]))):
@@ -183,7 +174,7 @@ def manage_data(data: dict, metering_code: str, measures: list) -> None:
     path_transformed_data = '{}/../media/transformed/VHG/{}/'.format(__location__, metering_code[:-1])
     transformed_data_filename = '{}_transformed_merged.csv'.format(metering_code[:-1])
 
-    create_transformed_file(data, transformed_data_filename, path_transformed_data, measures)
+    create_data_file(data, transformed_data_filename, path_transformed_data, measures, True)
 
 
 def main() -> None:
@@ -220,9 +211,12 @@ def main() -> None:
 
     print("--------------- Starting requests to VHG : {} ---------------".format(today))
 
+    # Test if the start date catch up the end date
     while start_date <= end_date:
+        # Manually set the year working on
         year_working_on = str(datetime.datetime.strptime(start_date, '%Y-%m-%d').year)
         tmp_end_date = year_working_on + "-12-31"
+        # Check if the end date generated is greater than the end date given
         if tmp_end_date > end_date:
             tmp_end_date = end_date
 
@@ -231,6 +225,33 @@ def main() -> None:
             data = {}
             # Iterate alternately on DEB and HLM and create a dict with the results
             for measure in measures_DEB_HLM:
+                # data[measure] = request_data(start_date, end_date, metering_code, measure)
+                val = ast.literal_eval(request_data(start_date, end_date, metering_code, measure))
+                # Iterate over the answer of the requested data
+                for e in val:
+                    # Add data to dict using the timestamp as key
+                    if e["timestamp"] not in data.keys():
+                        data[e["timestamp"]] = {
+                            measure: e["value"]
+                        }
+                    else:
+                        data[e["timestamp"]][measure] = e["value"]
+            # If there was not data answered, create fake timestamp of start and end date to write in the corresponding files that no data was available
+            if data == {}:
+                data[str(int(time.mktime(datetime.datetime.strptime(start_date, "%Y-%m-%d").timetuple())))] = {
+                    measure: ''
+                }
+                data[str(int(time.mktime(datetime.datetime.strptime(end_date, "%Y-%m-%d").timetuple())))] = {
+                    measure: ''
+                }
+            manage_data(data, metering_code, measures_DEB_HLM)
+
+        # Call metering code and measures for PLU and similar
+        # For now it only contains PLU
+        for metering_code in stations_PLU:
+            data = {}
+            # Iterate alternately on DEB and HLM and create a dict with the results
+            for measure in measures_PLU:
                 # data[measure] = request_data(start_date, end_date, metering_code, measure)
                 val = ast.literal_eval(request_data(start_date, end_date, metering_code, measure))
                 for e in val:
@@ -247,7 +268,7 @@ def main() -> None:
                 data[str(int(time.mktime(datetime.datetime.strptime(end_date, "%Y-%m-%d").timetuple())))] = {
                     measure: ''
                 }
-            manage_data(data, metering_code, measures_DEB_HLM)
+            manage_data(data, metering_code, measures_PLU)
 
 
         start_date = datetime.datetime.strftime(datetime.datetime.strptime(tmp_end_date, '%Y-%m-%d') + datetime.timedelta(days=1), '%Y-%m-%d')
