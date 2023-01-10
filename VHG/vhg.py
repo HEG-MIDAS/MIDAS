@@ -18,8 +18,8 @@ page = "/io/web_service_json.php"
 
 dossier_id = 50955
 
-username = env_username
-encrypted_password = env_encrypted_password
+username = os.environ.get('env_username_VHG')
+encrypted_password = os.environ.get('env_encrypted_password_VHG')
 
 url = "https://"+server+":"+str(443)+page
 
