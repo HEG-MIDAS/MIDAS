@@ -87,7 +87,6 @@ def request_data(starting_date:str, ending_date:str, metering_code: str, measure
 
 def format_data_original(data:dict, measures:str) -> list:
     array_data_formatted_original = []
-    print("ICIIIII")
     for e in data:
         val = [e]
         for m in measures:
@@ -96,7 +95,6 @@ def format_data_original(data:dict, measures:str) -> list:
             else:
                 val.append("")
         array_data_formatted_original.append(val)
-    print(array_data_formatted_original)
     return array_data_formatted_original
 
 
