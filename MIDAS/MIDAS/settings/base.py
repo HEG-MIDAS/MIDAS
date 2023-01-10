@@ -149,6 +149,7 @@ LOGOUT_REDIRECT_URL = '/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'../media')
 CLIMACITY_ROOT = os.path.join(BASE_DIR, '../Climacity')
 SABRA_ROOT = os.path.join(BASE_DIR, '../SABRA')
+VHG_ROOT = os.path.join(BASE_DIR, '../VHG')
 
 AUTH_USER_MODEL = 'MIDAS_app.User'
 

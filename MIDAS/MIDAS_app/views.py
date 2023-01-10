@@ -384,7 +384,8 @@ def harvest_data(request):
         if 'starting_date' in request.POST and 'ending_date' in request.POST and request.POST['starting_date'] != "" and request.POST['ending_date'] != "":
             source_dict = {
                 "climacity": "python3 {}/climacity.py -s {} -e {}".format(settings.CLIMACITY_ROOT, str(request.POST['starting_date']), str(request.POST['ending_date'])),
-                "sabra" : "python3 {}/sabra.py -s {} -e {}".format(settings.SABRA_ROOT, str(request.POST['starting_date']), str(request.POST['ending_date']))
+                "sabra" : "python3 {}/sabra.py -s {} -e {}".format(settings.SABRA_ROOT, str(request.POST['starting_date']), str(request.POST['ending_date'])),
+                "vhg" : "python3 {}/vhg.py -s {} -e {}".format(settings.VHG_ROOT, str(request.POST['starting_date']), str(request.POST['ending_date']))
             }
             if 'source_list' in request.POST:
                 for s in request.POST.getlist('source_list'):
