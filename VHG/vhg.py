@@ -8,10 +8,6 @@ import getopt
 import sys
 import os
 import ast
-# DO NOT FORGET TO CREATE env.py FILE WITH
-# env_username = with username
-# env_encrypted_password = with encrypted password
-from env import *
 
 server = "vhg.ch"
 page = "/io/web_service_json.php"
