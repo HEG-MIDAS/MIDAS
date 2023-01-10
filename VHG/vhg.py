@@ -82,61 +82,39 @@ def request_data(starting_date:str, ending_date:str, metering_code: str, measure
     # print("------------------------Response------------------------")
     # print(str(r)+"\n"+str(r.headers)+"\n"+str(r.content))
     # print(data)
-    print(r.content.decode('utf-8'))
+    # print(r.content.decode('utf-8'))
     return r.content.decode('utf-8')
 
-
 def format_data_original(data:dict, measures:str) -> list:
-    data_formatted_original = {}
     array_data_formatted_original = []
-    for m in measures:
-        # Cast string array of dicts to an array of dicts
-        casted_data = ast.literal_eval(data[m])
-        for e in casted_data:
-            t = int(e['timestamp'])
-            if not t in data_formatted_original.keys():
-                data_formatted_original[t] = {}
-            data_formatted_original[t][m] = str(e['value'])
-    
-    # Check if there is data to format
-    if not data_formatted_original == {}:
-        for e in data_formatted_original:
-            val = [str(e)]
-            for v in data_formatted_original[e]:
-                val.append(data_formatted_original[e][v])
-            array_data_formatted_original.append(val)
-
+    print("ICIIIII")
+    for e in data:
+        val = [e]
+        for m in measures:
+            if m in data[e].keys():
+                val.append(data[e][m])
+            else:
+                val.append("")
+        array_data_formatted_original.append(val)
+    print(array_data_formatted_original)
     return array_data_formatted_original
 
 
 def format_data_transformed(data:dict, measures:str) -> list:
-    data_formatted = {}
     array_data_formatted = []
-    for m in measures:
-        # Cast string array of dicts to an array of dicts
-        casted_data = ast.literal_eval(data[m])
-        for e in casted_data:
-            t = datetime.datetime.fromtimestamp(int(e['timestamp'])).strftime('%Y-%m-%d %H') + ":00:00"
-            if not t in data_formatted.keys():
-                data_formatted[t] = {}
-            data_formatted[t][m] = str(e['value'])
-    
-    # Check if there is data to format
-    if not data_formatted == {}: 
-        # Get first element of data to have a first date for later check
-        previous_date = list(data_formatted.keys())[0]
-        for e in data_formatted:
-            # Loop until we catch up previous date with current date creating empty data between
-            # As each measure is done at 1h of interval we keep this gap
-            while (datetime.datetime.strptime(e, '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime(previous_date, '%Y-%m-%d %H:%M:%S')) > datetime.timedelta(hours=1):
+    for i,e in enumerate(data):
+        val = [datetime.datetime.fromtimestamp(int(e)).strftime('%Y-%m-%d %H') + ":00:00"]
+        for m in measures:
+            if m in data[e].keys():
+                val.append(data[e][m])
+            else:
+                val.append("")
+        if array_data_formatted != []:
+            previous_date = array_data_formatted[-1][0]
+            while (datetime.datetime.strptime(val[0], '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime(previous_date, '%Y-%m-%d %H:%M:%S')) > datetime.timedelta(hours=1):
                 previous_date = ((datetime.datetime.strptime(previous_date, '%Y-%m-%d %H:%M:%S'))+datetime.timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
                 array_data_formatted.append([previous_date, '', ''])
-
-            val = [e]
-            for v in data_formatted[e]:
-                val.append(data_formatted[e][v])
-            array_data_formatted.append(val)
-            previous_date = e
+        array_data_formatted.append(val)
 
     return array_data_formatted
 
@@ -153,7 +131,7 @@ def create_original_file(data:dict, tmp_filename:str, path_original_data:str, me
 
     f = open(path_original_data+tmp_filename, "w")
     f.write("localtime,"+measures_str+"\n")
-    format_data_original(data, measures)
+    # format_data_original(data, measures)
 
     data_formatted_original = format_data_original(data, measures)
     for line in data_formatted_original:
@@ -255,8 +233,17 @@ def main() -> None:
             data = {}
             # Iterate alternately on DEB and HLM and create a dict with the results
             for measure in measures_DEB_HLM:
-                data[measure] = request_data(start_date, end_date, metering_code, measure)
-            manage_data(data, metering_code, measures_DEB_HLM)
+                # data[measure] = request_data(start_date, end_date, metering_code, measure)
+                val = ast.literal_eval(request_data(start_date, end_date, metering_code, measure))
+                for e in val:
+                    if e["timestamp"] not in data.keys():
+                        data[e["timestamp"]] = {
+                            measure: e["value"]
+                        }
+                    else:
+                        data[e["timestamp"]][measure] = e["value"]
+            if data != {}:
+                manage_data(data, metering_code, measures_DEB_HLM)
 
 
         start_date = datetime.datetime.strftime(datetime.datetime.strptime(tmp_end_date, '%Y-%m-%d') + datetime.timedelta(days=1), '%Y-%m-%d')
@@ -264,29 +251,29 @@ def main() -> None:
     print("--------------- Ending requests to VHG : {} ---------------".format(time.strftime("%Y-%m-%d %H:%M:%S")))
 
 
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    main()
 
 
-challenge_txt = str(int(time.time()))
-challenge_password = sha256((encrypted_password+challenge_txt).encode('utf-8')).hexdigest()
+# challenge_txt = str(int(time.time()))
+# challenge_password = sha256((encrypted_password+challenge_txt).encode('utf-8')).hexdigest()
 
-headers = {
-    "Content-Type": "application/json",
-    "user_agent": "tetraedre/TDS",
-    "method": "POST",
-}
-data = {
-    "operation": "check_access",
-    "username": username,
-    "challenge": challenge_txt,
-    "dossier_id": dossier_id,
-    "challenge_password": challenge_password
-}
+# headers = {
+#     "Content-Type": "application/json",
+#     "user_agent": "tetraedre/TDS",
+#     "method": "POST",
+# }
+# data = {
+#     "operation": "check_access",
+#     "username": username,
+#     "challenge": challenge_txt,
+#     "dossier_id": dossier_id,
+#     "challenge_password": challenge_password
+# }
 
 
-r = requests.post(url, data=json.dumps(data), headers=headers, verify=False)
+# r = requests.post(url, data=json.dumps(data), headers=headers, verify=False)
 # print("------------------------Response------------------------")
 # print(str(r)+"\n"+str(r.headers)+"\n"+str(r.content))
 # print(data)
-print(r.content.decode('utf-8'))
+# print(r.content.decode('utf-8'))
