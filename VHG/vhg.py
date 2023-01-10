@@ -240,8 +240,14 @@ def main() -> None:
                         }
                     else:
                         data[e["timestamp"]][measure] = e["value"]
-            if data != {}:
-                manage_data(data, metering_code, measures_DEB_HLM)
+            if data == {}:
+                data[str(int(time.mktime(datetime.datetime.strptime(start_date, "%Y-%m-%d").timetuple())))] = {
+                    measure: ''
+                }
+                data[str(int(time.mktime(datetime.datetime.strptime(end_date, "%Y-%m-%d").timetuple())))] = {
+                    measure: ''
+                }
+            manage_data(data, metering_code, measures_DEB_HLM)
 
 
         start_date = datetime.datetime.strftime(datetime.datetime.strptime(tmp_end_date, '%Y-%m-%d') + datetime.timedelta(days=1), '%Y-%m-%d')
