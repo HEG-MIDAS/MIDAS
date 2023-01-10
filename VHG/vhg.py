@@ -16,6 +16,7 @@ dossier_id = 50955
 
 username = os.environ.get('env_username_VHG')
 encrypted_password = os.environ.get('env_encrypted_password_VHG')
+print(encrypted_password)
 
 url = "https://"+server+":"+str(443)+page
 
@@ -26,6 +27,35 @@ media = {
     "DEB": 16, # Flow. Instantaneous value usually expressed in [liter/sec] or [m3/h]
 }
 
+map_station_acronyme_name = {
+    "AM_": "Le:Foron:à:Ambilly",
+    "AV_": "Le:Nant:d’Avril:à:Mon:Désir",
+    "BS_": "L’Aire:à:Bossenailles",
+    "BU_": "Canal:Le:Brassu:–:Route:Suisse",
+    "CP_": "Le:Chambet:à:Compois",
+    "CS_": "L’Aire:au:Pont:du:Centenaire",
+    "GC_": "La:Drize:à:Grange-Collomb",
+    "GO_": "Le:Gobé:à:la:route:de:Colovrex",
+    "HE_": "L’Hermance:à:la:Douane",
+    "LM_": "La:Seymaz:au:pont:Ladame",
+    "XPA_": "Le:Canal:de:la:Papeterie:à:Versoix",
+    "PG_": "La:Drize:à:Pierre-Grand",
+    "PR_": "L’Aire:à:Pont-Rouge",
+    "VI_": "La:Seymaz:à:Villette",
+    "VX_": "La:Versoix:à:Versoix-CFF",
+    "AR_": "Aïre",
+    "BA_": "Bachet",
+    "CE_": "Chevrier",
+    "CR_": "CERN",
+    "DD_": "David-Dufour",
+    "ER_": "Ermitage",
+    "ES_": "Essertines",
+    "FO_": "Maison:de:la:Foret",
+    "GF_": "Grange-Falquet",
+    "LA_": "Landecy",
+    "LC_": "Laconnex",
+    "SA_": "Sauverny",
+    }
 stations_DEB_HLM = ["AM_", "AV_", "BS_", "BU_", "CP_", "CS_", "GC_", "GO_", "HE_", "LM_", "XPA_", "PG_", "PR_", "VI_", "VX_"]
 measures_DEB_HLM = ["DEB", "HLM"]
 stations_PLU = ["AR_", "BA_", "CE_", "CR_", "DD_", "ER_", "ES_", "FO_", "GF_", "LA_", "LC_", "SA_"]
