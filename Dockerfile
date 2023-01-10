@@ -21,6 +21,7 @@ COPY packaging_merge_csv_by_date /app/packaging_merge_csv_by_date
 ## Scraper
 COPY Climacity /app/Climacity
 COPY SABRA /app/SABRA
+COPY VHG /app/VHG
 COPY logs /app/logs
 ## Django App
 COPY MIDAS /app/MIDAS
