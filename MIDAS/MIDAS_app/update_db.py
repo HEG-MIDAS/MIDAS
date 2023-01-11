@@ -48,22 +48,25 @@ def insert_parameters():
     for dir in sources_dir:
         working_path = os.path.join(station_transformed_path, dir)
         if os.path.isdir(working_path):
-            for file in os.listdir(working_path):
-                if file.split('.')[-1] == 'csv':
-                    station = file.split('_')[0]
-                    header = ''
-                    with open(os.path.join(working_path, file)) as f:
-                        header = f.readline()
-                    for parameter in header.split(','):
-                        param = parameter.replace('*', '').replace('\n', '')
-                        if param not in ['gmt', 'localtime', 'Date [GMT+1]']:
-                            if len(Parameter.objects.filter(name=param)) == 0:
-                                p = Parameter(name=param)
-                                p.save()
-                            if len(ParametersOfStation.objects.filter(name="{}-{}".format(station, param))) == 0:
-                                if len(Station.objects.filter(name=station)) > 0 :
-                                    p = ParametersOfStation(station=Station.objects.get(name=station), parameter=Parameter.objects.get(name=param))
-                                    p.save()
+            for station in os.listdir(working_path):
+                station_path = os.path.join(working_path, station)
+                if os.path.isdir(station_path):
+                    for file in os.listdir(station_path):
+                        if file.split('.')[-1] == 'csv':
+                            stationfile = file.split('.')[0].split('_')[1].replace(':', ' ')
+                            header = ''
+                            with open(os.path.join(station_path, file)) as f:
+                                header = f.readline()
+                            for parameter in header.split(','):
+                                param = parameter.replace('*', '').replace('\n', '')
+                                if param not in ['gmt', 'localtime', 'Date [GMT+1]']:
+                                    if len(Parameter.objects.filter(name=param)) == 0:
+                                        p = Parameter(name=param)
+                                        p.save()
+                                    if len(ParametersOfStation.objects.filter(name="{}-{}".format(stationfile, param))) == 0:
+                                        if len(Station.objects.filter(name=stationfile)) > 0 :
+                                            p = ParametersOfStation(station=Station.objects.get(name=stationfile), parameter=Parameter.objects.get(name=param))
+                                            p.save()
 
 
 def update_infos_parameters():
