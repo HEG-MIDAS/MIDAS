@@ -33,9 +33,9 @@ def insert_stations():
     for dir in sources_dir:
         working_path = os.path.join(station_transformed_path, dir)
         if os.path.isdir(working_path):
-            for file in os.listdir(working_path):
-                if file.split('.')[-1] == 'csv':
-                    station = file.split('_')[0]
+            for station in os.listdir(working_path):
+                if os.path.isdir(os.path.join(working_path, station)):
+                    station = station.replace(':', ' ')
                     if len(Station.objects.filter(name=station)) == 0:
                         s = Station(name=station, source=Source.objects.get(name=dir))
                         s.save()

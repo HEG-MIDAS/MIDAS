@@ -66,12 +66,6 @@ __location__ = os.path.realpath(
 
 path_tmp = '{}/'.format(__location__)
 tmp_filename = 'tmp_data_request.csv'
-path_original_data = '{}/../media/original/Climacity/Prairie/'.format(__location__)
-original_data_filename = 'climacity_original_merged.csv'
-
-path_transformed_data = '{}/../media/transformed/Climacity/Prairie/'.format(__location__)
-transformed_data_filename = 'Prairie.csv'
-
 
 def request_data(starting_date:str, ending_date:str, metering_code: str, measure: str) -> list:
     challenge_txt = str(int(time.time()))
@@ -180,25 +174,25 @@ def create_data_file(data:dict, tmp_filename:str, path_original_data:str, measur
     f.close()
 
 
-def manage_data(data: dict, metering_code: str, measures: list) -> None:
+def manage_data(data: dict, metering_code: str, measures: list, year_working_on: str) -> None:
     """
     Will handle the data requested to VHG. It will first create an tmp file with the original data, in the corresponding folder, if the folder does not exists,
     it will automatically create the folder. Then it will merge the tmp original data file with the orginal data file. And repeat the same steps for the transformed datas
     transforming obviously the data if needed.
     """
     # Check if dir already exists if it's not the case, create new dir
-    if(not os.path.isdir("{}/../media/original/VHG/{}".format(__location__, metering_code[:-1]))):
-        os.mkdir("{}/../media/original/VHG/{}".format(__location__, metering_code[:-1]))
-    path_original_data = '{}/../media/original/VHG/{}/'.format(__location__, metering_code[:-1])
-    original_data_filename = '{}_original_merged.csv'.format(metering_code[:-1])
+    if(not os.path.isdir("{}/../media/original/VHG/{}".format(__location__, map_station_acronyme_name[metering_code]))):
+        os.mkdir("{}/../media/original/VHG/{}".format(__location__, map_station_acronyme_name[metering_code]))
+    path_original_data = '{}/../media/original/VHG/{}/'.format(__location__, map_station_acronyme_name[metering_code])
+    original_data_filename = '{}_{}_original_merged.csv'.format(year_working_on, map_station_acronyme_name[metering_code])
 
     create_data_file(data, original_data_filename, path_original_data, measures)
 
     # Check if dir already exists if it's not the case, create new dir
-    if(not os.path.isdir("{}/../media/transformed/VHG/{}".format(__location__, metering_code[:-1]))):
-        os.mkdir("{}/../media/transformed/VHG/{}".format(__location__, metering_code[:-1]))
-    path_transformed_data = '{}/../media/transformed/VHG/{}/'.format(__location__, metering_code[:-1])
-    transformed_data_filename = '{}_transformed_merged.csv'.format(metering_code[:-1])
+    if(not os.path.isdir("{}/../media/transformed/VHG/{}".format(__location__, map_station_acronyme_name[metering_code]))):
+        os.mkdir("{}/../media/transformed/VHG/{}".format(__location__, map_station_acronyme_name[metering_code]))
+    path_transformed_data = '{}/../media/transformed/VHG/{}/'.format(__location__, map_station_acronyme_name[metering_code])
+    transformed_data_filename = '{}_{}.csv'.format(year_working_on, map_station_acronyme_name[metering_code])
 
     create_data_file(data, transformed_data_filename, path_transformed_data, measures, True)
 
@@ -270,7 +264,8 @@ def main() -> None:
                 data[str(int(time.mktime(datetime.datetime.strptime(end_date, "%Y-%m-%d").timetuple())))] = {
                     measure: ''
                 }
-            manage_data(data, metering_code, measures_DEB_HLM)
+
+            manage_data(data, metering_code, measures_DEB_HLM, str(datetime.datetime.strptime(start_date, '%Y-%m-%d').year))
 
         # Call metering code and measures for PLU and similar
         # For now it only contains PLU
@@ -294,7 +289,7 @@ def main() -> None:
                 data[str(int(time.mktime(datetime.datetime.strptime(end_date, "%Y-%m-%d").timetuple())))] = {
                     measure: ''
                 }
-            manage_data(data, metering_code, measures_PLU)
+            manage_data(data, metering_code, measures_PLU, str(datetime.datetime.strptime(start_date, '%Y-%m-%d').year))
 
 
         start_date = datetime.datetime.strftime(datetime.datetime.strptime(tmp_end_date, '%Y-%m-%d') + datetime.timedelta(days=1), '%Y-%m-%d')

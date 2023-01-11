@@ -395,6 +395,7 @@ def harvest_data(request):
     elif request.POST['updateOperation'] == 'db':
         print("Updating Database...")
         print("{}".format(os.system("python3 MIDAS/manage.py insert_ssp_db")))
+        update_db.insert_stations()
     elif request.POST['updateOperation'] == 'dbInfos':
         print("Updating Databse Informations...")
         print("{}".format(os.system("python3 MIDAS/manage.py update_db_params_infos")))
