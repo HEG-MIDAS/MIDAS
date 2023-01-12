@@ -137,7 +137,7 @@ def format_data_transformed(data:dict, measures:str) -> list:
             # Iterate creating timestamps with empty values if there is a jump between the last and the next timestamp
             while (datetime.datetime.strptime(val[0], '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime(previous_date, '%Y-%m-%d %H:%M:%S')) > datetime.timedelta(hours=1):
                 previous_date = ((datetime.datetime.strptime(previous_date, '%Y-%m-%d %H:%M:%S'))+datetime.timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
-                array_data_formatted.append([previous_date, '', ''])
+                array_data_formatted.append([previous_date]+['' for _ in range(len(measures))])
         array_data_formatted.append(val)
 
     return array_data_formatted
