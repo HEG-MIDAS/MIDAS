@@ -297,29 +297,43 @@ def main() -> None:
     print("--------------- Ending requests to VHG : {} ---------------".format(time.strftime("%Y-%m-%d %H:%M:%S")))
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
 
 
-# challenge_txt = str(int(time.time()))
-# challenge_password = sha256((encrypted_password+challenge_txt).encode('utf-8')).hexdigest()
+challenge_txt = str(int(time.time()))
+challenge_password = sha256((encrypted_password+challenge_txt).encode('utf-8')).hexdigest()
 
-# headers = {
-#     "Content-Type": "application/json",
-#     "user_agent": "tetraedre/TDS",
-#     "method": "POST",
-# }
-# data = {
-#     "operation": "check_access",
-#     "username": username,
-#     "challenge": challenge_txt,
-#     "dossier_id": dossier_id,
-#     "challenge_password": challenge_password
-# }
+headers = {
+    "Content-Type": "application/json",
+    "user_agent": "tetraedre/TDS",
+    "method": "POST",
+}
+data = {
+    "operation": "check_access",
+    "username": username,
+    "challenge": challenge_txt,
+    "dossier_id": dossier_id,
+    "challenge_password": challenge_password
+}
+
+data = {
+    "operation": "get_values",
+    "username": username,
+    "challenge": challenge_txt,
+    "dossier_id": dossier_id,
+    "challenge_password": challenge_password,
+    "metering_code": "BA_",
+    "t0": time.mktime(datetime.datetime.strptime("2023-01-08", "%Y-%m-%d").timetuple()),
+    "t1": time.mktime(datetime.datetime.strptime("2023-01-09", "%Y-%m-%d").timetuple()),
+    "limit": 0,
+    "sort": "ASC",
+    "media": media["PLU"],
+}
 
 
-# r = requests.post(url, data=json.dumps(data), headers=headers, verify=False)
-# print("------------------------Response------------------------")
-# print(str(r)+"\n"+str(r.headers)+"\n"+str(r.content))
-# print(data)
-# print(r.content.decode('utf-8'))
+r = requests.post(url, data=json.dumps(data), headers=headers, verify=False)
+print("------------------------Response------------------------")
+print(str(r)+"\n"+str(r.headers)+"\n"+str(r.content))
+print(data)
+print(r.content.decode('utf-8'))

@@ -355,7 +355,6 @@ function select_station(e, idx){
         }
     }
     handleElementsSelection()
-    console.log(stations)
 }
 
 // Function lauched when a parameter is selected or deselected by the user
