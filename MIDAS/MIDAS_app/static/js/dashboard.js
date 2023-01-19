@@ -170,7 +170,6 @@ async function requestData(displayData = true){
 
             // Construct the json body of the POST method
             options = {'sources': sources[cnt], 'stations': stations[cnt], 'parameters': parameters[cnt], 'starting_date': startingDateString, 'ending_date': endingDateString}
-            console.log(options)
             let promise = await requestDataFetch(options);
             array_promises.push(promise);
         }
@@ -189,7 +188,6 @@ async function requestData(displayData = true){
                 drawChart(data[0]);
             }
             else{
-                console.log(data[0])
                 downloadData(data[0]);
             }
         }
@@ -419,7 +417,6 @@ const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value ;
 // Request all the stations available for the selected sources
 async function requestStations(options, idx){
     // Request station-dashboard view
-    console.log(options)
     var index = arrayCurrentIdx.indexOf(idx);
     await fetch('/stations-dashboard/',{
         method: 'POST',
@@ -473,13 +470,10 @@ async function requestStations(options, idx){
         
         // This part check the boxes that were previously selected and can still be
         // Check if there is stations selected
-        console.log(stations[index].length)
         if (stations[index].length > 0){
             for (var i = stations[index].length-1; i >= 0; --i) {
-                console.log(i)
                 // Check if the station is still available to be selected
                 if (stationsSlug.includes(stations[index][i])){
-                    console.log(stations[index][i])
                     // Select the station box
                     document.getElementById("flexCheck"+stations[index][i]+idx.toString()).checked = true;
                     // Request for the parameters of the box selected and will do the same stuff
@@ -489,7 +483,6 @@ async function requestStations(options, idx){
                     stations[index].splice(i, 1);
                 }
             }
-            console.log(stations[index])
             requestParameters({'sources': sources[index], 'stations': stations[index]}, idx)
         }
         // If there is no stations selected
@@ -586,7 +579,6 @@ function requestParameters(options, idx){
             // Add slug of the current paramter to our current parameter array
             parametersSlug.push(jsonData[i]['slug'])
         }
-        console.log(parametersSlug)
 
         // Check if there was paremeters selected
         if (parameters[index].length > 0){
@@ -724,11 +716,11 @@ function changeLinePlotDisplay(name, displayType){
 
 // Change the display of the extremes values on Y axis
 function changeXtremeValuesDisplayYAxis(value, filterWorkingOn, changeMax=true){
-    console.log(value)
+    // console.log(value)
     if (value.length == 0){
         value = undefined;
     }
-    console.log(value)
+    // console.log(value)
     if (changeMax){
         option.yAxis[filterWorkingOn].max = value;
     }
@@ -936,7 +928,6 @@ function addRuleOfEChartsParameters(echartSeriesNames){
         if (i+1 < echartSeriesNames.length){
             const separationFilterFilter = document.createElement("hr");
             separationFilterFilter.classList.add("dashed");
-            console.log(separationFilterFilter)
 
             divPlot.appendChild(separationFilterFilter);
         }
