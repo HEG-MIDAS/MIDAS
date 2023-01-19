@@ -198,16 +198,16 @@ def request_data_dasboard(request):
                 for parameter in data_stations_response[str(source)][str(station)][str(hour)]:
                     if str(parameter) not in formatted_data_station:
                         formatted_data_station[str(parameter)] = [[hour, data_stations_response[str(source)][str(station)][str(hour)][str(parameter)]]]
-                        print("If : " + hour)
+                        # print("If : " + hour)
                     else:
                         #if formatted_data_station[str(parameter)][-1] != [] and (datetime.datetime.strptime(hour, '%Y-%m-%d %H:%M:%S')-datetime.datetime.strptime(formatted_data_station[str(parameter)][-1][0], '%Y-%m-%d %H:%M:%S')) == datetime.timedelta(hours=1):
                         while (datetime.datetime.strptime(last_hour, '%Y-%m-%d %H:%M:%S') + datetime.timedelta(hours=1) < datetime.datetime.strptime(hour, '%Y-%m-%d %H:%M:%S')):
                             last_hour = (datetime.datetime.strptime(last_hour, '%Y-%m-%d %H:%M:%S') + datetime.timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
                             formatted_data_station[str(parameter)].append([last_hour, ""])
-                            print(last_hour)
+                            # print(last_hour)
 
                         formatted_data_station[str(parameter)].append([hour, data_stations_response[str(source)][str(station)][str(hour)][str(parameter)]])
-                        print("Else : " + hour)
+                        # print("Else : " + hour)
                         #else:
                             #formatted_data_station[str(parameter)].append([])
                     last_hour = hour # datetime.datetime.strptime(hour, '%Y-%m-%d')

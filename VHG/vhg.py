@@ -28,21 +28,21 @@ media = {
 }
 
 map_station_acronyme_name = {
-    "AM_": "Le:Foron:à:Ambilly",
-    "AV_": "Le:Nant:d’Avril:à:Mon:Désir",
-    "BS_": "L’Aire:à:Bossenailles",
-    "BU_": "Canal:Le:Brassu:–:Route:Suisse",
-    "CP_": "Le:Chambet:à:Compois",
-    "CS_": "L’Aire:au:Pont:du:Centenaire",
-    "GC_": "La:Drize:à:Grange-Collomb",
-    "GO_": "Le:Gobé:à:la:route:de:Colovrex",
-    "HE_": "L’Hermance:à:la:Douane",
-    "LM_": "La:Seymaz:au:pont:Ladame",
-    "XPA_": "Le:Canal:de:la:Papeterie:à:Versoix",
-    "PG_": "La:Drize:à:Pierre-Grand",
-    "PR_": "L’Aire:à:Pont-Rouge",
-    "VI_": "La:Seymaz:à:Villette",
-    "VX_": "La:Versoix:à:Versoix-CFF",
+    "AM_": "Le Foron à Ambilly",
+    "AV_": "Le Nant d’Avril à Mon Désir",
+    "BS_": "L’Aire à Bossenailles",
+    "BU_": "Canal Le Brassu – Route Suisse",
+    "CP_": "Le Chambet à Compois",
+    "CS_": "L’Aire au Pont du Centenaire",
+    "GC_": "La Drize à Grange-Collomb",
+    "GO_": "Le Gobé à la route de Colovrex",
+    "HE_": "L’Hermance à la Douane",
+    "LM_": "La Seymaz au pont Ladame",
+    "XPA_": "Le Canal de la Papeterie à Versoix",
+    "PG_": "La Drize à Pierre-Grand",
+    "PR_": "L’Aire à Pont-Rouge",
+    "VI_": "La Seymaz à Villette",
+    "VX_": "La Versoix à Versoix-CFF",
     "AR_": "Aïre",
     "BA_": "Bachet",
     "CE_": "Chevrier",
@@ -50,7 +50,7 @@ map_station_acronyme_name = {
     "DD_": "David-Dufour",
     "ER_": "Ermitage",
     "ES_": "Essertines",
-    "FO_": "Maison:de:la:Foret",
+    "FO_": "Maison de la Foret",
     "GF_": "Grange-Falquet",
     "LA_": "Landecy",
     "LC_": "Laconnex",
@@ -118,10 +118,11 @@ def format_data_original(data:dict, measures:str) -> list:
     return array_data_formatted_original
 
 
-def format_data_transformed(data:dict, measures:str) -> list:
+def format_data_transformed(data:dict, measures:str, start_date:str) -> list:
     array_data_formatted = []
     # Iterate over the data
     for e in data:
+        to_be_added = True
         # Create variable that will contain the data of the measures for a timestamp/date
         val = [datetime.datetime.fromtimestamp(int(e)).strftime('%Y-%m-%d %H') + ":00:00"]
         # Iterate over the measures keys
@@ -131,19 +132,28 @@ def format_data_transformed(data:dict, measures:str) -> list:
                 val.append(data[e][m])
             else:
                 val.append("")
+        previous_date = start_date
         # Check that the array is not empty as we try to access the last added value
         if array_data_formatted != []:
             previous_date = array_data_formatted[-1][0]
-            # Iterate creating timestamps with empty values if there is a jump between the last and the next timestamp
-            while (datetime.datetime.strptime(val[0], '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime(previous_date, '%Y-%m-%d %H:%M:%S')) > datetime.timedelta(hours=1):
-                previous_date = ((datetime.datetime.strptime(previous_date, '%Y-%m-%d %H:%M:%S'))+datetime.timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
-                array_data_formatted.append([previous_date]+['' for _ in range(len(measures))])
-        array_data_formatted.append(val)
+            if ((measures[0] == "PLU") and (previous_date[:-6] == val[0][:-6])):
+                array_data_formatted[-1][1] = str(float(array_data_formatted[-1][1])+float(val[1]))
+                to_be_added = False
+        else:
+            if (datetime.datetime.strptime(val[0], '%Y-%m-%d %H:%M:%S') > datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S')) and start_date == previous_date:
+                array_data_formatted.append([previous_date]+['0' for _ in range(len(measures))])
+
+        # Iterate creating timestamps with empty values if there is a jump between the last and the next timestamp
+        while (datetime.datetime.strptime(val[0], '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime(previous_date, '%Y-%m-%d %H:%M:%S')) > datetime.timedelta(hours=1):
+            previous_date = ((datetime.datetime.strptime(previous_date, '%Y-%m-%d %H:%M:%S'))+datetime.timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
+            array_data_formatted.append([previous_date]+['0' for _ in range(len(measures))])
+        if to_be_added:
+            array_data_formatted.append(val)
 
     return array_data_formatted
 
 
-def create_data_file(data:dict, tmp_filename:str, path_original_data:str, measures:list, transformed:bool=False) -> None:
+def create_data_file(data:dict, tmp_filename:str, path_original_data:str, measures:list, start_date:str, transformed:bool=False) -> None:
     """
     Create a file with the data of the request. Will format the data (editing it or not) at some point to be able to write it into a file
     """
@@ -163,7 +173,7 @@ def create_data_file(data:dict, tmp_filename:str, path_original_data:str, measur
     f.write("localtime,"+measures_str+"\n")
 
     if transformed:
-        data_formatted = format_data_transformed(data, measures)
+        data_formatted = format_data_transformed(data, measures, start_date)
     else:
         data_formatted = format_data_original(data, measures)
     for line in data_formatted:
@@ -174,7 +184,7 @@ def create_data_file(data:dict, tmp_filename:str, path_original_data:str, measur
     f.close()
 
 
-def manage_data(data: dict, metering_code: str, measures: list, year_working_on: str) -> None:
+def manage_data(data: dict, metering_code: str, measures: list, start_date: str) -> None:
     """
     Will handle the data requested to VHG. It will first create an tmp file with the original data, in the corresponding folder, if the folder does not exists,
     it will automatically create the folder. Then it will merge the tmp original data file with the orginal data file. And repeat the same steps for the transformed datas
@@ -184,17 +194,17 @@ def manage_data(data: dict, metering_code: str, measures: list, year_working_on:
     if(not os.path.isdir("{}/../media/original/VHG/{}".format(__location__, map_station_acronyme_name[metering_code]))):
         os.mkdir("{}/../media/original/VHG/{}".format(__location__, map_station_acronyme_name[metering_code]))
     path_original_data = '{}/../media/original/VHG/{}/'.format(__location__, map_station_acronyme_name[metering_code])
-    original_data_filename = '{}_{}_original_merged.csv'.format(year_working_on, map_station_acronyme_name[metering_code])
+    original_data_filename = '{}_{}_original_merged.csv'.format(str(datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S').year), map_station_acronyme_name[metering_code])
 
-    create_data_file(data, original_data_filename, path_original_data, measures)
+    create_data_file(data, original_data_filename, path_original_data, measures, start_date)
 
     # Check if dir already exists if it's not the case, create new dir
     if(not os.path.isdir("{}/../media/transformed/VHG/{}".format(__location__, map_station_acronyme_name[metering_code]))):
         os.mkdir("{}/../media/transformed/VHG/{}".format(__location__, map_station_acronyme_name[metering_code]))
     path_transformed_data = '{}/../media/transformed/VHG/{}/'.format(__location__, map_station_acronyme_name[metering_code])
-    transformed_data_filename = '{}_{}.csv'.format(year_working_on, map_station_acronyme_name[metering_code])
+    transformed_data_filename = '{}_{}.csv'.format(str(datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S').year), map_station_acronyme_name[metering_code])
 
-    create_data_file(data, transformed_data_filename, path_transformed_data, measures, True)
+    create_data_file(data, transformed_data_filename, path_transformed_data, measures, start_date, True)
 
 
 def main() -> None:
@@ -265,7 +275,7 @@ def main() -> None:
                     measure: ''
                 }
 
-            manage_data(data, metering_code, measures_DEB_HLM, str(datetime.datetime.strptime(start_date, '%Y-%m-%d').year))
+            manage_data(data, metering_code, measures_DEB_HLM, start_date+" 00:00:00")
 
         # Call metering code and measures for PLU and similar
         # For now it only contains PLU
@@ -289,7 +299,7 @@ def main() -> None:
                 data[str(int(time.mktime(datetime.datetime.strptime(end_date, "%Y-%m-%d").timetuple())))] = {
                     measure: ''
                 }
-            manage_data(data, metering_code, measures_PLU, str(datetime.datetime.strptime(start_date, '%Y-%m-%d').year))
+            manage_data(data, metering_code, measures_PLU, start_date+" 00:00:00")
 
 
         start_date = datetime.datetime.strftime(datetime.datetime.strptime(tmp_end_date, '%Y-%m-%d') + datetime.timedelta(days=1), '%Y-%m-%d')
@@ -332,8 +342,8 @@ if __name__ == '__main__':
 # }
 
 
-r = requests.post(url, data=json.dumps(data), headers=headers, verify=False)
-print("------------------------Response------------------------")
-print(str(r)+"\n"+str(r.headers)+"\n"+str(r.content))
-print(data)
-print(r.content.decode('utf-8'))
+# r = requests.post(url, data=json.dumps(data), headers=headers, verify=False)
+# print("------------------------Response------------------------")
+# print(str(r)+"\n"+str(r.headers)+"\n"+str(r.content))
+# print(data)
+# print(r.content.decode('utf-8'))
