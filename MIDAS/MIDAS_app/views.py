@@ -123,6 +123,7 @@ def stations_dashboard(request):
     new_request.user = request_user
 
     data_stations_response = json.loads(json.dumps(FilterView().post(new_request).data))
+    print(data_stations_response)
     for station in data_stations_response:
         data.append({'source': station['source'], 'name': station['name'], 'slug': station['slug']})
 

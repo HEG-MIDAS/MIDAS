@@ -170,7 +170,7 @@ async function requestData(displayData = true){
 
             // Construct the json body of the POST method
             options = {'sources': sources[cnt], 'stations': stations[cnt], 'parameters': parameters[cnt], 'starting_date': startingDateString, 'ending_date': endingDateString}
-
+            console.log(options)
             let promise = await requestDataFetch(options);
             array_promises.push(promise);
         }
@@ -419,6 +419,7 @@ const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value ;
 // Request all the stations available for the selected sources
 async function requestStations(options, idx){
     // Request station-dashboard view
+    console.log(options)
     var index = arrayCurrentIdx.indexOf(idx);
     await fetch('/stations-dashboard/',{
         method: 'POST',
@@ -472,21 +473,24 @@ async function requestStations(options, idx){
         
         // This part check the boxes that were previously selected and can still be
         // Check if there is stations selected
+        console.log(stations[index].length)
         if (stations[index].length > 0){
             for (var i = stations[index].length-1; i >= 0; --i) {
+                console.log(i)
                 // Check if the station is still available to be selected
                 if (stationsSlug.includes(stations[index][i])){
-                    //console.log(stations[i])
+                    console.log(stations[index][i])
                     // Select the station box
                     document.getElementById("flexCheck"+stations[index][i]+idx.toString()).checked = true;
                     // Request for the parameters of the box selected and will do the same stuff
-                    requestParameters({'sources': sources[index], 'stations': stations[index][i]}, idx)
                 }
                 else {
                     // If the code enter here, it means that the station was not in the request so it is deleted from our stations' array 
                     stations[index].splice(i, 1);
                 }
             }
+            console.log(stations[index])
+            requestParameters({'sources': sources[index], 'stations': stations[index]}, idx)
         }
         // If there is no stations selected
         if (stations[index].length == 0) {
@@ -525,7 +529,7 @@ function requestParameters(options, idx){
     .then(function(responseJSONData) {
         // Parse the JSON response
         jsonData = JSON.parse(responseJSONData);
-        // Array that will serve to know which parameters where in the request (we will use the slug)
+        // Array that will serve to know which parameters were in the request (we will use the slug)
         var parametersSlug = [];
         var accordionParameters = document.getElementById("accordionParameters"+idx.toString());
         // Delete all the checkboxes inside the parameter accordion
@@ -582,6 +586,7 @@ function requestParameters(options, idx){
             // Add slug of the current paramter to our current parameter array
             parametersSlug.push(jsonData[i]['slug'])
         }
+        console.log(parametersSlug)
 
         // Check if there was paremeters selected
         if (parameters[index].length > 0){
