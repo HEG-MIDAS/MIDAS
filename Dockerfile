@@ -10,8 +10,8 @@ RUN apt-get install zip -y
 ## Docker Env
 COPY docker /app/docker
 
-## Install and Hold Docker (102.6.0esr-1)
-RUN dpkg -i /app/docker/firefox-esr.deb
+## Install and Hold firefox (102.6.0esr-1)
+RUN apt-get install firefox-esr=102.6.0esr-1~deb10u1
 RUN apt-mark hold firefox-esr
 
 COPY MIDAS_docker_launcher.sh /app/MIDAS_docker_launcher.sh
