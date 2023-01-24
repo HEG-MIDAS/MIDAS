@@ -16,7 +16,6 @@ dossier_id = 50955
 
 username = os.environ.get('env_username_VHG')
 encrypted_password = os.environ.get('env_encrypted_password_VHG')
-print(encrypted_password)
 
 url = "https://"+server+":"+str(443)+page
 
@@ -102,7 +101,7 @@ def request_data(starting_date:str, ending_date:str, metering_code: str, measure
     # print("------------------------Response------------------------")
     # print(str(r)+"\n"+str(r.headers)+"\n"+str(r.content))
     # print(data)
-    print(r.status_code)
+    # print(r.content.decode('utf-8'))
     return r.content.decode('utf-8')
 
 def format_data_original(data:dict, measures:str) -> list:
