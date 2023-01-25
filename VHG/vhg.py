@@ -102,7 +102,10 @@ def request_data(starting_date:str, ending_date:str, metering_code: str, measure
     # print(str(r)+"\n"+str(r.headers)+"\n"+str(r.content))
     # print(data)
     # print(r.content.decode('utf-8'))
-    return r.content.decode('utf-8')
+    if r.status_code == 200:
+        return r.content.decode('utf-8')
+
+    return []
 
 def format_data_original(data:dict, measures:str) -> list:
     array_data_formatted_original = []
@@ -249,13 +252,19 @@ def main() -> None:
         if tmp_end_date > end_date:
             tmp_end_date = end_date
 
+        print("-------------------------- " + start_date + " to " + tmp_end_date + " --------------------------")
         # Iterate over each metering code available for DEB and HLM
         for metering_code in stations_DEB_HLM:
+            print(metering_code)
             data = {}
             # Iterate alternately on DEB and HLM and create a dict with the results
             for measure in measures_DEB_HLM:
                 # data[measure] = request_data(start_date, end_date, metering_code, measure)
-                val = ast.literal_eval(request_data(start_date, tmp_end_date, metering_code, measure))
+                val = []
+                try:
+                    val = ast.literal_eval(request_data(start_date, tmp_end_date, metering_code, measure))
+                except:
+                    print(metering_code)
                 # Iterate over the answer of the requested data
                 for e in val:
                     # Add data to dict using the timestamp as key
@@ -279,11 +288,17 @@ def main() -> None:
         # Call metering code and measures for PLU and similar
         # For now it only contains PLU
         for metering_code in stations_PLU:
+            print(metering_code)
             data = {}
             # Iterate alternately on DEB and HLM and create a dict with the results
             for measure in measures_PLU:
                 # data[measure] = request_data(start_date, end_date, metering_code, measure)
-                val = ast.literal_eval(request_data(start_date, tmp_end_date, metering_code, measure))
+                val = []
+                try:
+                    val = ast.literal_eval(request_data(start_date, tmp_end_date, metering_code, measure))
+                except:
+                    print(metering_code)
+
                 for e in val:
                     if e["timestamp"] not in data.keys():
                         data[e["timestamp"]] = {
