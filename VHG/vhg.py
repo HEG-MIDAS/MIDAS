@@ -66,6 +66,32 @@ __location__ = os.path.realpath(
 path_tmp = '{}/'.format(__location__)
 tmp_filename = 'tmp_data_request.csv'
 
+
+def check_access() -> bool:
+    challenge_txt = str(int(time.time()))
+    challenge_password = sha256((encrypted_password+challenge_txt).encode('utf-8')).hexdigest()
+
+    headers = {
+        "Content-Type": "application/json",
+        "user_agent": "tetraedre/TDS",
+        "method": "POST",
+    }
+    data = {
+        "operation": "check_access",
+        "username": username,
+        "challenge": challenge_txt,
+        "dossier_id": dossier_id,
+        "challenge_password": challenge_password
+    }
+
+    r = requests.post(url, data=json.dumps(data), headers=headers, verify=False)
+    res = ast.literal_eval(r.content.decode('utf-8'))
+
+    print(res)
+
+    return res["access_granted"] == 1 and res["export_data"] == '1'
+
+
 def request_data(starting_date:str, ending_date:str, metering_code: str, measure: str) -> list:
     challenge_txt = str(int(time.time()))
     challenge_password = sha256((encrypted_password+challenge_txt).encode('utf-8')).hexdigest()
@@ -322,7 +348,10 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-    main()
+    if check_access():
+        main()
+    else:
+        print("Permission denied")
 
 
 # challenge_txt = str(int(time.time()))
