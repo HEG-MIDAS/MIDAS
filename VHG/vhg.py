@@ -255,7 +255,7 @@ def main() -> None:
             # Iterate alternately on DEB and HLM and create a dict with the results
             for measure in measures_DEB_HLM:
                 # data[measure] = request_data(start_date, end_date, metering_code, measure)
-                val = ast.literal_eval(request_data(start_date, end_date, metering_code, measure))
+                val = ast.literal_eval(request_data(start_date, tmp_end_date, metering_code, measure))
                 # Iterate over the answer of the requested data
                 for e in val:
                     # Add data to dict using the timestamp as key
@@ -270,7 +270,7 @@ def main() -> None:
                 data[str(int(time.mktime(datetime.datetime.strptime(start_date, "%Y-%m-%d").timetuple())))] = {
                     measure: ''
                 }
-                data[str(int(time.mktime(datetime.datetime.strptime(end_date, "%Y-%m-%d").timetuple())))] = {
+                data[str(int(time.mktime(datetime.datetime.strptime(tmp_end_date, "%Y-%m-%d").timetuple())))] = {
                     measure: ''
                 }
 
@@ -283,7 +283,7 @@ def main() -> None:
             # Iterate alternately on DEB and HLM and create a dict with the results
             for measure in measures_PLU:
                 # data[measure] = request_data(start_date, end_date, metering_code, measure)
-                val = ast.literal_eval(request_data(start_date, end_date, metering_code, measure))
+                val = ast.literal_eval(request_data(start_date, tmp_end_date, metering_code, measure))
                 for e in val:
                     if e["timestamp"] not in data.keys():
                         data[e["timestamp"]] = {
@@ -295,7 +295,7 @@ def main() -> None:
                 data[str(int(time.mktime(datetime.datetime.strptime(start_date, "%Y-%m-%d").timetuple())))] = {
                     measure: ''
                 }
-                data[str(int(time.mktime(datetime.datetime.strptime(end_date, "%Y-%m-%d").timetuple())))] = {
+                data[str(int(time.mktime(datetime.datetime.strptime(tmp_end_date, "%Y-%m-%d").timetuple())))] = {
                     measure: ''
                 }
             manage_data(data, metering_code, measures_PLU, start_date+" 00:00:00")
