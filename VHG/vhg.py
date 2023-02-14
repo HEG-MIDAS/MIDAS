@@ -159,7 +159,7 @@ def format_data_transformed(data:dict, measures:str, start_date:str) -> list:
             if m in data[e].keys():
                 val.append(data[e][m])
             else:
-                val.append("")
+                val.append("0")
         previous_date = start_date
         # Check that the array is not empty as we try to access the last added value
         if array_data_formatted != []:
@@ -302,11 +302,13 @@ def main() -> None:
                         data[e["timestamp"]][measure] = e["value"]
             # If there was not data answered, create fake timestamp of start and end date to write in the corresponding files that no data was available
             if data == {}:
-                data[str(int(time.mktime(datetime.datetime.strptime(start_date, "%Y-%m-%d").timetuple())))] = {
-                    measure: ''
-                }
-                data[str(int(time.mktime(datetime.datetime.strptime(tmp_end_date, "%Y-%m-%d").timetuple())))] = {
-                    measure: ''
+                empty_measures = {}
+                for measure in measures_DEB_HLM:
+                    empty_measures[measure] = '0'
+                    
+                data = {
+                    str(int(time.mktime(datetime.datetime.strptime(start_date, "%Y-%m-%d").timetuple()))): empty_measures, 
+                    str(int(time.mktime(datetime.datetime.strptime(tmp_end_date, "%Y-%m-%d").timetuple()))): empty_measures
                 }
 
             manage_data(data, metering_code, measures_DEB_HLM, start_date+" 00:00:00")
@@ -333,11 +335,13 @@ def main() -> None:
                     else:
                         data[e["timestamp"]][measure] = e["value"]
             if data == {}:
-                data[str(int(time.mktime(datetime.datetime.strptime(start_date, "%Y-%m-%d").timetuple())))] = {
-                    measure: ''
-                }
-                data[str(int(time.mktime(datetime.datetime.strptime(tmp_end_date, "%Y-%m-%d").timetuple())))] = {
-                    measure: ''
+                empty_measures = {}
+                for measure in measures_PLU:
+                    empty_measures[measure] = '0'
+                    
+                data = {
+                    str(int(time.mktime(datetime.datetime.strptime(start_date, "%Y-%m-%d").timetuple()))): empty_measures, 
+                    str(int(time.mktime(datetime.datetime.strptime(tmp_end_date, "%Y-%m-%d").timetuple()))): empty_measures
                 }
             manage_data(data, metering_code, measures_PLU, start_date+" 00:00:00")
 
