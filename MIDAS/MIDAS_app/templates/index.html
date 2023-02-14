@@ -2,10 +2,16 @@
 {% load static %}
 {% block extracss %}
     <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+    integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+    crossorigin=""/>
 {% endblock %}
 
 {% block extrajs %}
     <script src="/static/lib/echarts/echarts.js" charset="utf-8"></script>
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+     integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+     crossorigin=""></script>
 {% endblock %}
 
 {% block body_alert %}
@@ -22,9 +28,6 @@
 {% block body_content %}
 
 {% csrf_token %}
-
-
-<p class="h1 title">Dashboard</p>
 
 {% comment %}
 <div class="btn-group dimension-display" role="group" aria-label="Selection of display graph mode 2D or 3D" onchange="flipDimensionDisplay()">
@@ -44,7 +47,8 @@
     </div>
 </div>
 {% endcomment %}
-<div class="midas-container container-fluid">
+<div class="midas-container container-fluid" id="midas-container-manual">
+    <p class="h1 title">Dashboard</p>
     <div class="accordion" id="accordionDashboard0" hidden>
         <h4 id="title0">Données : filtre 0</h4>
         <div class="accordion-item">
@@ -152,12 +156,27 @@
 
 </div>
 
+<div class="midas-container-map" id="midas-container-map">
+    <div id="map"></div>
+</div>
+
+<div id="manual-map-selection">
+    <button type="button" class="btn btn-outline-primary" onclick="handleManualOrMap(this)">Map</button>
+</div>
+
 <script type="text/javascript">
     var idx = 1;
     var array_current_idx = [];
 </script>
 
-<script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dashboard/variables.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dashboard/utils.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dashboard/displayData.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dashboard/getData.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dashboard/map.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dashboard/manual.js' %}"></script>
+
+
 
 <script type="text/javascript">
 
