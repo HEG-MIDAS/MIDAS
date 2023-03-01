@@ -35,7 +35,13 @@ var blueIcon = new L.Icon({
     shadowSize: [41, 41]
 });
 
+function clickAction(e) {
+    alert("HELLO")
+}
+
 var marker = new L.Marker([46.2026, 6.1235], {
         icon: blueIcon
         });
-marker.addTo(map);
+marker.addTo(map).on("click", clickAction);
+
+L.circle([46.3026, 6.1235], 400).addTo(map).on("click", clickAction);

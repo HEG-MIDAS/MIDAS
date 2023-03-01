@@ -191,6 +191,7 @@ hr.dashed {
     left: 2rem;
     z-index: 9999;
     background-color: white;
+    border-radius: 10%;
 }
 
 #map { 
