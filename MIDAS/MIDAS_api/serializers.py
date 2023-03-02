@@ -42,7 +42,7 @@ class StationSerializer(serializers.ModelSerializer):
     parameters_list = ParametersForStationSerializer(many=True,source="parameters_of_station")
     class Meta:
         model = Station
-        fields = ['id','name','slug','source','infos','latitude','longitude','height','parameters_list']
+        fields = ['id','name','slug','source','infos','latitude','longitude','height', 'coordinates_exact','parameters_list']
 
 # Favorites
 class ParametersOfStationFavoriteSerializer(serializers.ModelSerializer):
@@ -86,9 +86,10 @@ class ParametersOfStationStationsSerializer(serializers.ModelSerializer):
     latitude = serializers.ReadOnlyField(source='station.latitude')
     longitude = serializers.ReadOnlyField(source='station.longitude')
     height = serializers.ReadOnlyField(source='station.height')
+    coordinates_exact = serializers.ReadOnlyField(source='station.coordinates_exact')
     class Meta:
         model = ParametersOfStation
-        fields = ['name','slug','infos','source','latitude','longitude','height']
+        fields = ['name','slug','infos','source','latitude','longitude','height', 'coordinates_exact']
 
 class ParameterSerializer(serializers.ModelSerializer):
     class Meta:
