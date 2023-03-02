@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from MIDAS_app.update_db import update_infos_parameters
+from MIDAS_app.update_db import update_infos_parameters, insert_lat_long_from_csv
 
 
 class Command(BaseCommand):
@@ -7,3 +7,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         update_infos_parameters()
+        insert_lat_long_from_csv()

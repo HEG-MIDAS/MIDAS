@@ -120,3 +120,28 @@ def update_infos_parameters():
 
 
 # regex detecting 3 or more spaces : \s{3,}
+
+
+def insert_lat_long_from_csv():
+    print("Inserting latitude and longitude from csv file")
+    sources_csv_path = os.path.join(settings.BASE_DIR, '../stations_coordinates.csv')
+
+    with open(sources_csv_path) as f:
+        next(f)
+        for line in f:
+            formatted_line = line.replace('\n', '').split(',')
+            if formatted_line != ['']:
+                station = None
+                try:
+                    station = Station.objects.get(name=formatted_line[0])
+                except:
+                    print("Station : '"+formatted_line[0]+"' not found in database...")
+                else:
+                    try:
+                        station.latitude = formatted_line[1]
+                        station.longitude = formatted_line[2]
+                        station.coordinates_exact = formatted_line[3]
+
+                        station.save()
+                    except:
+                        print("Error when editing station : '"+formatted_line[0]+"' ...")

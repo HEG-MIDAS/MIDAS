@@ -68,11 +68,11 @@ class StationAdmin(admin.ModelAdmin):
             'fields': ('name', 'source')
         }),
         ('Details', {
-            'fields': ('infos', 'latitude', 'longitude', 'height')
+            'fields': ('infos', 'latitude', 'longitude', 'height', 'coordinates_exact')
         })
     )
 
-    list_display = ['name', 'slug', 'infos', 'latitude', 'longitude', 'height']
+    list_display = ['name', 'slug', 'infos', 'latitude', 'longitude', 'height', 'coordinates_exact']
 
 admin.register(Station, StationAdmin)
 

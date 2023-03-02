@@ -53,6 +53,7 @@ class Station(models.Model):
     infos = models.TextField(max_length=500, blank=True)
     latitude = models.DecimalField(blank=True, max_digits=30, decimal_places=15, null=True)
     longitude = models.DecimalField(blank=True, max_digits=30, decimal_places=15, null=True)
+    coordinates_exact = models.BooleanField(blank=True, null=True)
     height = models.DecimalField(blank=True, max_digits=10, decimal_places=5, help_text="Height in meters", null=True)
 
     def save(self, *args, **kwargs):
