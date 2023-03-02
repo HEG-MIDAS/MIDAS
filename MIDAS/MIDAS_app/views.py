@@ -24,6 +24,15 @@ from django.contrib import messages
 from . import update_db
 import time
 from django.contrib.gis.geoip2 import GeoIP2
+import decimal
+
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            return str(o)
+        return super(DecimalEncoder, self).default(o)
+    
 
 def get_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -136,8 +145,10 @@ def parameters_dashboard(request):
     data = []
 
     jsonData = json.loads(request.body)
+    print(jsonData)
     sources = jsonData.get('sources')
     stations = jsonData.get('stations')
+    print(stations)
 
     request_user = request.user
 
@@ -149,7 +160,9 @@ def parameters_dashboard(request):
 
     new_request.user = request_user
 
-    data_parameters_response = json.loads(json.dumps(FilterView().post(new_request).data))
+    print(FilterView().post(new_request).data)
+
+    data_parameters_response = json.loads(json.dumps(FilterView().post(new_request).data, cls=DecimalEncoder))
     for parameter in data_parameters_response:
         stations_tmp = []
         sources_tmp = []
