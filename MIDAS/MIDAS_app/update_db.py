@@ -76,47 +76,50 @@ def update_infos_parameters():
     sources_dir = [source.name for source in Source.objects.all()]
     # Get all the paramaters and do a list to work with
     parameters = [parameter.name for parameter in Parameter.objects.all()]
-    # Check that we have at least one parameter
-    if len(parameters) > 0:
-        for dir in sources_dir:
-            working_path = os.path.join(station_original_path, dir)
-            if os.path.isdir(working_path):
-                for station in os.listdir(working_path):
-                    station_path = os.path.join(working_path, station)
-                    print(station_path)
-                    if os.path.isdir(station_path):
-                        if dir == 'Climacity':
-                            station_path = os.path.join(station_path, )
-                            for file in os.listdir(station_path):
-                                if file.split('.')[-1] == 'csv':
-                                    with open(os.path.join(station_path, file)) as f:
-                                        for line in f:
-                                            line_array = re.split('\s{3,}', line.rstrip())
-                                            if re.match("^-+-$", line.rstrip()):
-                                                break
-                                            if line_array[0] in parameters:
-                                                Parameter.objects.filter(name=line_array[0]).update(infos=line_array[1])
-                                                parameters.remove(line_array[0])
-                                            if line_array[0] in header_dictionary.keys():
-                                                Parameter.objects.filter(name=header_dictionary[line_array[0]]).update(infos=line_array[1])
-                                                parameters.remove(header_dictionary[line_array[0]])
-                                if len(parameters) <= 0:
-                                    break
-                        if dir == 'SABRA':
-                            for file in os.listdir(station_path):
-                                if file.split('.')[-1] == 'csv' and file.split('_')[-1].split('.')[0] in parameters:
-                                    with open(os.path.join(station_path, file)) as f:
-                                        for line in f:
-                                            if ' Polluant:  ' in line:
-                                                polluant = line.rstrip().split(' Polluant:  ')[1]
-                                                Parameter.objects.filter(name=polluant.split('(')[1][:-1]).update(infos=polluant.split('(')[0].replace('  ', ' '))
-                                                parameters.remove(polluant.split('(')[1][:-1])
-                                            elif line == '\n':
-                                                break
-                                if len(parameters) <= 0:
-                                    break
-            if len(parameters) <= 0:
-                break
+    try:
+        # Check that we have at least one parameter
+        if len(parameters) > 0:
+            for dir in sources_dir:
+                working_path = os.path.join(station_original_path, dir)
+                if os.path.isdir(working_path):
+                    for station in os.listdir(working_path):
+                        station_path = os.path.join(working_path, station)
+                        print(station_path)
+                        if os.path.isdir(station_path):
+                            if dir == 'Climacity':
+                                station_path = os.path.join(station_path, )
+                                for file in os.listdir(station_path):
+                                    if file.split('.')[-1] == 'csv':
+                                        with open(os.path.join(station_path, file)) as f:
+                                            for line in f:
+                                                line_array = re.split('\s{3,}', line.rstrip())
+                                                if re.match("^-+-$", line.rstrip()):
+                                                    break
+                                                if line_array[0] in parameters:
+                                                    Parameter.objects.filter(name=line_array[0]).update(infos=line_array[1])
+                                                    parameters.remove(line_array[0])
+                                                if line_array[0] in header_dictionary.keys():
+                                                    Parameter.objects.filter(name=header_dictionary[line_array[0]]).update(infos=line_array[1])
+                                                    parameters.remove(header_dictionary[line_array[0]])
+                                    if len(parameters) <= 0:
+                                        break
+                            if dir == 'SABRA':
+                                for file in os.listdir(station_path):
+                                    if file.split('.')[-1] == 'csv' and file.split('_')[-1].split('.')[0] in parameters:
+                                        with open(os.path.join(station_path, file)) as f:
+                                            for line in f:
+                                                if ' Polluant:  ' in line:
+                                                    polluant = line.rstrip().split(' Polluant:  ')[1]
+                                                    Parameter.objects.filter(name=polluant.split('(')[1][:-1]).update(infos=polluant.split('(')[0].replace('  ', ' '))
+                                                    parameters.remove(polluant.split('(')[1][:-1])
+                                                elif line == '\n':
+                                                    break
+                                    if len(parameters) <= 0:
+                                        break
+                if len(parameters) <= 0:
+                    break
+    except:
+        print("An error occured")
 
 
 # regex detecting 3 or more spaces : \s{3,}

@@ -247,3 +247,11 @@ hr.dashed {
     margin-top: 3rem;
 }
 
+#burger-map-stations {
+    font-size: 2em;
+}
+
+.list-burger {
+    margin-right: 0.5em;
+    margin-bottom: 0.5em;
+}
