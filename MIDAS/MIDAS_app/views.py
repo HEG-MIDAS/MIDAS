@@ -132,9 +132,9 @@ def stations_dashboard(request):
     new_request.user = request_user
 
     data_stations_response = json.loads(json.dumps(FilterView().post(new_request).data))
-    print(data_stations_response)
+    # print(data_stations_response)
     for station in data_stations_response:
-        data.append({'source': station['source'], 'name': station['name'], 'slug': station['slug']})
+        data.append({'source': station['source'], 'name': station['name'], 'slug': station['slug'], 'latitude': station['latitude'], 'longitude': station['longitude'], 'coordinates_exact': station['coordinates_exact']})
 
     return JsonResponse(json.dumps(data), safe=False)
 
@@ -145,10 +145,8 @@ def parameters_dashboard(request):
     data = []
 
     jsonData = json.loads(request.body)
-    print(jsonData)
     sources = jsonData.get('sources')
     stations = jsonData.get('stations')
-    print(stations)
 
     request_user = request.user
 
@@ -160,12 +158,14 @@ def parameters_dashboard(request):
 
     new_request.user = request_user
 
-    print(FilterView().post(new_request).data)
+    # print(FilterView().post(new_request).data)
 
     data_parameters_response = json.loads(json.dumps(FilterView().post(new_request).data, cls=DecimalEncoder))
+    # print(data_parameters_response)
     for parameter in data_parameters_response:
         stations_tmp = []
         sources_tmp = []
+
         for station in parameter['stations']:
             stations_tmp.append(station['slug'])
             sources_tmp.append(station['source']['slug'])

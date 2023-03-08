@@ -160,7 +160,7 @@
     <div id="map">
         <div>
             <div id="search-bar" class="input-group rounded">
-                <button type="button" class="btn btn-light search-burger-button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+                <button id="buttonBurger" type="button" class="btn btn-light search-burger-button" onclick="manageMapMenu()">
                     <i class="fa-solid fa-bars"></i>
                 </button>
                 <input type="search" id="form1" class="form-control" placeholder="Recherche"/>
@@ -171,7 +171,14 @@
             <div class="layer-over-search">
                 <div class="collapse collapse-horizontal" id="collapseWidthExample">
                     <div class="card card-body">
-                        
+                        <div class="card-map-stations" id="burger-map-stations">
+                            <h2>Stations</h2>
+                            <p>Aucune station n'est sélectionnée...</p>
+                        </div>
+                        <div class="card-map-parameters" id="burger-map-parameters">
+                        </div>
+                        <div class="card-map-time" id="burger-map-time">
+                        </div>
                     </div>
                 </div>
             </div>

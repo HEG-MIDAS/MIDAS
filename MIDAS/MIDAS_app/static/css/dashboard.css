@@ -240,7 +240,10 @@ hr.dashed {
     height: 100vh;
     width: 35vw;
     z-index: 9999;
+    cursor: default !important;
 }
 
-
+.card-map-stations {
+    margin-top: 3rem;
+}
 

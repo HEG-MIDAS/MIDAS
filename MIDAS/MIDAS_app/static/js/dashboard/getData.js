@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////////////////////////////////////
-// Fetch requests to get data
+// Fetch requests to get data Manual part
 //////////////////////////////////////////////////////////////////////////////////////
 
 // Add CSRF into a constant to be used by the fetch requests
@@ -24,6 +24,7 @@ async function requestStations(options, idx){
     .then(function(responseJSONData) {
         // Parse JSON
         jsonData = JSON.parse(responseJSONData);
+        console.log(jsonData.length)
         // Array that will contain all the slugs of the stations of the request
         var stationsSlug = [];
         var accordionStations = document.getElementById("accordionStations"+idx.toString());
@@ -60,7 +61,7 @@ async function requestStations(options, idx){
         
         // This part check the boxes that were previously selected and can still be
         // Check if there is stations selected
-        if (stations[index].length > 0){
+        if (index != -1 && stations[index].length > 0){
             for (var i = stations[index].length-1; i >= 0; --i) {
                 // Check if the station is still available to be selected
                 if (stationsSlug.includes(stations[index][i])){
@@ -76,7 +77,7 @@ async function requestStations(options, idx){
             requestParameters({'sources': sources[index], 'stations': stations[index]}, idx)
         }
         // If there is no stations selected
-        if (stations[index].length == 0) {
+        if (index == -1 || stations[index].length == 0) {
             var cs = document.getElementById('buttonParameters'+idx.toString());
             // Check if the parameters div is expanded
             if (cs.getAttribute('aria-expanded') === 'true') {
@@ -219,4 +220,51 @@ async function requestDataFetch(options){
         jsonData = JSON.parse(responseJSONData);
         return jsonData;
     }).catch(error => console.log(error));
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+// Fetch requests to get data Map part
+//////////////////////////////////////////////////////////////////////////////////////
+
+async function requestStationsSimplified(options){
+    // Request station-dashboard view
+    return fetch('/stations-dashboard/',{
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrf,
+        },
+        body: JSON.stringify(
+            options
+        )
+    })
+    .then(function(response) {
+        // Handle json response
+        return response.json();
+    })
+    .then(function(responseJSONData) {
+        // Parse JSON
+        return JSON.parse(responseJSONData);
+    });
+}
+
+// Request all the paremeters available for the selected stations and sources
+async function requestParametersSimplified(options){
+    // Request parameters to view parameters-dashboard
+    return fetch('/parameters-dashboard/',{
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrf,
+        },
+        body: JSON.stringify(
+            options
+        )
+    })
+    .then(function(response) {
+        // Get a response on JSON format
+        return response.json();
+    })
+    .then(function(responseJSONData) {
+        // Parse the JSON response
+        return JSON.parse(responseJSONData);
+    });
 }
