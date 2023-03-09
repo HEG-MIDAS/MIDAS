@@ -2,6 +2,8 @@ sourcesMap = ["climacity", "sabra", "vhg"];
 stationsMap = [];
 parametersMap = [];
 
+markersArray = [];
+
 const bsCollapse = new bootstrap.Collapse('#collapseWidthExample', {
     toggle: false
 })
@@ -13,6 +15,15 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 var greenIcon = new L.Icon({
     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+});
+
+var yellowIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png',
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
@@ -55,23 +66,65 @@ const customCircle = L.Circle.extend({
     }
 });
 
-function triggerParameterButton(){
-    
-}
-
-function toggleButtonCollapse(){
-    bsCollapse.toggle();
-}
 
 options = {'sources': sourcesMap};
 const stations_results = requestStationsSimplified(options);
 
-function manageMapMenu(form=false, currentMarker=null, parameters_data=null){
+function triggerParameterButton(){
+    
+}
+
+function handleButtonCollapse(collapse=false){
+    const chevronNode = document.getElementById("extension-chevron");
+    if (chevronNode.classList.contains("extension-chevron") || !collapse) {
+        chevronNode.classList.remove("extension-chevron");
+        chevronNode.classList.add("extension-chevron-on");
+    }
+    else {
+        bsCollapse.hide();
+        chevronNode.classList.remove("extension-chevron-on");
+        chevronNode.classList.add("extension-chevron");
+    }
+}
+
+function synchronizeButtonCollapseAndMarkers(){
+    const chevronNode = document.getElementById("extension-chevron");
+    collapse = false;
+    if (chevronNode.classList.contains("extension-chevron-on")) {
+        collapse = true;
+    }
+    manageMapMenu();
+    handleButtonCollapse(collapse);
+}
+
+function manageMarkerColor(){
+    markersArray.forEach(marker => {
+        if (stationsMap.includes(marker.options.stationSlug)){
+            if (marker instanceof customMarker) {
+                marker.setIcon(greenIcon);
+            }
+            else {
+                marker.setStyle({color: 'green'})
+            }
+        }
+        else if (marker instanceof customMarker) {
+            marker.setIcon(blueIcon);
+        }
+        else {
+            marker.setStyle({color: '#3487FD'})
+        }
+    });
+}
+
+function manageMapMenu(form=false, currentMarker=null, parameters_data=null, collapse=false){
     const stationsNode = document.getElementById("burger-map-stations");
     const parametersNode = document.getElementById("burger-map-parameters");
     const burgerExpanded = document.getElementById("buttonBurger");
 
     stationsNode.innerHTML = '';
+    parametersNode.innerHTML = '';
+
+    manageMarkerColor();
 
     // If the function was called by clicking on the burger, displays the current information
     if (!form){
@@ -87,7 +140,6 @@ function manageMapMenu(form=false, currentMarker=null, parameters_data=null){
             stationsNode.innerHTML = 'Aucune station sélectionnée'
             parametersNode.innerHTML = 'Aucun paramètre sélectionné'
         }
-        bsCollapse.show();
     }
     else{
         let btnStation = document.createElement("span");
@@ -103,13 +155,16 @@ function manageMapMenu(form=false, currentMarker=null, parameters_data=null){
             parametersNode.appendChild(btnParameter);
             
         }
-        currentMarker.setIcon(greenIcon);
-
-        // Open menu
-        
-        bsCollapse.show();
-
+        if (currentMarker instanceof customMarker) {
+            currentMarker.setIcon(yellowIcon);
+        }
+        else {
+            currentMarker.setStyle({color: 'yellow'})
+        }
     }
+    // Open menu
+    bsCollapse.show();
+    handleButtonCollapse();
 }
 
 async function openSelectionMenu() {
@@ -132,13 +187,16 @@ function addingMarker2Map(latitude, longitude, stationName, slug) {
         stationSlug: slug
         });
     marker.addTo(map).on("click", openSelectionMenu);
+    markersArray.push(marker);
 }
 
 function addingCircle2Map(latitude, longitude, stationName, slug) {
-    new customCircle([parseFloat(latitude), parseFloat(longitude)], 600, options = {
+    var marker = new customCircle([parseFloat(latitude), parseFloat(longitude)], 600, options = {
         station: stationName,
         stationSlug: slug
-    }).addTo(map).on("click", openSelectionMenu);
+    });
+    marker.addTo(map).on("click", openSelectionMenu);
+    markersArray.push(marker);
 }
 
 async function setUpStationsOnMap(){

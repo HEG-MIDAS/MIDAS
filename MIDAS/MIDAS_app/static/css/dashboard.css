@@ -243,6 +243,23 @@ hr.dashed {
     cursor: default !important;
 }
 
+.extension-chevron {
+    transition: .35s;
+    z-index: 9999;
+    position: absolute !important;
+    top: 35vw;
+    left: 0rem;
+}
+
+.extension-chevron-on {
+    transform: rotate(180deg);
+    transition: .35s;
+    z-index: 9999;
+    position: absolute !important;
+    top: 35vw;
+    left: 35vw;
+}
+
 .card-map-stations {
     margin-top: 3rem;
 }
