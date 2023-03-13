@@ -116,7 +116,24 @@ function manageMarkerColor(){
     });
 }
 
-function manageMapMenu(form=false, currentMarker=null, parameters_data=null, collapse=false){
+
+// Manage the parameters selected or unselected
+function manageParameter(parameterSlug, stationSlug){
+    btn = document.getElementById(parameterSlug);
+    if (btn.classList.contains("btn-outline-secondary")){
+        btn.classList.remove("btn-outline-secondary");
+        btn.classList.add("btn-secondary");
+        stationsMap.push(stationSlug);
+        parametersMap.push(parameterSlug);
+    }
+    else {
+        btn.classList.remove("btn-secondary");
+        btn.classList.add("btn-outline-secondary");
+    }
+}
+
+
+function manageMapMenu(form=false, currentMarker=null, parametersData=null, collapse=false){
     const stationsNode = document.getElementById("burger-map-stations");
     const parametersNode = document.getElementById("burger-map-parameters");
     const burgerExpanded = document.getElementById("buttonBurger");
@@ -147,13 +164,19 @@ function manageMapMenu(form=false, currentMarker=null, parameters_data=null, col
         btnStation.classList.add('badge', 'bg-primary');
         stationsNode.appendChild(btnStation);
 
-        for (let i = 0; i < parameters_data.length; i++) {
+        for (let i = 0; i < parametersData.length; i++) {
             let btnParameter = document.createElement("button");
-            btnParameter.innerHTML = parameters_data[i].name;
-            btnParameter.classList.add('btn', 'btn-secondary', 'list-burger');
-            btnParameter.name = parameters_data[i].name;
+            btnParameter.innerHTML = parametersData[i].name;
+            if (parametersMap.includes(parametersData[i].slug)){
+                btnParameter.classList.add('btn', 'btn-secondary', 'list-burger');
+            }
+            else{
+                btnParameter.classList.add('btn', 'btn-outline-secondary', 'list-burger');
+            }
+            btnParameter.id = parametersData[i].slug;
+            btnParameter.name = parametersData[i].name;
+            btnParameter.setAttribute("onclick", "".concat("manageParameter('", parametersData[i].slug,"','", parametersData[i].station, "')"));
             parametersNode.appendChild(btnParameter);
-            
         }
         if (currentMarker instanceof customMarker) {
             currentMarker.setIcon(yellowIcon);
@@ -173,8 +196,8 @@ async function openSelectionMenu() {
         'stations': [this.options.stationSlug]
     }
     try {
-        const parameters_data = await requestParametersSimplified(options);
-        manageMapMenu(true, this, parameters_data)
+        const parametersData = await requestParametersSimplified(options);
+        manageMapMenu(true, this, parametersData)
     }
     catch(err){
         console.log(err);

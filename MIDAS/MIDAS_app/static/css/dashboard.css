@@ -247,7 +247,7 @@ hr.dashed {
     transition: .35s;
     z-index: 9999;
     position: absolute !important;
-    top: 35vw;
+    top: 50%;
     left: 0rem;
 }
 
@@ -256,7 +256,7 @@ hr.dashed {
     transition: .35s;
     z-index: 9999;
     position: absolute !important;
-    top: 35vw;
+    top: 50%;
     left: 35vw;
 }
 
@@ -271,4 +271,8 @@ hr.dashed {
 .list-burger {
     margin-right: 0.5em;
     margin-bottom: 0.5em;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #adb7c0 !important;
 }

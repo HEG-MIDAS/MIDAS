@@ -57,3 +57,6 @@ map.zoomControl.setPosition('topright');
         map.addLayer(new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             {attribution:'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'}
         ));
+
+L.DomEvent.disableClickPropagation(document.getElementById("map-menu"));
+L.DomEvent.disableScrollPropagation(document.getElementById("map-menu"));
