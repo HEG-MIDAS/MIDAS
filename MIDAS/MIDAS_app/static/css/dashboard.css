@@ -264,10 +264,6 @@ hr.dashed {
     margin-top: 3rem;
 }
 
-#burger-map-stations {
-    font-size: 2em;
-}
-
 .list-burger {
     margin-right: 0.5em;
     margin-bottom: 0.5em;
@@ -275,4 +271,23 @@ hr.dashed {
 
 .btn-outline-secondary:hover {
     background-color: #adb7c0 !important;
+}
+
+#badges-recap {
+    z-index: 9999;
+    position: fixed;
+    top: 3.5rem;
+    left: 36vw;
+    margin-top: 0.5rem;
+    max-width: 58vw ;
+}
+
+.anim-plus-2-delete i {
+    transform: rotate(405deg);
+    transition: .5s;
+}
+
+.anim-delete-2-plus i {
+    transform: rotate(0deg);
+    transition: .5s;
 }
