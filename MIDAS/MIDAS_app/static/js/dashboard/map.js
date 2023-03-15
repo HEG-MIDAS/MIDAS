@@ -258,13 +258,26 @@ function manageMapMenu(form=false, currentMarker=null, parametersData=null, coll
                 let btnStation = document.createElement("span");
                 btnStation.innerHTML = stationsMap[i].name;
                 btnStation.classList.add('btn', 'btn-primary');
-                btnStation.style = "pointer-events: none; margin-right: 10px; padding-bottom: 10px;";
+                btnStation.style = "pointer-events: none; margin-right: 0.5em; margin-bottom: 0.5em;";
                 stationsNode.appendChild(btnStation);
+            }
+
+            if (parametersMap.length > 0){
+                for (let i = 0; i < parametersMap.length; i++) {
+                    let btnParameter = document.createElement("span");
+                    btnParameter.innerHTML = parametersMap[i].name;
+                    btnParameter.classList.add('btn', 'btn-secondary');
+                    btnParameter.style = "pointer-events: none; margin-right: 0.5em; margin-bottom: 0.5em;";
+                    parametersNode.appendChild(btnParameter);
+                }
+            }
+            else {
+                parametersNode.innerHTML = 'Aucun paramètre sélectionné';
             }
         }
         else{
-            stationsNode.innerHTML = 'Aucune station sélectionnée'
-            parametersNode.innerHTML = 'Aucun paramètre sélectionné'
+            stationsNode.innerHTML = 'Aucune station sélectionnée';
+            parametersNode.innerHTML = 'Aucun paramètre sélectionné';
         }
     }
     else{
@@ -279,7 +292,7 @@ function manageMapMenu(form=false, currentMarker=null, parametersData=null, coll
         let btnAddStation = document.createElement("span");
         btnAddStation.classList.add('btn', 'btn-primary');
         btnAddStation.innerHTML = '<i class="fas fa-plus-circle"></i>';
-        btnAddStation.style = "padding: 0; margin-left: 10px; pointer-events: auto;";
+        btnAddStation.style = "padding: 0; border: 0; margin-left: 10px; pointer-events: auto;";
         // Check if the station was already added, if it is the case add the class for the delete button
         if (stationsMap.some(e => e.slug === btnStation.id)){
             btnAddStation.classList.add("anim-plus-2-delete");

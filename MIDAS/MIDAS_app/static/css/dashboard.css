@@ -283,6 +283,10 @@ hr.dashed {
     font-size: 1.7em;
 }
 
+#badges-recap .badge {
+    margin-right: 0.5em;
+}
+
 .anim-plus-2-delete i {
     transform: rotate(405deg);
     transition: .5s;
