@@ -180,12 +180,12 @@ hr.dashed {
     background-color: transparent;
 }
 
-#midas-container-map {
+#midas-container-advanced {
     visibility: hidden;
     display: none;
 }
 
-#manual-map-selection {
+#advanced-map-selection {
     position: absolute !important;
     bottom: 2rem;
     left: 2rem;
@@ -280,6 +280,7 @@ hr.dashed {
     left: 36vw;
     margin-top: 0.5rem;
     max-width: 58vw ;
+    font-size: 1.7em;
 }
 
 .anim-plus-2-delete i {
@@ -291,3 +292,4 @@ hr.dashed {
     transform: rotate(0deg);
     transition: .5s;
 }
+

@@ -53,27 +53,27 @@ function downloadData(JSONDataToCSV) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
-// Manage the display between Manual or Map mode
+// Manage the display between Advanced or Map mode
 //////////////////////////////////////////////////////////////////////////////////////
 
-function handleManualOrMap(element) {
-    var manual_disp = document.getElementById("midas-container-manual");
+function handleAdvancedOrMap(element) {
+    var advanced_disp = document.getElementById("midas-container-advanced");
     var map_disp = document.getElementById("midas-container-map");
 
-    if (window.getComputedStyle(manual_disp).visibility === "hidden") {
-        map_disp.style.visibility = 'hidden';
-        map_disp.style.display = 'none';
-        manual_disp.style.visibility = 'visible';
-        manual_disp.style.display = 'inline';
-        element.innerHTML = 'Map';
-    }
-    else {
-        manual_disp.style.visibility = 'hidden';
-        manual_disp.style.display = 'none';
+    if (window.getComputedStyle(map_disp).visibility === "hidden") {
+        advanced_disp.style.visibility = 'hidden';
+        advanced_disp.style.display = 'none';
         map_disp.style.visibility = 'visible';
         map_disp.style.display = 'block';
         map.invalidateSize();
-        element.innerHTML = 'Manual';
+        element.innerHTML = 'Avancé';
+    }
+    else {
+        map_disp.style.visibility = 'hidden';
+        map_disp.style.display = 'none';
+        advanced_disp.style.visibility = 'visible';
+        advanced_disp.style.display = 'inline';
+        element.innerHTML = 'Map';
     }
 }
 

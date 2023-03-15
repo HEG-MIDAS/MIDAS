@@ -75,7 +75,7 @@ function triggerParameterButton(){
     const stationsNode = document.getElementById("burger-map-stations");
     const parametersNode = document.getElementById("burger-map-parameters");
 
-    if (stationsMap.includes(stationsNode.children[0].id)){
+    if (stationsMap.some(e => e.slug === stationsNode.children[0].id)){
         for (const child of parametersNode.children) {
             child.classList.remove("disabled");
         }
@@ -102,20 +102,9 @@ function handleButtonCollapse(collapse=false){
 }
 
 
-function synchronizeButtonCollapseAndMarkers(){
-    const chevronNode = document.getElementById("extension-chevron");
-    var collapse = false;
-    if (chevronNode.classList.contains("extension-chevron-on")) {
-        collapse = true;
-    }
-    manageMapMenu();
-    handleButtonCollapse(collapse);
-}
-
-
 function manageMarkerColor(){
     markersArray.forEach(marker => {
-        if (stationsMap.includes(marker.options.stationSlug)){
+        if (stationsMap.some(e => e.slug === marker.options.stationSlug)){
             if (marker instanceof customMarker) {
                 marker.setIcon(greenIcon);
             }
@@ -133,20 +122,34 @@ function manageMarkerColor(){
 }
 
 
+function synchronizeButtonCollapseAndMarkers(){
+    const chevronNode = document.getElementById("extension-chevron");
+    var collapse = false;
+    if (chevronNode.classList.contains("extension-chevron-on")) {
+        collapse = true;
+        manageMarkerColor();
+    }
+    else{
+        manageMapMenu();
+    }
+    handleButtonCollapse(collapse);
+}
+
+
 // Manage the display of the badges for the stations and the parameters
 function manageBadges(){
     badgesElement = document.getElementById("badges-recap");
     badgesElement.innerHTML = '';
-    for (let station = 0; station < stationsMap.length; station++) {
+    for (let i = 0; i < stationsMap.length; i++) {
         let badgeStation = document.createElement("span");
-        badgeStation.innerHTML = stationsMap[station];;
+        badgeStation.innerHTML = stationsMap[i].name;
         badgeStation.classList.add('badge', 'bg-primary');
         badgesElement.appendChild(badgeStation);
     }
 
-    for (let parameter = 0; parameter < parametersMap.length; parameter++) {
+    for (let i = 0; i < parametersMap.length; i++) {
         let badgeParameter = document.createElement("span");
-        badgeParameter.innerHTML = parametersMap[parameter];;
+        badgeParameter.innerHTML = parametersMap[i].name;
         badgeParameter.classList.add('badge', 'bg-secondary');
         badgesElement.appendChild(badgeParameter);
     }
@@ -154,17 +157,20 @@ function manageBadges(){
 
 
 // Manage the parameters selected or unselected
-function manageParameter(parameterSlug){
+function manageParameter(parameterSlug, parameterName){
     btn = document.getElementById(parameterSlug);
     if (btn.classList.contains("btn-outline-secondary")){
         btn.classList.remove("btn-outline-secondary");
         btn.classList.add("btn-secondary");
-        parametersMap.push(parameterSlug);
+        parametersMap.push({
+            slug: parameterSlug,
+            name: parameterName
+        });
     }
     else {
         btn.classList.remove("btn-secondary");
         btn.classList.add("btn-outline-secondary");
-        var index = parametersMap.indexOf(parameterSlug);
+        var index = parametersMap.findIndex(e => e.slug === parameterSlug);
         if (index !== -1) {
             parametersMap.splice(index, 1);
         }
@@ -181,7 +187,7 @@ async function manageParametersOnStationDeletion(){
     if (stationsMap.length > 0){
         options = {
             'sources': sourcesMap,
-            'stations': stationsMap
+            'stations': stationsMap.map(e => e.slug)
         }
         try {
             const parametersData = await requestParametersSimplified(options);
@@ -189,12 +195,11 @@ async function manageParametersOnStationDeletion(){
             parametersData.forEach(e => {
                 array_params_stations.push(e.slug);
             });
-            var cnt = parametersMap.length-1;
-            while (cnt >= 0){
-                if (!array_params_stations.includes(parametersMap[cnt])){
-                    manageParameter(parametersMap[cnt]);
+            for (let i = parametersMap.length-1; i >= 0; i--) {
+                if (!array_params_stations.includes(parametersMap[i].slug)){
+                    manageParameter(parametersMap[i].slug, parametersMap[i].name);
                 }
-                cnt--;
+                
             }
         }
         catch(err){
@@ -202,26 +207,26 @@ async function manageParametersOnStationDeletion(){
         }
     }
     else {
-        parametersMap.forEach(param =>{
-            manageParameter(param);
-        });
-        while (parametersMap.length > 0) {
-            manageParameter(parametersMap[0]);
+        for (let i = parametersMap.length-1; i >= 0; i--) {
+            manageParameter(parametersMap[i].slug, parametersMap[i].name);
         }
     }
 }
 
 
 // Manage the station selected or unselected
-async function manageStation(stationSlug){
+function manageStation(stationSlug, stationName){
     btn = document.getElementById(stationSlug);
-    if (!stationsMap.includes(stationSlug)){
-        stationsMap.push(stationSlug);
+    if (!stationsMap.some(e => e.slug === stationSlug)){
+        stationsMap.push({
+            slug: stationSlug,
+            name: stationName
+        });
         btn.children[0].classList.remove("anim-delete-2-plus")
         btn.children[0].classList.add("anim-plus-2-delete")
     }
     else {
-        var index = stationsMap.indexOf(stationSlug);
+        var index = stationsMap.findIndex(e => e.slug === stationSlug);
         if (index !== -1) {
             stationsMap.splice(index, 1);
         }
@@ -229,7 +234,7 @@ async function manageStation(stationSlug){
         btn.children[0].classList.add("anim-delete-2-plus")
     }
 
-    await manageParametersOnStationDeletion();
+    manageParametersOnStationDeletion();
     triggerParameterButton();
     manageBadges();
 }
@@ -246,10 +251,16 @@ function manageMapMenu(form=false, currentMarker=null, parametersData=null, coll
 
     manageMarkerColor();
 
-    // If the function was called by clicking on the burger, displays the current information
+    // If the function was called by clicking on the open offcanvas button, displays the current information
     if (!form){
         if (stationsMap.length > 0){
-            stationsNode.innerHTML = 'test'
+            for (let i = 0; i < stationsMap.length; i++) {
+                let btnStation = document.createElement("span");
+                btnStation.innerHTML = stationsMap[i].name;
+                btnStation.classList.add('btn', 'btn-primary');
+                btnStation.style = "pointer-events: none; margin-right: 10px; padding-bottom: 10px;";
+                stationsNode.appendChild(btnStation);
+            }
         }
         else{
             stationsNode.innerHTML = 'Aucune station sélectionnée'
@@ -257,17 +268,23 @@ function manageMapMenu(form=false, currentMarker=null, parametersData=null, coll
         }
     }
     else{
+        // Creates a button like containing the name of the current station
         let btnStation = document.createElement("span");
         btnStation.innerHTML = currentMarker.options.station;
         btnStation.classList.add('btn', 'btn-primary');
         btnStation.id = currentMarker.options.stationSlug;
         btnStation.style = "pointer-events: none;";
 
+        // Creates a button to add or delete the current station
         let btnAddStation = document.createElement("span");
         btnAddStation.classList.add('btn', 'btn-primary');
         btnAddStation.innerHTML = '<i class="fas fa-plus-circle"></i>';
         btnAddStation.style = "padding: 0; margin-left: 10px; pointer-events: auto;";
-        btnAddStation.setAttribute("onclick", "".concat("manageStation('",currentMarker.options.stationSlug,"')"));
+        // Check if the station was already added, if it is the case add the class for the delete button
+        if (stationsMap.some(e => e.slug === btnStation.id)){
+            btnAddStation.classList.add("anim-plus-2-delete");
+        }
+        btnAddStation.setAttribute("onclick", "".concat("manageStation('",currentMarker.options.stationSlug,"','",currentMarker.options.station,"')"));
 
         btnStation.appendChild(btnAddStation);
         stationsNode.appendChild(btnStation);
@@ -275,18 +292,18 @@ function manageMapMenu(form=false, currentMarker=null, parametersData=null, coll
         for (let i = 0; i < parametersData.length; i++) {
             let btnParameter = document.createElement("button");
             btnParameter.innerHTML = parametersData[i].name;
-            if (parametersMap.includes(parametersData[i].slug)){
+            if (parametersMap.some(e => e.slug === parametersData[i].slug)){
                 btnParameter.classList.add('btn', 'btn-secondary', 'list-burger');
             }
             else{
                 btnParameter.classList.add('btn', 'btn-outline-secondary', 'list-burger');
             }
-            if (!stationsMap.includes(parametersData[i].station)){
+            if (!stationsMap.some(e => e.slug === parametersData[i].station)){
                 btnParameter.classList.add('disabled')
             }
             btnParameter.id = parametersData[i].slug;
             btnParameter.name = parametersData[i].name;
-            btnParameter.setAttribute("onclick", "".concat("manageParameter('", parametersData[i].slug,"')"));
+            btnParameter.setAttribute("onclick", "".concat("manageParameter('", parametersData[i].slug,"','",parametersData[i].name,"')"));
             parametersNode.appendChild(btnParameter);
         }
         if (currentMarker instanceof customMarker) {
