@@ -1,17 +1,37 @@
+// Author : David Nogueiras Blanco
+// Last edition : 29.03.2023
+// Project : MIDAS (HEG)
+
+//////////////////////////////////////////////////////////////////////////////////////
+// Arrays of data selected
+//////////////////////////////////////////////////////////////////////////////////////
+
 sourcesMap = ["climacity", "sabra", "vhg"];
 stationsMap = [];
 parametersMap = [];
 
 markersArray = [];
 
+//////////////////////////////////////////////////////////////////////////////////////
+// Handles the offcanvas display
+//////////////////////////////////////////////////////////////////////////////////////
+
 const bsCollapse = new bootstrap.Collapse('#collapseWidthExample', {
     toggle: false
 })
+
+//////////////////////////////////////////////////////////////////////////////////////
+// Manage the map
+//////////////////////////////////////////////////////////////////////////////////////
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
+
+//////////////////////////////////////////////////////////////////////////////////////
+// Defining Icon colors
+//////////////////////////////////////////////////////////////////////////////////////
 
 var greenIcon = new L.Icon({
     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
@@ -66,10 +86,9 @@ const customCircle = L.Circle.extend({
     }
 });
 
-
-options = {'sources': sourcesMap};
-const stations_results = requestStationsSimplified(options);
-
+//////////////////////////////////////////////////////////////////////////////////////
+// Functions
+//////////////////////////////////////////////////////////////////////////////////////
 
 function triggerParameterButton(){
     const stationsNode = document.getElementById("burger-map-stations");
@@ -102,7 +121,7 @@ function handleButtonCollapse(collapse=false){
 }
 
 
-function manageMarkerColor(){
+function manageMarkerColor(currentStationSlug=""){
     markersArray.forEach(marker => {
         if (stationsMap.some(e => e.slug === marker.options.stationSlug)){
             if (marker instanceof customMarker) {
@@ -117,6 +136,15 @@ function manageMarkerColor(){
         }
         else {
             marker.setStyle({color: '#3487FD'})
+        }
+
+        if (marker.options.stationSlug == currentStationSlug){
+            if (marker instanceof customMarker) {
+                marker.setIcon(yellowIcon);
+            }
+            else {
+                marker.setStyle({color: 'yellow'})
+            }
         }
     });
 }
@@ -144,6 +172,8 @@ function manageBadges(){
         let badgeStation = document.createElement("span");
         badgeStation.innerHTML = stationsMap[i].name;
         badgeStation.classList.add('badge', 'bg-primary');
+        console.log()
+        badgeStation.setAttribute("onclick", "".concat("openSelectionMenuBadge('", stationsMap[i].slug,"','", stationsMap[i].name,"')"));
         badgesElement.appendChild(badgeStation);
     }
 
@@ -241,7 +271,7 @@ function manageStation(stationSlug, stationName){
 
 
 // Manage the menu of the map, that means, that the generation of the content of the offcanvas is done here
-function manageMapMenu(form=false, currentMarker=null, parametersData=null, collapse=false){
+function manageMapMenu(stationSlug=null, stationName=null, parametersData=null){
     const stationsNode = document.getElementById("burger-map-stations");
     const parametersNode = document.getElementById("burger-map-parameters");
     const burgerExpanded = document.getElementById("buttonBurger");
@@ -249,10 +279,8 @@ function manageMapMenu(form=false, currentMarker=null, parametersData=null, coll
     stationsNode.innerHTML = '';
     parametersNode.innerHTML = '';
 
-    manageMarkerColor();
-
     // If the function was called by clicking on the open offcanvas button, displays the current information
-    if (!form){
+    if (stationSlug == null){
         if (stationsMap.length > 0){
             for (let i = 0; i < stationsMap.length; i++) {
                 let btnStation = document.createElement("span");
@@ -283,9 +311,9 @@ function manageMapMenu(form=false, currentMarker=null, parametersData=null, coll
     else{
         // Creates a button like containing the name of the current station
         let btnStation = document.createElement("span");
-        btnStation.innerHTML = currentMarker.options.station;
+        btnStation.innerHTML = stationName;
         btnStation.classList.add('btn', 'btn-primary');
-        btnStation.id = currentMarker.options.stationSlug;
+        btnStation.id = stationSlug;
         btnStation.style = "pointer-events: none;";
 
         // Creates a button to add or delete the current station
@@ -297,7 +325,7 @@ function manageMapMenu(form=false, currentMarker=null, parametersData=null, coll
         if (stationsMap.some(e => e.slug === btnStation.id)){
             btnAddStation.classList.add("anim-plus-2-delete");
         }
-        btnAddStation.setAttribute("onclick", "".concat("manageStation('",currentMarker.options.stationSlug,"','",currentMarker.options.station,"')"));
+        btnAddStation.setAttribute("onclick", "".concat("manageStation('",stationSlug,"','",stationName,"')"));
 
         btnStation.appendChild(btnAddStation);
         stationsNode.appendChild(btnStation);
@@ -319,26 +347,21 @@ function manageMapMenu(form=false, currentMarker=null, parametersData=null, coll
             btnParameter.setAttribute("onclick", "".concat("manageParameter('", parametersData[i].slug,"','",parametersData[i].name,"')"));
             parametersNode.appendChild(btnParameter);
         }
-        if (currentMarker instanceof customMarker) {
-            currentMarker.setIcon(yellowIcon);
-        }
-        else {
-            currentMarker.setStyle({color: 'yellow'})
-        }
     }
     // Open menu
     bsCollapse.show();
     handleButtonCollapse();
 }
 
-async function openSelectionMenu() {
+async function openSelectionMenuMarker() {
     options = {
         'sources': sourcesMap,
         'stations': [this.options.stationSlug]
     }
     try {
         const parametersData = await requestParametersSimplified(options);
-        manageMapMenu(true, this, parametersData)
+        manageMarkerColor(this.options.stationSlug);
+        manageMapMenu(this.options.stationSlug, this.options.station, parametersData)
     }
     catch(err){
         console.log(err);
@@ -350,7 +373,7 @@ function addingMarker2Map(latitude, longitude, stationName, slug) {
         station: stationName,
         stationSlug: slug
         });
-    marker.addTo(map).on("click", openSelectionMenu);
+    marker.addTo(map).on("click", openSelectionMenuMarker);
     markersArray.push(marker);
 }
 
@@ -359,10 +382,29 @@ function addingCircle2Map(latitude, longitude, stationName, slug) {
         station: stationName,
         stationSlug: slug
     });
-    marker.addTo(map).on("click", openSelectionMenu);
+    marker.addTo(map).on("click", openSelectionMenuMarker);
     markersArray.push(marker);
 }
 
+// Handles the Map Menu opening when clicking a badge
+async function openSelectionMenuBadge(stationSlug, stationName) {
+    options = {
+        'sources': sourcesMap,
+        'stations': [stationSlug]
+    }
+    try {
+        const parametersData = await requestParametersSimplified(options);
+        
+        manageMarkerColor(stationSlug);
+        manageMapMenu(stationSlug, stationName, parametersData)
+    }
+    catch(err){
+        console.log(err);
+    }
+}
+
+// Add markers on the map thanks to their coordinates
+// Depending on the precision of the coordinates, will display a point or a zone to select
 async function setUpStationsOnMap(){
     try {
         const stations_data = await stations_results;
@@ -380,6 +422,15 @@ async function setUpStationsOnMap(){
     }
 }
 
+//////////////////////////////////////////////////////////////////////////////////////
+// Start of code
+//////////////////////////////////////////////////////////////////////////////////////
+
+// Creates request to request all the stations available on the API
+options = {'sources': sourcesMap};
+const stations_results = requestStationsSimplified(options);
+
+// Display all the stations on the map
 setUpStationsOnMap();
 
 

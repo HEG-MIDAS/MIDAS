@@ -285,6 +285,7 @@ hr.dashed {
 
 #badges-recap .badge {
     margin-right: 0.5em;
+    cursor: pointer;
 }
 
 .anim-plus-2-delete i {
