@@ -7,6 +7,7 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 sourcesMap = ["climacity", "sabra", "vhg"];
+stationsMap4Search = [];
 stationsMap = [];
 parametersMap = [];
 
@@ -112,6 +113,7 @@ function handleButtonCollapse(collapse=false){
     if (chevronNode.classList.contains("extension-chevron") || !collapse) {
         chevronNode.classList.remove("extension-chevron");
         chevronNode.classList.add("extension-chevron-on");
+        bsCollapse.show();
     }
     else {
         bsCollapse.hide();
@@ -150,17 +152,27 @@ function manageMarkerColor(currentStationSlug=""){
 }
 
 
+function openMapMenu(){
+    manageMarkerColor();
+    manageMapMenu();
+}
+
+
 function synchronizeButtonCollapseAndMarkers(){
     const chevronNode = document.getElementById("extension-chevron");
+    const stationsNode = document.getElementById("burger-map-stations");
     var collapse = false;
+    let station_slug = stationsNode.childNodes[0].id;
+
+    // Check if the button is collapsing or not
     if (chevronNode.classList.contains("extension-chevron-on")) {
         collapse = true;
-        manageMarkerColor();
+        // redefine station_slug if we close, since we don't need to highlight station
+        station_slug = "";
     }
-    else{
-        manageMapMenu();
-    }
+
     handleButtonCollapse(collapse);
+    manageMarkerColor(station_slug);
 }
 
 
@@ -168,15 +180,22 @@ function synchronizeButtonCollapseAndMarkers(){
 function manageBadges(){
     badgesElement = document.getElementById("badges-recap");
     badgesElement.innerHTML = '';
+
+    // let badgeSearch = document.createElement("span");
+    // badgeSearch.innerHTML = "Visualiser";
+    // badgeSearch.classList.add('badge', 'bg-danger');
+    // badgesElement.appendChild(badgeSearch);
+
+    // Managing badges for the stations
     for (let i = 0; i < stationsMap.length; i++) {
         let badgeStation = document.createElement("span");
         badgeStation.innerHTML = stationsMap[i].name;
         badgeStation.classList.add('badge', 'bg-primary');
-        console.log()
         badgeStation.setAttribute("onclick", "".concat("openSelectionMenuBadge('", stationsMap[i].slug,"','", stationsMap[i].name,"')"));
         badgesElement.appendChild(badgeStation);
     }
 
+    // Managing badges for the parameters
     for (let i = 0; i < parametersMap.length; i++) {
         let badgeParameter = document.createElement("span");
         badgeParameter.innerHTML = parametersMap[i].name;
@@ -281,7 +300,12 @@ function manageMapMenu(stationSlug=null, stationName=null, parametersData=null){
 
     // If the function was called by clicking on the open offcanvas button, displays the current information
     if (stationSlug == null){
+        let noStations = true
+        let noParameters = true
+
+        // Manage the creation of the stations buttons
         if (stationsMap.length > 0){
+            noStations = false
             for (let i = 0; i < stationsMap.length; i++) {
                 let btnStation = document.createElement("span");
                 btnStation.innerHTML = stationsMap[i].name;
@@ -290,7 +314,9 @@ function manageMapMenu(stationSlug=null, stationName=null, parametersData=null){
                 stationsNode.appendChild(btnStation);
             }
 
+            // Manage the creation of the parameters buttons
             if (parametersMap.length > 0){
+                noParameters = false
                 for (let i = 0; i < parametersMap.length; i++) {
                     let btnParameter = document.createElement("span");
                     btnParameter.innerHTML = parametersMap[i].name;
@@ -299,13 +325,14 @@ function manageMapMenu(stationSlug=null, stationName=null, parametersData=null){
                     parametersNode.appendChild(btnParameter);
                 }
             }
-            else {
-                parametersNode.innerHTML = 'Aucun paramètre sélectionné';
-            }
         }
-        else{
-            stationsNode.innerHTML = 'Aucune station sélectionnée';
-            parametersNode.innerHTML = 'Aucun paramètre sélectionné';
+
+        // Deals the display of text when no station nor parameter is selected
+        if(noStations){
+            stationsNode.innerHTML = 'Aucune station sélectionnée...';
+        }
+        if(noParameters){
+            parametersNode.innerHTML = 'Aucun paramètre sélectionné...';
         }
     }
     else{
@@ -415,12 +442,32 @@ async function setUpStationsOnMap(){
             else {
                 addingCircle2Map(stations_data[i]['latitude'], stations_data[i]['longitude'], stations_data[i]['name'], stations_data[i]['slug'])
             }
+            stationsMap4Search.push({
+                name: stations_data[i]['name'],
+                slug: stations_data[i]['slug'].replace("_", " ")
+            })
         }
     }
     catch(err){
         console.log(err);
     }
 }
+
+
+const searchInput = document.querySelector('#form1');
+searchInput.addEventListener("input", (e) => {
+
+    let value = e.target.value
+    if (value.length > 2){
+        console.log(value);
+    }
+    else {
+
+        searchInput.dataset.bsToggle = "tooltip";
+        searchInput.dataset.placement = "bottom";
+        searchInput.setAttribute("title", "Hello")
+    }
+})
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Start of code

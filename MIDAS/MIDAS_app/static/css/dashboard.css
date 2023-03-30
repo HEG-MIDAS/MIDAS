@@ -217,6 +217,18 @@ hr.dashed {
 .search-btn-glass {
     background-color: white !important;
     border: none ! important;
+
+}
+
+.search-btn-chart {
+    background-color: white !important;
+    border: none ! important;
+    position: relative;
+}
+
+.divider {
+    border-left: 3px solid #BBBBBB !important;
+    height: 1.5rem;
 }
 
 .search-burger-button {
@@ -226,6 +238,7 @@ hr.dashed {
 
 #search-bar {
     border: 1px solid #BBBBBB;
+    align-items: center;
 }
 
 .layer-over-search {
@@ -288,6 +301,10 @@ hr.dashed {
     cursor: pointer;
 }
 
+#badges-recap .bg-secondary {
+    cursor: default;
+}
+
 .anim-plus-2-delete i {
     transform: rotate(405deg);
     transition: .5s;
@@ -298,3 +315,9 @@ hr.dashed {
     transition: .5s;
 }
 
+#map-viualisation {
+    position: absolute !important;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 9999;
+}
