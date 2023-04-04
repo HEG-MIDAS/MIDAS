@@ -33,20 +33,33 @@ var myChart;
 //////////////////////////////////////////////////////////////////////////////////////
 
 // get todays date
-var datePH = new Date();
+var dateEnd = new Date();
+var dateStart = new Date();
 // var date = datePH.getFullYear()+'-'+(datePH.getMonth() + 1)+'-'+datePH.getDate();
 // var time = datePH.getHours() + ":" + datePH.getMinutes();
 // var dateTime = date+' '+time;
 
-const endingDate = document.getElementById("endingDate0");
-endingDate.value = datePH.toISOString().slice(0, -8);
-
 // Get 30 days ago date
+dateStart.setDate(dateEnd.getDate() - 30);
+dateStart.setHours(0);
+dateStart.setMinutes(0);
+
+// ADVANCED
 const startingDate = document.getElementById("startingDate0");
-datePH.setDate(datePH.getDate() - 30);
-datePH.setHours(0);
-datePH.setMinutes(0);
-startingDate.value = datePH.toISOString().slice(0, -8);
+startingDate.value = dateStart.toISOString().slice(0, -8);
+
+const endingDate = document.getElementById("endingDate0");
+endingDate.value = dateEnd.toISOString().slice(0, -8);
+
+// MAP
+let lastStartingDateMap = dateStart.toISOString().slice(0, -8);
+let lastEndingDateMap = dateEnd.toISOString().slice(0, -8);
+
+const startingDateMap = document.getElementById("startingDateMap");
+startingDateMap.value = lastStartingDateMap
+
+const endingDateMap = document.getElementById("endingDateMap");
+endingDateMap.value = lastEndingDateMap
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Map
@@ -55,7 +68,7 @@ startingDate.value = datePH.toISOString().slice(0, -8);
 var map = L.map('map').setView([46.2026, 6.1235], 12);
 map.zoomControl.setPosition('topright');
         map.addLayer(new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            {attribution:'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'}
+            // {attribution:'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'}
         ));
 
 L.DomEvent.disableClickPropagation(document.getElementById("map-menu"));

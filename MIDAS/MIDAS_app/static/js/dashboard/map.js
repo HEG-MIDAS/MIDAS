@@ -91,6 +91,28 @@ const customCircle = L.Circle.extend({
 // Functions
 //////////////////////////////////////////////////////////////////////////////////////
 
+// Check if the request is possible by checking if there is at least 1 station
+// and 1 parameter selected
+// Return a boolean
+function checkIfRequestIsPossible(){
+    if (stationsMap.length > 0 && parametersMap.length > 0) {
+        return true;
+    }
+    return false;
+}
+
+
+// Update the value of the variables containing the last date selected
+function updateDateMap(val, isStartingDateMap){
+    if(isStartingDateMap == 1){
+        lastStartingDateMap = val
+    }
+    else{
+        lastEndingDateMap = val
+    }
+}
+
+
 function triggerParameterButton(){
     const stationsNode = document.getElementById("burger-map-stations");
     const parametersNode = document.getElementById("burger-map-parameters");
@@ -293,30 +315,33 @@ function manageStation(stationSlug, stationName){
 function manageMapMenu(stationSlug=null, stationName=null, parametersData=null){
     const stationsNode = document.getElementById("burger-map-stations");
     const parametersNode = document.getElementById("burger-map-parameters");
-    const burgerExpanded = document.getElementById("buttonBurger");
+    const temporalityNode = document.getElementById("card-map-temporality");
+    const displayBtnNode = document.getElementById("display-btn-data-map");
 
     stationsNode.innerHTML = '';
     parametersNode.innerHTML = '';
+    temporalityNode.innerHTML = '';
+    displayBtnNode.innerHTML = '';
 
     // If the function was called by clicking on the open offcanvas button, displays the current information
     if (stationSlug == null){
-        let noStations = true
-        let noParameters = true
+        let noStations = true;
+        let noParameters = true;
 
         // Manage the creation of the stations buttons
         if (stationsMap.length > 0){
-            noStations = false
+            noStations = false;
             for (let i = 0; i < stationsMap.length; i++) {
                 let btnStation = document.createElement("span");
                 btnStation.innerHTML = stationsMap[i].name;
                 btnStation.classList.add('btn', 'btn-primary');
-                btnStation.style = "pointer-events: none; margin-right: 0.5em; margin-bottom: 0.5em;";
+                btnStation.style = "pointer-events: none; margin-right: 0.5em; margin-bottom: 0.5em; padding-bottom: 7px;";
                 stationsNode.appendChild(btnStation);
             }
 
             // Manage the creation of the parameters buttons
             if (parametersMap.length > 0){
-                noParameters = false
+                noParameters = false;
                 for (let i = 0; i < parametersMap.length; i++) {
                     let btnParameter = document.createElement("span");
                     btnParameter.innerHTML = parametersMap[i].name;
@@ -334,6 +359,55 @@ function manageMapMenu(stationSlug=null, stationName=null, parametersData=null){
         if(noParameters){
             parametersNode.innerHTML = 'Aucun paramètre sélectionné...';
         }
+
+        // Creating temporality form
+        let titleTemp = document.createElement("h2");
+        titleTemp.innerHTML = "Temporalité :";
+
+        let labelStart = document.createElement("label");
+        labelStart.setAttribute("for", "startingDateMap");
+        labelStart.innerHTML = "Date de début :";
+
+        let inputStart = document.createElement("input");
+        inputStart.setAttribute("type", "datetime-local");
+        inputStart.id = "startingDateMap";
+        inputStart.name = "starting_date_map";
+        inputStart.classList.add("form-control");
+        inputStart.required = true;
+        inputStart.value = lastStartingDateMap;
+        inputStart.setAttribute("oninput", "updateDateMap(this.value, 1)");
+
+        let labelEnd = document.createElement("label");
+        labelEnd.setAttribute("for", "endingDateMap");
+        labelEnd.innerHTML = "Date de fin :";
+        labelEnd.style = "margin-top: 1em;";
+
+        let inputEnd = document.createElement("input");
+        inputEnd.setAttribute("type", "datetime-local");
+        inputEnd.id = "endingDateMap";
+        inputEnd.name = "ending_date_map";
+        inputEnd.classList.add("form-control");
+        inputEnd.required = true;
+        inputEnd.value = lastEndingDateMap;
+        inputEnd.setAttribute("oninput", "updateDateMap(this.value, 0)");
+
+        temporalityNode.appendChild(titleTemp);
+        temporalityNode.appendChild(labelStart);
+        temporalityNode.appendChild(inputStart);
+        temporalityNode.appendChild(labelEnd);
+        temporalityNode.appendChild(inputEnd);
+
+        // Create button for displaying the data selected
+
+        let btnDisplay = document.createElement("button");
+        btnDisplay.setAttribute("type", "button");
+        btnDisplay.classList.add("btn", "btn-primary");
+        btnDisplay.setAttribute("onclick", "");
+        btnDisplay.innerHTML = "Afficher";
+        btnDisplay.disabled = !checkIfRequestIsPossible();
+
+        displayBtnNode.appendChild(btnDisplay);
+
     }
     else{
         // Creates a button like containing the name of the current station
@@ -341,7 +415,7 @@ function manageMapMenu(stationSlug=null, stationName=null, parametersData=null){
         btnStation.innerHTML = stationName;
         btnStation.classList.add('btn', 'btn-primary');
         btnStation.id = stationSlug;
-        btnStation.style = "pointer-events: none;";
+        btnStation.style = "pointer-events: none; margin-bottom: 0.5em;";
 
         // Creates a button to add or delete the current station
         let btnAddStation = document.createElement("span");

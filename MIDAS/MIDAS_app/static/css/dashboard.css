@@ -188,7 +188,7 @@ hr.dashed {
 #advanced-map-selection {
     position: absolute !important;
     bottom: 2rem;
-    left: 2rem;
+    right: 2rem;
     z-index: 9999;
     background-color: white;
     border-radius: 10%;
@@ -250,10 +250,11 @@ hr.dashed {
 }
 
 .layer-over-search .card {
-    height: 100vh;
+    height: 95vh;
     width: 35vw;
     z-index: 9999;
     cursor: default !important;
+    overflow-y: auto;
 }
 
 .extension-chevron {
@@ -320,4 +321,9 @@ hr.dashed {
     bottom: 2rem;
     right: 2rem;
     z-index: 9999;
+}
+
+#display-btn-data-map {
+    margin-top: 3em;
+    margin-left: 25vw;
 }

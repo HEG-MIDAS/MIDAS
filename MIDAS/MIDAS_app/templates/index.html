@@ -187,7 +187,15 @@
                             <h2>Paramètres :</h2>
                             <div id="burger-map-parameters">Aucun paramètre sélectionné...</div>
                         </div>
-                        <div class="card-map-time" id="burger-map-time">
+                        <div class="card-map-temporality" id="card-map-temporality">
+                            <h2>Temporalité :</h2>
+                            <label for="startingDateMap">Date de début :</label>
+                            <input type="datetime-local" id="startingDateMap" name="starting_date_map" class="form-control" oninput="updateDateMap(this.value, 1)" required="">
+                            <label for="endingDateMap" style="margin-top: 1em;">Date de fin :</label>
+                            <input type="datetime-local" id="endingDateMap" name="ending_date_map" class="form-control" oninput="updateDateMap(this.value, 0)" required="">
+                        </div>
+                        <div class="display-btn-data-map" id="display-btn-data-map">
+                            <button type="button" class="btn btn-primary" onclick="" disabled>Afficher</button>
                         </div>
                     </div>
                 </div>
