@@ -201,7 +201,7 @@ function requestParameters(options, idx){
 
 // Request data from the sources, stations, parameters, and date selected
 async function requestDataFetch(options){
-    return await fetch('/request-data-dashboard/',{
+    return fetch('/request-data-dashboard/',{
         method: 'POST',
         headers: {
             'X-CSRFToken': csrf,

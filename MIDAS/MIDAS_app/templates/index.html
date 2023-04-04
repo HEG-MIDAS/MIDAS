@@ -141,17 +141,20 @@
         </button>
     </div>
 
-    <div class="" id="EchartsParameters">
-    </div>
+    <div id="displayAdvanced">
 
-    <div id="loader" class=""></div>
+        <div class="" id="EchartsParameters">
+        </div>
 
-    <div id="error-dashboard-message" class="alert alert-danger text-center balise-infos" role="alert" hidden>
-        Une erreur est survenue lors du chargement des données
-    </div>
+        <div id="loader" class=""></div>
 
-    <div class="d-flex w-100 justify-content-center" id="echarts">
-        <div id="main" class="d-none" width="100%" height="800px" style="width: 100%; height: 800px;"></div>
+        <div id="error-dashboard-message" class="alert alert-danger text-center balise-infos" role="alert" hidden>
+            Une erreur est survenue lors du chargement des données
+        </div>
+
+        <div class="d-flex w-100 justify-content-center" id="echarts">
+            <div id="main" class="d-none" width="100%" height="800px" style="width: 100%; height: 800px;"></div>
+        </div>
     </div>
 
 </div>
@@ -195,11 +198,38 @@
                             <input type="datetime-local" id="endingDateMap" name="ending_date_map" class="form-control" oninput="updateDateMap(this.value, 0)" required="">
                         </div>
                         <div class="display-btn-data-map" id="display-btn-data-map">
-                            <button type="button" class="btn btn-primary" onclick="" disabled>Afficher</button>
+                            <button id="displayButton" type="button" class="btn btn-primary" onclick="" disabled>Visualiser</button>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="modal fade" id="displayModal" tabindex="-1" aria-labelledby="displayModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="displayModalLabel">Modal title</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="displayMap">
+
+                            <div class="" id="EchartsParameters">
+                            </div>
+                    
+                            <div id="loader" class=""></div>
+                    
+                            <div id="error-dashboard-message" class="alert alert-danger text-center balise-infos" role="alert" hidden>
+                                Une erreur est survenue lors du chargement des données
+                            </div>
+                    
+                            <div class="d-flex w-100 justify-content-center" id="echarts">
+                                <div id="main" class="d-none" width="100%" height="800px" style="width: 100%; height: 800px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
         </div>
     </div>
 </div>

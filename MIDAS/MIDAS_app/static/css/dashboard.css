@@ -1,3 +1,8 @@
+:root {
+    --z-index-over-map: 1001;
+    --z-index-over-components: 1002;
+}
+
 .accordion {
     margin-left: 10%;
     margin-right: 10%;
@@ -189,7 +194,7 @@ hr.dashed {
     position: absolute !important;
     bottom: 2rem;
     right: 2rem;
-    z-index: 9999;
+    z-index: var(--z-index-over-map);
     background-color: white;
     border-radius: 10%;
 }
@@ -199,7 +204,7 @@ hr.dashed {
 }
 
 #search-bar {
-    z-index: 9999;
+    z-index: var(--z-index-over-components);
     margin-left: 0.5rem;
     margin-top: 0.5rem;
     width: 30vw;
@@ -246,20 +251,20 @@ hr.dashed {
     position: fixed;
     left: 0;
     top: 3.5rem;
-    z-index: 9998;
+    z-index: var(--z-index-over-map);
 }
 
 .layer-over-search .card {
     height: 95vh;
     width: 35vw;
-    z-index: 9999;
+    z-index: var(--z-index-over-map);
     cursor: default !important;
     overflow-y: auto;
 }
 
 .extension-chevron {
     transition: .35s;
-    z-index: 9999;
+    z-index: var(--z-index-over-map);
     position: absolute !important;
     top: 50%;
     left: 0rem;
@@ -268,7 +273,7 @@ hr.dashed {
 .extension-chevron-on {
     transform: rotate(180deg);
     transition: .35s;
-    z-index: 9999;
+    z-index: var(--z-index-over-map);
     position: absolute !important;
     top: 50%;
     left: 35vw;
@@ -288,7 +293,7 @@ hr.dashed {
 }
 
 #badges-recap {
-    z-index: 9999;
+    z-index: var(--z-index-over-map);
     position: fixed;
     top: 3.5rem;
     left: 36vw;
@@ -320,10 +325,10 @@ hr.dashed {
     position: absolute !important;
     bottom: 2rem;
     right: 2rem;
-    z-index: 9999;
+    z-index: var(--z-index-over-map);
 }
 
 #display-btn-data-map {
     margin-top: 3em;
-    margin-left: 25vw;
+    margin-left: auto;
 }

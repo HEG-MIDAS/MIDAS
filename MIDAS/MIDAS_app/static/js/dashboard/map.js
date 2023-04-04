@@ -311,6 +311,63 @@ function manageStation(stationSlug, stationName){
 }
 
 
+// Handles format the json body to send via the POST method to get the data requested
+function requestMapData(lastStartingDate, lastEndingDate, sources, stations, parameters){
+    // // Hide the error message if it's not already hidden
+    // document.getElementById("error-dashboard-message").hidden = true;
+    // // Create loader icon
+    // loader = document.getElementById('loader');
+    // if (myChart == null){
+    //     loader.classList.add("loader");
+    // }
+    // else {
+    //     loader.classList.add("loader-with-main");
+    //     document.getElementById('main').classList.add("opacity-low");
+    // }
+
+
+    // Check the dates of start and end are filled and that there is at least one element selected for source, station, and parameter
+    // to be able to send the request
+    if (lastStartingDate != '' && lastEndingDate != '' && sources.length > 0 && stations.length > 0 && parameters.length > 0) {
+        
+        // Formatting dates for request
+        var startingDate = new Date(lastStartingDate);
+        var startingDateString = startingDate.getFullYear() +"-"+ (startingDate.getMonth()+1) +"-"+ startingDate.getDate() + " " + startingDate.getHours() + ":" + startingDate.getMinutes() + ":" + startingDate.getSeconds();
+        var endingDate = new Date(lastEndingDate);
+        var endingDateString = endingDate.getFullYear() +"-"+ (endingDate.getMonth()+1) +"-"+ endingDate.getDate() + " " + endingDate.getHours() + ":" + endingDate.getMinutes() + ":" + endingDate.getSeconds();
+
+        // Construct the json body of the POST method
+        options = {'sources': sources, 'stations': stations, 'parameters': parameters, 'starting_date': startingDateString, 'ending_date': endingDateString}
+        return requestDataFetch(options);
+
+    }
+
+    // Promise.all([array_promises]).then((data) => {
+    //     // Remove loader icon
+    //     loader.className = '';
+    //     document.getElementById("main").className = '';
+    //     document.getElementById('main').classList.remove("opacity-low");
+    //     // If there is an error in the promises, display an error message in the dashboard, if not draw the chart
+    //     if (data.some((value) => {return (value[0]==undefined)})){
+    //         document.getElementById("error-dashboard-message").hidden = false;
+    //     } else {
+    //         if (displayData){
+    //             drawChart(data[0]);
+    //         }
+    //         else{
+    //             downloadData(data[0]);
+    //         }
+    //     }
+    // }).catch(e => {console.log(e); document.getElementById("error-dashboard-message").hidden = false;});
+}
+
+
+async function displayDataMap(){
+    let jsonData = await requestMapData(lastStartingDateMap, lastEndingDateMap, sourcesMap, stationsMap.map(e => e.slug), parametersMap.map(e => e.slug));
+    drawChart([jsonData], "displayMap");
+}
+
+
 // Manage the menu of the map, that means, that the generation of the content of the offcanvas is done here
 function manageMapMenu(stationSlug=null, stationName=null, parametersData=null){
     const stationsNode = document.getElementById("burger-map-stations");
@@ -402,9 +459,12 @@ function manageMapMenu(stationSlug=null, stationName=null, parametersData=null){
         let btnDisplay = document.createElement("button");
         btnDisplay.setAttribute("type", "button");
         btnDisplay.classList.add("btn", "btn-primary");
-        btnDisplay.setAttribute("onclick", "");
-        btnDisplay.innerHTML = "Afficher";
+        btnDisplay.setAttribute("onclick", "displayDataMap()");
+        btnDisplay.innerHTML = "Visualiser";
         btnDisplay.disabled = !checkIfRequestIsPossible();
+        btnDisplay.id = "displayButton";
+        btnDisplay.dataset.bsToggle = "modal";
+        btnDisplay.dataset.bsTarget = "#displayModal";
 
         displayBtnNode.appendChild(btnDisplay);
 
@@ -550,6 +610,13 @@ searchInput.addEventListener("input", (e) => {
 // Creates request to request all the stations available on the API
 options = {'sources': sourcesMap};
 const stations_results = requestStationsSimplified(options);
+
+var myModal = document.getElementById('displayModal')
+var myInput = document.getElementById('displayButton')
+
+myModal.addEventListener('shown.bs.modal', function () {
+  myInput.focus()
+})
 
 // Display all the stations on the map
 setUpStationsOnMap();
