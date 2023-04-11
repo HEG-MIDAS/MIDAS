@@ -361,10 +361,22 @@ function requestMapData(lastStartingDate, lastEndingDate, sources, stations, par
     // }).catch(e => {console.log(e); document.getElementById("error-dashboard-message").hidden = false;});
 }
 
+function waitForElement(elementId, callBack){
+    window.setTimeout(function(){
+        var element = document.getElementById(elementId);
+        console.log(element.classList.contains('show'))
+        if(element.classList.contains('show')){
+            callBack(elementId, element);
+        }
+        else{
+            waitForElement(elementId, callBack);
+        }
+    }, 500)
+}
 
 async function displayDataMap(){
-    let jsonData = await requestMapData(lastStartingDateMap, lastEndingDateMap, sourcesMap, stationsMap.map(e => e.slug), parametersMap.map(e => e.slug));
-    drawChart([jsonData], "displayMap");
+    // let jsonData = await requestMapData(lastStartingDateMap, lastEndingDateMap, sourcesMap, stationsMap.map(e => e.slug), parametersMap.map(e => e.slug));
+    // drawChart([jsonData], "mainMap");
 }
 
 
@@ -508,6 +520,15 @@ function manageMapMenu(stationSlug=null, stationName=null, parametersData=null){
             btnParameter.setAttribute("onclick", "".concat("manageParameter('", parametersData[i].slug,"','",parametersData[i].name,"')"));
             parametersNode.appendChild(btnParameter);
         }
+
+        let btnDisplay = document.createElement("button");
+        btnDisplay.setAttribute("type", "button");
+        btnDisplay.classList.add("btn", "btn-primary");
+        btnDisplay.setAttribute("onclick", "openMapMenu()");
+        btnDisplay.innerHTML = "Récap";
+        btnDisplay.id = "displayButton";
+
+        displayBtnNode.appendChild(btnDisplay);
     }
     // Open menu
     bsCollapse.show();
@@ -611,11 +632,13 @@ searchInput.addEventListener("input", (e) => {
 options = {'sources': sourcesMap};
 const stations_results = requestStationsSimplified(options);
 
-var myModal = document.getElementById('displayModal')
-var myInput = document.getElementById('displayButton')
+const myModalEl = document.getElementById('displayModal');
+const myInput = document.getElementById('displayButton')
 
-myModal.addEventListener('shown.bs.modal', function () {
-  myInput.focus()
+myModalEl.addEventListener('shown.bs.modal', async event => {
+    myInput.focus()
+    let jsonData = await requestMapData(lastStartingDateMap, lastEndingDateMap, sourcesMap, stationsMap.map(e => e.slug), parametersMap.map(e => e.slug));
+    drawChart([jsonData], "mainMap");
 })
 
 // Display all the stations on the map

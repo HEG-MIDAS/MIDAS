@@ -10,7 +10,7 @@ function resetEchartsPlot() {
     }
 
     // Initialize the echarts instance based on the prepared dom
-    myChart = echarts.init(document.getElementById('main'));
+    myChart = echarts.init(document.getElementById(myChartMainID));
 
     // Display the chart using the configuration items and data just specified.
     myChart.setOption(option, true);
@@ -349,14 +349,16 @@ function generateData(JSONdata, currentIndex, nbOffset){
     return jsonDataParsed
 }
 
-function drawChart(JSONdata) {
+function drawChart(JSONdata, mainID) {
+
+    myChartMainID = mainID
 
     if (myChart != null && myChart != '' && myChart != undefined) {
         myChart.dispose() //Solve the error reported by echarts dom already loaded
     }
 
     // Initialize the echarts instance based on the prepared dom
-    myChart = echarts.init(document.getElementById('main'));
+    myChart = echarts.init(document.getElementById(myChartMainID));
     //myChart.showLoading();
 
     const colors = ['#5470C6', '#EE6666'];

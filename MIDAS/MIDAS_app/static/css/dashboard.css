@@ -332,3 +332,12 @@ hr.dashed {
     margin-top: 3em;
     margin-left: auto;
 }
+
+.modal-dialog {
+    max-width: 70vw !important;
+}
+
+.modal-content {
+    width: 70vw;
+    height: 70vw;
+}

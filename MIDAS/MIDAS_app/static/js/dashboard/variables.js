@@ -27,6 +27,7 @@ var idxResearch = 1;
 
 // echarts display
 var myChart;
+var myChartMainID = '';
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Define default dates of data research

@@ -48,7 +48,7 @@ async function requestData(displayData = true){
             document.getElementById("error-dashboard-message").hidden = false;
         } else {
             if (displayData){
-                drawChart(data[0]);
+                drawChart(data[0], 'mainAdvanced');
             }
             else{
                 downloadData(data[0]);
