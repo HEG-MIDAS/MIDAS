@@ -339,5 +339,8 @@ hr.dashed {
 
 .modal-content {
     width: 70vw;
-    height: 70vw;
+}
+
+.legend {
+    margin-bottom: 50px !important;
 }

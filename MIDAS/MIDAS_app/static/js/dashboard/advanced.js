@@ -13,7 +13,7 @@ async function requestData(displayData = true){
     }
     else {
         loader.classList.add("loader-with-main");
-        document.getElementById('main').classList.add("opacity-low");
+        document.getElementById('mainAdvanced').classList.add("opacity-low");
     }
     
 
@@ -41,8 +41,8 @@ async function requestData(displayData = true){
     Promise.all([array_promises]).then((data) => {
         // Remove loader icon
         loader.className = '';
-        document.getElementById("main").className = '';
-        document.getElementById('main').classList.remove("opacity-low");
+        document.getElementById("mainAdvanced").className = '';
+        document.getElementById('mainAdvanced').classList.remove("opacity-low");
         // If there is an error in the promises, display an error message in the dashboard, if not draw the chart
         if (data.some((value) => {return (value[0]==undefined)})){
             document.getElementById("error-dashboard-message").hidden = false;

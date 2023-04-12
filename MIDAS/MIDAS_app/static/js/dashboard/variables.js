@@ -74,3 +74,54 @@ map.zoomControl.setPosition('topright');
 
 L.DomEvent.disableClickPropagation(document.getElementById("map-menu"));
 L.DomEvent.disableScrollPropagation(document.getElementById("map-menu"));
+
+/*Legend specific*/
+var legend = L.control({ position: "bottomright" });
+
+legend.onAdd = function(map) {
+    let div = L.DomUtil.create("div", "legend");
+    let accordion = document.createElement("div");
+    accordion.classList.add("accordion");
+    accordion.id = "accordionExample";
+
+    let accordionItem = document.createElement("div");
+    accordionItem.classList.add("accordion-item");
+
+    let accordionTitle1 = document.createElement("h2");
+    accordionTitle1.classList.add("accordion-header");
+    accordionTitle1.id = "headingOne";
+
+    let accordionButton1 = document.createElement("button");
+    accordionButton1.classList.add("accordion-button", "collapsed");
+    accordionButton1.setAttribute("type", "button");
+    accordionButton1.dataset.bsToggle = "collapse";
+    accordionButton1.dataset.bsTarget = "#collapseLegend";
+    accordionButton1.setAttribute("aria-expanded", "false");
+    accordionButton1.setAttribute("aria-controls", "collapseLegend");
+
+    accordionButton1.innerHTML = "Légende";
+
+    let legendContent = document.createElement("div");
+    legendContent.classList.add("accordion-collapse", "collapse");
+    legendContent.id = "collapseLegend";
+    legendContent.setAttribute("aria-labelledby", "headingOne");
+    legendContent.dataset.bsParent = "accordionExample";
+
+    let legendContentBody = document.createElement("div");
+    legendContentBody.classList.add("accordion-body");
+    legendContentBody.innerHTML = "TEST TEST TEST";
+
+    legendContent.appendChild(legendContentBody);
+
+    accordionTitle1.appendChild(accordionButton1);
+    accordionItem.appendChild(accordionTitle1);
+    accordionItem.appendChild(legendContent);
+    accordion.appendChild(accordionItem);
+    div.appendChild(accordion);
+
+    
+  
+    return div;
+  };
+  
+  legend.addTo(map);
