@@ -276,7 +276,7 @@ function addRuleOfEChartsParameters(echartSeriesNames){
 }
 
 
-function generateData(JSONdata, currentIndex, nbOffset){
+function generateData(JSONdata, currentIndex, nbOffset, hasFilters){
     var jsonSeriesData = [];
     var jsonLegendData = [];
     var jsonxAxisData = [];
@@ -293,7 +293,10 @@ function generateData(JSONdata, currentIndex, nbOffset){
                             arrayTemp = []
                             JSONdata[source][station][parameter].forEach(element => arrayTemp.push(element[0]))
                             //console.log(arrayData);
-                            nameOfParam = String(parameter)+" ("+String(station)+" - "+String(source)+") Filtre " + (arrayCurrentIdx.indexOf(arrayCurrentIdx[currentIndex])+1).toString();
+                            nameOfParam = String(parameter)+" ("+String(station)+" - "+String(source)+")";
+                            if (hasFilters){
+                                nameOfParam.concat(" Filtre " + (arrayCurrentIdx.indexOf(arrayCurrentIdx[currentIndex])+1).toString());
+                            }
                             jsonSeriesData.push({
                                 "name": nameOfParam,
                                 "xAxisIndex": currentIndex,
@@ -302,7 +305,9 @@ function generateData(JSONdata, currentIndex, nbOffset){
                                 "type": "line",
                                 "markLine": {
                                     data: []
-                                }
+                                },
+                                "zlevel": nbOffset.offset+currentIndex+cnt,
+                                "z": nbOffset.offset+currentIndex+cnt
                             });
                             if (!jsonxAxisData.length > 0) {
                                 jsonxAxisData.push({
@@ -366,7 +371,7 @@ function drawChart(JSONdata, mainID) {
     JSONgenerateData = [];
     nbOffset = {"offset": 0}
     JSONdata.forEach(function(element, currentIndex) {
-        JSONgenerateData.push(generateData(element, currentIndex, nbOffset));
+        JSONgenerateData.push(generateData(element, currentIndex, nbOffset, mainID=="mainAdvanced"));
     });
     var legendData = []
     JSONgenerateData.forEach(element => element['legend'].forEach(e => legendData.push(e)));
