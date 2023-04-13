@@ -215,7 +215,7 @@ hr.dashed {
     background-color: white;
 }
 
-#form1 {
+#searchBar {
     border-color: white ! important;
 }
 
@@ -339,8 +339,16 @@ hr.dashed {
 
 .modal-content {
     width: 70vw;
+    margin: auto;
 }
 
 .legend {
     margin-bottom: 50px !important;
+}
+
+#search-bar .card {
+    position: absolute !important;
+    margin-top: 9rem;
+    border-radius: 0.25rem;
+    width: calc(100% + 2px);
 }

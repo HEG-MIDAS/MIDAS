@@ -609,18 +609,42 @@ async function setUpStationsOnMap(){
 }
 
 
-const searchInput = document.querySelector('#form1');
+const levenshteinDistance = (s, t) => {
+    if (!s.length) return t.length;
+    if (!t.length) return s.length;
+    const arr = [];
+    for (let i = 0; i <= t.length; i++) {
+        arr[i] = [i];
+        for (let j = 1; j <= s.length; j++) {
+            arr[i][j] =
+            i === 0
+                ? j
+                : Math.min(
+                    arr[i - 1][j] + 1,
+                    arr[i][j - 1] + 1,
+                    arr[i - 1][j - 1] + (s[j - 1] === t[i - 1] ? 0 : 1)
+                );
+        }
+    }
+    return arr[t.length][s.length];
+};
+
+
+const searchInput = document.querySelector('#searchBar');
 searchInput.addEventListener("input", (e) => {
 
     let value = e.target.value
-    if (value.length > 2){
-        console.log(value);
+    if (value.length > 2 && value.trim().length > 2){
+        value = value.trim().toLowerCase();
+        let resultsFilter = stationsMap4Search.filter(station => {
+            return station.name.toLowerCase().includes(value) || station.slug.toLowerCase().includes(value) || levenshteinDistance(station.name.toLowerCase(), value) <= 2 || levenshteinDistance(station.slug.toLowerCase(), value) <= 2
+        })
     }
     else {
 
-        searchInput.dataset.bsToggle = "tooltip";
-        searchInput.dataset.placement = "bottom";
-        searchInput.setAttribute("title", "Hello")
+        // searchInput.dataset.bsToggle = "tooltip";
+        // searchInput.dataset.placement = "bottom";
+        // searchInput.setAttribute("title", "Hello")
     }
 })
 
@@ -643,8 +667,3 @@ myModalEl.addEventListener('shown.bs.modal', async event => {
 
 // Display all the stations on the map
 setUpStationsOnMap();
-
-
-
-
-
