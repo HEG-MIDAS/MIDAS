@@ -163,16 +163,14 @@
     <div id="map">
         <div id="map-menu">
             <div id="search-bar" class="input-group rounded">
-                <input type="search" id="searchBar" class="form-control" placeholder="Recherche"/>
-                <div class="card">
-                    <ul class="list-group list-group-flush">
+                <input type="search" id="searchBar" class="form-control" placeholder="Recherche" autocomplete="off" />
+                <div class="card" hidden>
+                    <ul id="cardResultsList" class="list-group list-group-flush">
                         <li class="list-group-item">An item</li>
-                        <li class="list-group-item">A second item</li>
-                        <li class="list-group-item">A third item</li>
                     </ul>
                 </div>
-                <button type="button" class="btn btn-light search-btn search-btn-glass">
-                    <i class="fa-solid fa-magnifying-glass"></i>
+                <button type="button" id="magnifyingButtonId" class="btn btn-light search-btn search-btn-glass" onclick="keyIputSearch()">
+                    <i id="magnifyingId" class="fa-solid fa-magnifying-glass"></i>
                 </button>
                 <span class="divider"></span>
                 <button type="button" class="btn btn-light search-btn search-btn-chart" onclick="openMapMenu()">

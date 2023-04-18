@@ -213,7 +213,7 @@ function manageBadges(){
         let badgeStation = document.createElement("span");
         badgeStation.innerHTML = stationsMap[i].name;
         badgeStation.classList.add('badge', 'bg-primary');
-        badgeStation.setAttribute("onclick", "".concat("openSelectionMenuBadge('", stationsMap[i].slug,"','", stationsMap[i].name,"')"));
+        badgeStation.setAttribute("onclick", "".concat("openSelectionMenuBadge(`", stationsMap[i].slug,"`,`", stationsMap[i].name,"`)"));
         badgesElement.appendChild(badgeStation);
     }
 
@@ -498,7 +498,7 @@ function manageMapMenu(stationSlug=null, stationName=null, parametersData=null){
         if (stationsMap.some(e => e.slug === btnStation.id)){
             btnAddStation.classList.add("anim-plus-2-delete");
         }
-        btnAddStation.setAttribute("onclick", "".concat("manageStation('",stationSlug,"','",stationName,"')"));
+        btnAddStation.setAttribute("onclick", "".concat("manageStation(`",stationSlug,"`,`",stationName,"`)"));
 
         btnStation.appendChild(btnAddStation);
         stationsNode.appendChild(btnStation);
@@ -599,7 +599,7 @@ async function setUpStationsOnMap(){
             }
             stationsMap4Search.push({
                 name: stations_data[i]['name'],
-                slug: stations_data[i]['slug'].replace("_", " ")
+                slug: stations_data[i]['slug']
             })
         }
     }
@@ -630,23 +630,96 @@ const levenshteinDistance = (s, t) => {
 };
 
 
-const searchInput = document.querySelector('#searchBar');
-searchInput.addEventListener("input", (e) => {
+function searchBarStations(valueOfSearchBar){
+    cardResultsList = document.getElementById("cardResultsList");
+    cardResultsList.innerHTML = "";
 
-    let value = e.target.value
-    if (value.length > 2 && value.trim().length > 2){
-        value = value.trim().toLowerCase();
+    if (valueOfSearchBar.length >= 3 && valueOfSearchBar.trim().length >= 3){
+        valueOfSearchBar = valueOfSearchBar.trim().toLowerCase();
         let resultsFilter = stationsMap4Search.filter(station => {
-            return station.name.toLowerCase().includes(value) || station.slug.toLowerCase().includes(value) || levenshteinDistance(station.name.toLowerCase(), value) <= 2 || levenshteinDistance(station.slug.toLowerCase(), value) <= 2
-        })
+            return station.name.toLowerCase().includes(valueOfSearchBar) || station.slug.toLowerCase().includes(valueOfSearchBar) || levenshteinDistance(station.name.toLowerCase(), valueOfSearchBar) <= 2 || levenshteinDistance(station.slug.toLowerCase(), valueOfSearchBar) <= 2;
+        });
+
+        if (resultsFilter.length > 0){
+
+            resultsFilter.forEach(result => {
+                listElement = document.createElement("li");
+                listElement.classList.add("list-group-item", "listElementSelection");
+                listElement.innerHTML = result.name.concat(" - ", result.slug);
+                listElement.setAttribute("onclick", "".concat("openSelectionMenuBadge(`", result.slug,"`,`", result.name,"`)"))
+                cardResultsList.appendChild(listElement);
+            });
+        }
     }
     else {
-
-        // searchInput.dataset.bsToggle = "tooltip";
-        // searchInput.dataset.placement = "bottom";
-        // searchInput.setAttribute("title", "Hello")
+        listElement = document.createElement("li");
+        listElement.classList.add("list-group-item", "clueListElementSelection");
+        listElement.innerHTML = "Entrer au moins 3 caractères";
+        cardResultsList.appendChild(listElement);
     }
-})
+}
+
+
+function keyIputSearch(){
+    let cardResultsList = document.getElementById("cardResultsList");
+    let searchBar = document.getElementById("searchBar");
+    let valOfSearchBar = searchBar.value
+
+    if (valOfSearchBar.length >= 3 && valOfSearchBar.trim().length >= 3) {
+        valOfSearchBar = valOfSearchBar.trim().toLowerCase();
+        let resultsFilter = stationsMap4Search.filter(station => {
+            return station.name.toLowerCase().includes(valOfSearchBar) || station.slug.toLowerCase().includes(valOfSearchBar) || levenshteinDistance(station.name.toLowerCase(), valOfSearchBar) <= 2 || levenshteinDistance(station.slug.toLowerCase(), valOfSearchBar) <= 2;
+        });
+        openSelectionMenuBadge(resultsFilter[0].slug, resultsFilter[0].name);
+    }
+    else {
+        searchBar.focus();
+    }
+}
+
+
+const searchInput = document.querySelector('#searchBar');
+searchInput.addEventListener("input", (e) => {
+    // Clean the content of the results
+    searchBarStations(e.target.value);
+});
+
+
+document.addEventListener('click', function(event){
+    let searchClick = document.getElementById("searchBar").contains(event.target);
+    let searchBar = document.getElementById("searchBar");
+    let valOfSearchBar = searchBar.value
+    let isMagnifyingGlass = document.getElementById("magnifyingButtonId").contains(event.target) ||  document.getElementById("magnifyingId").contains(event.target);
+
+    let cardResultsList = document.getElementById("cardResultsList");
+    if (searchClick || isMagnifyingGlass) {
+        valOfSearchBar = document.getElementById("searchBar").value
+        searchBarStations(valOfSearchBar)
+
+        if (isMagnifyingGlass && valOfSearchBar.trim().length >= 3){
+            cardResultsList.parentNode.hidden = true;
+        }
+        else {
+            cardResultsList.parentNode.hidden = false;
+        }
+    }
+    else {
+        cardResultsList.parentNode.hidden = true;
+    }
+});
+
+
+searchInput.addEventListener('keydown', function(event){
+    if (event.key === "Enter") {
+
+        let searchBar = document.getElementById("searchBar");
+        let valOfSearchBar = searchBar.value
+        if (valOfSearchBar.length >= 3) {
+            keyIputSearch();
+            cardResultsList.parentNode.hidden = true;
+        }
+    }
+});
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Start of code

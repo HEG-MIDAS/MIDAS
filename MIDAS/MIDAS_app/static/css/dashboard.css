@@ -348,7 +348,17 @@ hr.dashed {
 
 #search-bar .card {
     position: absolute !important;
-    margin-top: 9rem;
+    top: 2.4rem;
     border-radius: 0.25rem;
     width: calc(100% + 2px);
+}
+
+.listElementSelection:hover {
+    background-color: #0B5ED7;
+    color: #FFFFFF;
+    cursor: pointer;
+}
+
+.clueListElementSelection {
+    cursor: default;
 }
