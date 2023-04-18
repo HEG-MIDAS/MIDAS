@@ -79,39 +79,43 @@ L.DomEvent.disableScrollPropagation(document.getElementById("map-menu"));
 var legend = L.control({ position: "bottomright" });
 
 legend.onAdd = function(map) {
-    let div = L.DomUtil.create("div", "legend");
-    let accordion = document.createElement("div");
-    accordion.classList.add("accordion");
-    accordion.id = "accordionExample";
+    let div = L.DomUtil.create("div", "Légende");
+    let dropup = document.createElement("div");
+    dropup.classList.add("btn-group");
 
-    let accordionItem = document.createElement("div");
-    accordionItem.classList.add("accordion-item");
+    let dropupButton = document.createElement("button");
+    dropupButton.type = "button";
+    dropupButton.classList.add("btn", "btn-danger", "dropdown-toggle");
+    dropupButton.dataset.bsToggle="dropdown";
+    dropupButton.setAttribute("aria-expanded", "false");
 
-    let accordionTitle1 = document.createElement("h2");
-    accordionTitle1.classList.add("accordion-header");
-    accordionTitle1.id = "headingOne";
+    
 
-    let accordionButton1 = document.createElement("button");
-    accordionButton1.classList.add("accordion-button", "collapsed");
-    accordionButton1.setAttribute("type", "button");
-    accordionButton1.dataset.bsToggle = "collapse";
-    accordionButton1.dataset.bsTarget = "#collapseLegend";
-    accordionButton1.setAttribute("aria-expanded", "false");
-    accordionButton1.setAttribute("aria-controls", "collapseLegend");
+    // let accordionTitle1 = document.createElement("h2");
+    // accordionTitle1.classList.add("accordion-header");
+    // accordionTitle1.id = "headingOne";
 
-    accordionButton1.innerHTML = "Légende";
+    // let accordionButton1 = document.createElement("button");
+    // accordionButton1.classList.add("accordion-button", "collapsed");
+    // accordionButton1.setAttribute("type", "button");
+    // accordionButton1.dataset.bsToggle = "collapse";
+    // accordionButton1.dataset.bsTarget = "#collapseLegend";
+    // accordionButton1.setAttribute("aria-expanded", "false");
+    // accordionButton1.setAttribute("aria-controls", "collapseLegend");
 
-    let legendContent = document.createElement("div");
-    legendContent.classList.add("accordion-collapse", "collapse");
-    legendContent.id = "collapseLegend";
-    legendContent.setAttribute("aria-labelledby", "headingOne");
-    legendContent.dataset.bsParent = "accordionExample";
+    // accordionButton1.innerHTML = "Légende";
 
-    let legendContentBody = document.createElement("div");
-    legendContentBody.classList.add("accordion-body");
-    legendContentBody.innerHTML = "TEST TEST TEST";
+    // let legendContent = document.createElement("div");
+    // legendContent.classList.add("accordion-collapse", "collapse");
+    // legendContent.id = "collapseLegend";
+    // legendContent.setAttribute("aria-labelledby", "headingOne");
+    // legendContent.dataset.bsParent = "accordionExample";
 
-    legendContent.appendChild(legendContentBody);
+    // let legendContentBody = document.createElement("div");
+    // legendContentBody.classList.add("accordion-body");
+    // legendContentBody.innerHTML = "TEST TEST TEST";
+
+    // legendContent.appendChild(legendContentBody);
 
     accordionTitle1.appendChild(accordionButton1);
     accordionItem.appendChild(accordionTitle1);
