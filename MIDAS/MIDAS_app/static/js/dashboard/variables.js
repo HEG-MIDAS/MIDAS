@@ -99,7 +99,7 @@ legend.onAdd = function(map) {
 
     let elementListLegend = document.createElement("li");
     elementListLegend.classList.add("dropdown-item-text");
-    elementListLegend.innerHTML = "HELLO";
+    elementListLegend.innerHTML = "";
 
     listLegend.appendChild(elementListLegend);
     divLegend.appendChild(dropupButton);

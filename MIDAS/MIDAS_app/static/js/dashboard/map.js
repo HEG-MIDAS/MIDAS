@@ -21,6 +21,10 @@ const bsCollapse = new bootstrap.Collapse('#collapseWidthExample', {
     toggle: false
 })
 
+const dropupBootstrap = new bootstrap.Dropdown('#dropdownMenuButtonLegend', {
+    toggle: false
+})
+
 //////////////////////////////////////////////////////////////////////////////////////
 // Manage the map
 //////////////////////////////////////////////////////////////////////////////////////
@@ -262,6 +266,7 @@ async function manageParametersOnStationDeletion(){
         }
         try {
             const parametersData = await requestParametersSimplified(options);
+            console.log(parametersData)
             var array_params_stations = []
             parametersData.forEach(e => {
                 array_params_stations.push(e.slug);
@@ -380,8 +385,49 @@ async function displayDataMap(){
 }
 
 
-function manageLegendText(){
+function manageLegendText(isOpen=false, parametersData=null){
+    const divLegend = document.getElementById("divLegend");
+    if (isOpen){
+        let ulDivLegend = divLegend.getElementsByTagName("ul")[0];
+        ulDivLegend.innerHTML = ""
+        parametersData.forEach((e, idx, array) => {
+            let elementListLegendHeader = document.createElement("li");
+            let elementListLegendHeaderTitle = document.createElement("h6");
+            elementListLegendHeaderTitle.classList.add("dropdown-header");
+            elementListLegendHeaderTitle.innerHTML = e.name;
 
+            elementListLegendHeader.appendChild(elementListLegendHeaderTitle);
+            ulDivLegend.appendChild(elementListLegendHeader)
+
+            let elementListLegendText = document.createElement("li");
+            let elementListLegendTextInfo = document.createElement("p");
+            elementListLegendTextInfo.classList.add("dropdown-item-text");
+            if (e.infos != ""){
+                elementListLegendTextInfo.innerHTML = e.infos;
+            }
+            else {
+                elementListLegendTextInfo.innerHTML = "Aucune info disponible...";
+            }
+
+            elementListLegendText.appendChild(elementListLegendTextInfo);
+            ulDivLegend.appendChild(elementListLegendText)
+
+
+            if( idx < array.length-1){   
+                let elementListLegendli = document.createElement("li");
+                let elementListLegendlihr = document.createElement("hr");
+                elementListLegendlihr.classList.add("dropdown-divider");
+                
+                elementListLegendli.appendChild(elementListLegendlihr);
+                ulDivLegend.appendChild(elementListLegendli)
+            }
+        });
+        divLegend.hidden = false;
+        dropupBootstrap.show();
+    }
+    else {
+        divLegend.hidden = true;
+    }
 }
 
 
@@ -485,6 +531,8 @@ function manageMapMenu(stationSlug=null, stationName=null, parametersData=null){
 
         displayBtnNode.appendChild(btnDisplay);
 
+        manageLegendText()
+
     }
     else{
         // Creates a button like containing the name of the current station
@@ -534,6 +582,8 @@ function manageMapMenu(stationSlug=null, stationName=null, parametersData=null){
         btnDisplay.id = "displayButton";
 
         displayBtnNode.appendChild(btnDisplay);
+
+        manageLegendText(true, parametersData)
     }
     // Open menu
     bsCollapse.show();
