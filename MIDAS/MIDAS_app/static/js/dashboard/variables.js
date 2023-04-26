@@ -79,53 +79,36 @@ L.DomEvent.disableScrollPropagation(document.getElementById("map-menu"));
 var legend = L.control({ position: "bottomright" });
 
 legend.onAdd = function(map) {
-    let div = L.DomUtil.create("div", "Légende");
-    let dropup = document.createElement("div");
-    dropup.classList.add("btn-group");
+    let divLegend = L.DomUtil.create("div", "Légende");
+    divLegend.classList.add("btn-group", "dropup", "legend");
+    divLegend.id = "divLegend";
+    divLegend.hidden = true;
 
     let dropupButton = document.createElement("button");
     dropupButton.type = "button";
     dropupButton.classList.add("btn", "btn-danger", "dropdown-toggle");
     dropupButton.dataset.bsToggle="dropdown";
+    dropupButton.dataset.bsAutoClose = "outside";
     dropupButton.setAttribute("aria-expanded", "false");
+    dropupButton.innerHTML = "Légende";
+    dropupButton.id = "dropdownMenuButtonLegend";
 
-    
+    let listLegend = document.createElement("ul");
+    listLegend.classList.add("dropdown-menu");
+    listLegend.setAttribute("aria-labelledby", "dropdownMenuButtonLegend");
 
-    // let accordionTitle1 = document.createElement("h2");
-    // accordionTitle1.classList.add("accordion-header");
-    // accordionTitle1.id = "headingOne";
+    let elementListLegend = document.createElement("li");
+    elementListLegend.classList.add("dropdown-item-text");
+    elementListLegend.innerHTML = "HELLO";
 
-    // let accordionButton1 = document.createElement("button");
-    // accordionButton1.classList.add("accordion-button", "collapsed");
-    // accordionButton1.setAttribute("type", "button");
-    // accordionButton1.dataset.bsToggle = "collapse";
-    // accordionButton1.dataset.bsTarget = "#collapseLegend";
-    // accordionButton1.setAttribute("aria-expanded", "false");
-    // accordionButton1.setAttribute("aria-controls", "collapseLegend");
+    listLegend.appendChild(elementListLegend);
+    divLegend.appendChild(dropupButton);
+    divLegend.appendChild(listLegend);
 
-    // accordionButton1.innerHTML = "Légende";
-
-    // let legendContent = document.createElement("div");
-    // legendContent.classList.add("accordion-collapse", "collapse");
-    // legendContent.id = "collapseLegend";
-    // legendContent.setAttribute("aria-labelledby", "headingOne");
-    // legendContent.dataset.bsParent = "accordionExample";
-
-    // let legendContentBody = document.createElement("div");
-    // legendContentBody.classList.add("accordion-body");
-    // legendContentBody.innerHTML = "TEST TEST TEST";
-
-    // legendContent.appendChild(legendContentBody);
-
-    accordionTitle1.appendChild(accordionButton1);
-    accordionItem.appendChild(accordionTitle1);
-    accordionItem.appendChild(legendContent);
-    accordion.appendChild(accordionItem);
-    div.appendChild(accordion);
-
-    
+    return divLegend;
+};
   
-    return div;
-  };
-  
-  legend.addTo(map);
+legend.addTo(map);
+
+L.DomEvent.disableClickPropagation(document.getElementById("divLegend"));
+L.DomEvent.disableScrollPropagation(document.getElementById("divLegend"));

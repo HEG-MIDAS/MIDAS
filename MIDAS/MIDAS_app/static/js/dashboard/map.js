@@ -380,6 +380,11 @@ async function displayDataMap(){
 }
 
 
+function manageLegendText(){
+
+}
+
+
 // Manage the menu of the map, that means, that the generation of the content of the offcanvas is done here
 function manageMapMenu(stationSlug=null, stationName=null, parametersData=null){
     const stationsNode = document.getElementById("burger-map-stations");
@@ -576,6 +581,8 @@ async function openSelectionMenuBadge(stationSlug, stationName) {
     }
     try {
         const parametersData = await requestParametersSimplified(options);
+
+        console.log(parametersData)
         
         manageMarkerColor(stationSlug);
         manageMapMenu(stationSlug, stationName, parametersData)
