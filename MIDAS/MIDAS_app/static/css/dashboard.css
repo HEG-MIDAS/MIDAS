@@ -199,6 +199,11 @@ hr.dashed {
     border-radius: 10%;
 }
 
+#advanced-map-selection button {
+    padding-left: 1.42rem !important;
+    padding-right: 1.42rem !important;
+}
+
 #map { 
     height: calc(100vh - 3.5rem);
 }
@@ -343,7 +348,14 @@ hr.dashed {
 }
 
 .legend {
-    margin-bottom: 4rem!important;
+    margin-bottom: 4rem !important;
+    margin-right: 2rem !important;
+}
+
+.dropdown-menu {
+    max-height: 20rem;
+    width: 20rem;
+    overflow-y: scroll;
 }
 
 #search-bar .card {
