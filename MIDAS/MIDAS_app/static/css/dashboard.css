@@ -191,7 +191,7 @@ hr.dashed {
 }
 
 #advanced-map-selection {
-    position: absolute !important;
+    position: fixed !important;
     bottom: 2rem;
     right: 2rem;
     z-index: var(--z-index-over-map);
@@ -373,4 +373,28 @@ hr.dashed {
 
 .clueListElementSelection {
     cursor: default;
+}
+
+.echartsParametersCollapse {
+    font-size: 1rem;
+    line-height: 1.2;
+    font-weight: bold;
+}
+
+#EchartsViewParameters {
+    margin-bottom: 1rem;
+}
+
+#collapseEchartsParameters {
+    margin-top: 1rem;
+}
+
+.echartsParametersCollapseOn i {
+    transform: rotate(-180deg);
+    transition: .5s;
+}
+
+.echartsParametersCollapseOff i {
+    transform: rotate(0deg);
+    transition: .5s;
 }

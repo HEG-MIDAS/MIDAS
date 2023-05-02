@@ -69,8 +69,24 @@ function changeXtremeValuesDisplayYAxis(value, filterWorkingOn, changeMax=true){
 }
 
 
-function addRuleOfEChartsParameters(echartSeriesNames){
-    const baseDiv = document.getElementById("EchartsParameters");
+function animateChevron(){
+    btn = document.getElementById("echartsParametersCollapse");
+    if (btn.getAttribute('aria-expanded') == "true") {
+        btn.classList.remove("echartsParametersCollapseOff")
+        btn.classList.add("echartsParametersCollapseOn")
+    }
+    else {
+        btn.classList.remove("echartsParametersCollapseOn")
+        btn.classList.add("echartsParametersCollapseOff")
+    }
+}
+
+
+function addRuleOfEChartsParameters(idChart, echartSeriesNames){
+    let baseDiv = document.getElementById("EchartsParameters");
+    if (idChart == "mainMap"){
+        baseDiv = document.getElementById("EchartsParametersMap");
+    }
     
     while (baseDiv.firstChild) {
         baseDiv.removeChild(baseDiv.firstChild);
@@ -80,9 +96,24 @@ function addRuleOfEChartsParameters(echartSeriesNames){
     div.classList.add("container");
     div.id = "EchartsViewParameters";
 
-    const title = document.createElement("h4");
-    title.innerHTML = "Paramètres d'affichage";
+    const title = document.createElement("div");
+    title.innerHTML = "Paramètres d'affichage <i class='fa-solid fa-chevron-down'></i>";
+
+    // title.href = "#collapseEchartsParameters";
+    title.classList.add("echartsParametersCollapse", "echartsParametersCollapseOff");
+    title.id = "echartsParametersCollapse";
+    title.dataset.bsToggle="collapse";
+    title.dataset.bsTarget = "#collapseEchartsParameters"
+    title.type="button";
+    title.setAttribute("aria-expanded", "false");
+    title.setAttribute("aria-controls", "collapseEchartsParameters");
+    title.setAttribute("onclick", "animateChevron()");
+
     div.appendChild(title);
+
+    const divCollapse = document.createElement("div");
+    divCollapse.classList.add("collapse");
+    divCollapse.id = "collapseEchartsParameters";
 
     // Creates some buttons that allow to show statistical values on the echarts graph
 
@@ -161,12 +192,12 @@ function addRuleOfEChartsParameters(echartSeriesNames){
 
     divStats.appendChild(minDiv);
     
-    div.appendChild(divStats);
+    divCollapse.appendChild(divStats);
 
     const separationStatsFilters = document.createElement("hr");
     separationStatsFilters.classList.add("solid");
 
-    div.appendChild(separationStatsFilters);
+    divCollapse.appendChild(separationStatsFilters);
 
     // Create a select for each element displayed that allow to change the line to bar or bar to line
 
@@ -270,7 +301,8 @@ function addRuleOfEChartsParameters(echartSeriesNames){
         }
     }
 
-    div.appendChild(divPlot);
+    divCollapse.appendChild(divPlot);
+    div.appendChild(divCollapse);
 
     baseDiv.appendChild(div);
 }
@@ -430,5 +462,5 @@ function drawChart(JSONdata, mainID) {
     echartSeriesNames = [];
     option.series.forEach(element => echartSeriesNames.push(element.name));
 
-    addRuleOfEChartsParameters(echartSeriesNames);
+    addRuleOfEChartsParameters(mainID, echartSeriesNames);
 }
