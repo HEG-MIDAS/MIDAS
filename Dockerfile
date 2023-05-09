@@ -29,6 +29,7 @@ COPY static /app/static
 COPY media /app/media
 ## DB Update Default value
 COPY sources.csv /app/sources.csv
+COPY stations_coordinates.csv /app/stations_coordinates.csv
 ## Folder zipper
 COPY sources.py /app/sources.py
 ## Folder zipper
