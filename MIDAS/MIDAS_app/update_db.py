@@ -63,7 +63,7 @@ def insert_parameters():
                             with open(os.path.join(station_path, file)) as f:
                                 header = f.readline()
                             for parameter in header.split(','):
-                                param = parameter.replace('*', '').replace('\n', '')
+                                param = parameter.replace('*', '').replace('\n', '').replace("’", "'")
                                 if param not in ['gmt', 'localtime', 'Date [GMT+1]']:
                                     if len(Parameter.objects.filter(name=param)) == 0:
                                         p = Parameter(name=param)
