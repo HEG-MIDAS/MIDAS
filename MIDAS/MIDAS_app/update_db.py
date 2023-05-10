@@ -36,6 +36,7 @@ def insert_stations():
             for station in os.listdir(working_path):
                 if os.path.isdir(os.path.join(working_path, station)):
                     station = station.replace(':', ' ')
+                    print(station)
                     if len(Station.objects.filter(name=station)) == 0:
                         s = Station(name=station, source=Source.objects.get(name=dir))
                         s.save()
