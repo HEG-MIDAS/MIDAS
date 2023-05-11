@@ -414,6 +414,36 @@ function drawChart(JSONdata, mainID) {
     var yaxisData = []
     JSONgenerateData.forEach(element =>element['yaxis'].forEach(e => yaxisData.push(e)));
 
+    for (let i = 0; i < JSONdata.length; i++) {
+        for (var key in JSONdata[i]) {
+            if (JSONdata[i].hasOwnProperty(key)) {
+                for (var station in JSONdata[i][key]) {
+                    if (JSONdata[i][key].hasOwnProperty(station)) {
+                        if (Object.keys(JSONdata[i][key][station]).length === 0) {
+                            
+                            let divAlert = document.createElement("div");
+                            divAlert.classList.add("alert", "alert-warning", "alert-dismissible", "fade", "show");
+                            divAlert.role = "alert";
+
+                            let textAlert = document.createElement("p");
+                            textAlert.innerHTML = "Aucune donnée trouvée pour la station : <strong>".concat(station, "</strong>")
+
+                            let buttonAlert = document.createElement("button");
+                            buttonAlert.classList.add("btn-close");
+                            buttonAlert.type = "button";
+                            buttonAlert.dataset.bsDismiss = "alert";
+                            buttonAlert.setAttribute("aria-label", "Close");
+
+                            divAlert.appendChild(textAlert);
+                            divAlert.appendChild(buttonAlert);
+                            document.getElementsByTagName("body")[0].preprend(divAlert);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     // Specify the configuration items and data for the chart
     option = {
         tooltip: {
