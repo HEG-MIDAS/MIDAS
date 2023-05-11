@@ -414,6 +414,11 @@ function drawChart(JSONdata, mainID) {
     var yaxisData = []
     JSONgenerateData.forEach(element =>element['yaxis'].forEach(e => yaxisData.push(e)));
 
+    checkDivAlert =  document.getElementById("divAlert");
+    if (checkDivAlert!=null) {
+        checkDivAlert.remove();
+    }
+
     for (let i = 0; i < JSONdata.length; i++) {
         for (var key in JSONdata[i]) {
             if (JSONdata[i].hasOwnProperty(key)) {
@@ -423,6 +428,7 @@ function drawChart(JSONdata, mainID) {
                             
                             let divAlert = document.createElement("div");
                             divAlert.classList.add("alert", "alert-warning", "alert-dismissible", "fade", "show");
+                            divAlert.id = "divAlert";
                             divAlert.role = "alert";
 
                             let textAlert = document.createElement("p");
@@ -436,7 +442,7 @@ function drawChart(JSONdata, mainID) {
 
                             divAlert.appendChild(textAlert);
                             divAlert.appendChild(buttonAlert);
-                            document.getElementsByTagName("body")[0].preprend(divAlert);
+                            document.getElementsByTagName("body")[0].appendChild(divAlert);
                         }
                     }
                 }

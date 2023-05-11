@@ -398,3 +398,11 @@ hr.dashed {
     transform: rotate(0deg);
     transition: .5s;
 }
+
+#divAlert {
+    z-index: 9999;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    padding-bottom: 0;
+}
