@@ -399,9 +399,9 @@ hr.dashed {
     transition: .5s;
 }
 
-#divAlert {
+.divAlert {
     z-index: 9999;
-    position: absolute;
+    position: fixed;
     top: 0;
     width: 100%;
     padding-bottom: 0;

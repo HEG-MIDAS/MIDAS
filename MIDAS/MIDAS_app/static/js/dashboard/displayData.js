@@ -425,10 +425,10 @@ function drawChart(JSONdata, mainID) {
                 for (var station in JSONdata[i][key]) {
                     if (JSONdata[i][key].hasOwnProperty(station)) {
                         if (Object.keys(JSONdata[i][key][station]).length === 0) {
-                            
+                            console.log(JSONdata[i][key])
                             let divAlert = document.createElement("div");
-                            divAlert.classList.add("alert", "alert-warning", "alert-dismissible", "fade", "show");
-                            divAlert.id = "divAlert";
+                            divAlert.classList.add("alert", "alert-warning", "alert-dismissible", "fade", "show", "divAlert");
+                            divAlert.id = "divAlert".concat(station);
                             divAlert.role = "alert";
 
                             let textAlert = document.createElement("p");
@@ -443,6 +443,12 @@ function drawChart(JSONdata, mainID) {
                             divAlert.appendChild(textAlert);
                             divAlert.appendChild(buttonAlert);
                             document.getElementsByTagName("body")[0].appendChild(divAlert);
+
+                            setTimeout(function(){
+                                $('#divAlert'.concat(station)).fadeOut(500, function(){
+                                    $('#divAlert'.concat(station)).remove();
+                                });
+                              }, 5000);
                         }
                     }
                 }
