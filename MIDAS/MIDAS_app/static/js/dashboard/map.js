@@ -318,17 +318,17 @@ function manageStation(stationSlug, stationName){
 
 // Handles format the json body to send via the POST method to get the data requested
 function requestMapData(lastStartingDate, lastEndingDate, sources, stations, parameters){
-    // // Hide the error message if it's not already hidden
-    // document.getElementById("error-dashboard-message").hidden = true;
-    // // Create loader icon
-    // loader = document.getElementById('loader');
-    // if (myChart == null){
-    //     loader.classList.add("loader");
-    // }
-    // else {
-    //     loader.classList.add("loader-with-main");
-    //     document.getElementById('main').classList.add("opacity-low");
-    // }
+    // Hide the error message if it's not already hidden
+    document.getElementById("error-dashboard-message").hidden = true;
+    // Create loader icon
+    loader = document.getElementById('loaderMap');
+    if (myChart == null){
+        loader.classList.add("loader");
+    }
+    else {
+        loader.classList.add("loader-with-main");
+        document.getElementById('mainMap').classList.add("opacity-low");
+    }
 
 
     // Check the dates of start and end are filled and that there is at least one element selected for source, station, and parameter
@@ -793,6 +793,10 @@ myModalEl.addEventListener('shown.bs.modal', async event => {
     myInput.focus()
     let jsonData = await requestMapData(lastStartingDateMap, lastEndingDateMap, sourcesMap, stationsMap.map(e => e.slug), parametersMap.map(e => e.slug));
     drawChart([jsonData], "mainMap");
+    console.log("HERE")
+    // Remove loader icon
+    loader.className = '';
+    document.getElementById('mainMap').classList.remove("opacity-low");
 })
 
 // Display all the stations on the map
