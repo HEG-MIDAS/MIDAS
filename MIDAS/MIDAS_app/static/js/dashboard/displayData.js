@@ -1,3 +1,16 @@
+function deleteSmoothlyAlertDiv(){
+    console.log($('.divAlert:last'))
+    $('.divAlert:last').fadeOut(500, function(){
+        $('.divAlert:last').remove();
+    });
+    if ($('.divAlert:last').length != 0){
+        setTimeout(deleteSmoothlyAlertDiv, 2000);
+    }
+}
+
+
+
+
 //////////////////////////////////////////////////////////////////////////////////////
 // Echarts
 //////////////////////////////////////////////////////////////////////////////////////
@@ -443,18 +456,14 @@ function drawChart(JSONdata, mainID) {
                             divAlert.appendChild(textAlert);
                             divAlert.appendChild(buttonAlert);
                             document.getElementsByTagName("body")[0].appendChild(divAlert);
-
-                            setTimeout(function(){
-                                $('#divAlert'.concat(station)).fadeOut(500, function(){
-                                    $('#divAlert'.concat(station)).remove();
-                                });
-                              }, 5000);
                         }
                     }
                 }
             }
         }
     }
+
+    setTimeout(deleteSmoothlyAlertDiv, 2000);
 
     // Specify the configuration items and data for the chart
     option = {
