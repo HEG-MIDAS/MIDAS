@@ -124,6 +124,10 @@ def process_data(array_data: Array) -> Array:
             vv_max = (np.nanmax(casted_data[:, index_to_find_max]))
             data_mean[index_to_find_max] = str(np.where(np.isnan(vv_max), '', vv_max))
 
+            if data_mean[2] != '' and float(data_mean[2]) > 50.:
+                for j in range(len(data_mean)):
+                    data_mean[j] = ''
+
             array_processed_data.append(array_mean_full + data_mean)
             array_hour_data = []
             time_set = False
