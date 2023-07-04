@@ -119,6 +119,8 @@ def process_data(array_data: Array) -> Array:
             # Do the mean over all the columns of the data casted before, if there is no value for a column
             # an empty string is added
             data_mean = [str(j) if not np.isnan(j) else '' for j in np.nanmean(casted_data, axis=0)]
+            # Sum the values of the rain drop of every minute for 1 hour
+            data_mean[4] = str(np.nansum(casted_data[4]))
 
             # Take the value max of the index that correspond to a header where the value max is used
             vv_max = (np.nanmax(casted_data[:, index_to_find_max]))
