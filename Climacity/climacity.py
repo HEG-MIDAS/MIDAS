@@ -130,6 +130,9 @@ def process_data(array_data: Array) -> Array:
                 for j in range(len(data_mean)):
                     data_mean[j] = ''
 
+            if data_mean[4] != '' and float(data_mean[4]) > 150.:
+                data_mean[4] = ''
+
             array_processed_data.append(array_mean_full + data_mean)
             array_hour_data = []
             time_set = False
