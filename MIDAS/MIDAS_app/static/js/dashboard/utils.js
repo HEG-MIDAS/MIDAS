@@ -176,3 +176,35 @@ function removeResearch(e, idx){
     }
     document.getElementById("addResearchButton").innerHTML = "Ajouter une recherche ("+(document.querySelectorAll("[id^='accordionDashboard']").length-1)+"/"+NBMAXPARALLELSEARCHS+`) <i class="fa-solid fa-circle-plus"></i>`;
 }
+
+function formatDataJSON(lastStartingDateMap, jsonData){
+    for (let i = 0; i < jsonData.length; i++) {
+        sourceFormatted = {}
+        for (var source in jsonData[i]) {
+            stationFormatted = {}
+            for (var station in jsonData[i][source]) {
+                parameterFormatted = {}
+                for (var parameter in jsonData[i][source][station]) {
+                    previousDate = Date.parse(lastStartingDateMap)
+                    dataFormatted = []
+                    for (let j = 0; j < jsonData[i][source][station][parameter].length; j++) {
+                        cDate = Date.parse(jsonData[i][source][station][parameter][j][0])
+                        
+                        while (previousDate + 3600000 < cDate) {
+                            dateOb = new Date(previousDate + 3600000)
+                            dataFormatted.push([dateOb.toLocaleString("ja-JP").replaceAll("/", "-"), ""])
+                            previousDate = previousDate + 3600000
+                        }
+                        dataFormatted.push(jsonData[i][source][station][parameter][j])
+                        // console.log(jsonData[i][source][station][parameter][j])
+                        previousDate = cDate
+                    }
+                    parameterFormatted[parameter] = dataFormatted
+                }
+                stationFormatted[station] = parameterFormatted
+            }
+            sourceFormatted[source] = stationFormatted
+        }
+    }
+    return [sourceFormatted]
+}

@@ -48,10 +48,12 @@ async function requestData(displayData = true){
             document.getElementById("error-dashboard-message").hidden = false;
         } else {
             if (displayData){
-                drawChart(data[0], 'mainAdvanced');
+                console.log(data[0])
+                jsonData = formatDataJSON(startingDateString, data[0])
+                drawChart(jsonData, 'mainAdvanced');
             }
             else{
-                downloadData(data[0]);
+                downloadData(jsonData);
             }
         }
     }).catch(e => {console.log(e); document.getElementById("error-dashboard-message").hidden = false;});

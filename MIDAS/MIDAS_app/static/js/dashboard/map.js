@@ -792,7 +792,8 @@ const myInput = document.getElementById('displayButton')
 myModalEl.addEventListener('shown.bs.modal', async event => {
     myInput.focus()
     let jsonData = await requestMapData(lastStartingDateMap, lastEndingDateMap, sourcesMap, stationsMap.map(e => e.slug), parametersMap.map(e => e.slug));
-    drawChart([jsonData], "mainMap");
+    jsonDataFormatted = formatDataJSON(lastStartingDateMap.toString().replace("T", " ") + ":00", [jsonData])
+    drawChart(jsonDataFormatted, "mainMap");
     // Remove loader icon
     loader.className = '';
     document.getElementById('mainMap').classList.remove("opacity-low");
