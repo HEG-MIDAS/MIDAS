@@ -187,12 +187,14 @@ function formatDataJSON(lastStartingDateMap, jsonData){
                 for (var parameter in jsonData[i][source][station]) {
                     previousDate = Date.parse(lastStartingDateMap)
                     dataFormatted = []
+                    console.log("POUET")
                     for (let j = 0; j < jsonData[i][source][station][parameter].length; j++) {
                         cDate = Date.parse(jsonData[i][source][station][parameter][j][0])
-                        
-                        while (previousDate + 3600000 < cDate) {
+                        while ((previousDate + 3600000) < cDate) {
+                            console.log("TRUEEEEEE")
+                            console.log(previousDate)
                             dateOb = new Date(previousDate + 3600000)
-                            dataFormatted.push([dateOb.toLocaleString("ja-JP").replaceAll("/", "-"), ""])
+                            dataFormatted.push([dateOb.toLocaleString("sv-SE"), ""])
                             previousDate = previousDate + 3600000
                         }
                         dataFormatted.push(jsonData[i][source][station][parameter][j])
@@ -206,5 +208,6 @@ function formatDataJSON(lastStartingDateMap, jsonData){
             sourceFormatted[source] = stationFormatted
         }
     }
+    console.log(sourceFormatted)
     return [sourceFormatted]
 }
