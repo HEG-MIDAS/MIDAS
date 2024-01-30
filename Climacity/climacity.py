@@ -24,6 +24,7 @@ from merge_csv_by_date_package import merge_csv_by_date
 from pathlib import Path
 import pytz
 import shutil
+import random
 
 # Set timezone
 local = pytz.timezone('Europe/Zurich')
@@ -336,6 +337,8 @@ def main() -> None:
 
         thread = myThread(start_date, tmp_end_date, url, path_tmp, tmp_filename, path_original_data, year_working_on, original_data_filename, path_transformed_data, transformed_data_filename)
         thread_array.append(thread)
+        time_2_sleep = random.uniform(0.9, 5)
+        time.sleep(time_2_sleep)
         thread.start()
 
         start_date = datetime.datetime.strftime(datetime.datetime.strptime(tmp_end_date, '%Y-%m-%d') + datetime.timedelta(days=1), '%Y-%m-%d')
