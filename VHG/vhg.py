@@ -8,6 +8,8 @@ import getopt
 import sys
 import os
 import ast
+from merge_csv_by_date_package import merge_csv_by_date
+import numpy as np
 
 server = "vhg.ch"
 page = "/io/web_service_json.php"
@@ -146,42 +148,67 @@ def format_data_original(data:dict, measures:str) -> list:
     return array_data_formatted_original
 
 
-def format_data_transformed(data:dict, measures:str, start_date:str) -> list:
+def format_data_transformed(data:dict, measures:str, start_date:str, end_date:str) -> list:
     array_data_formatted = []
     # Iterate over the data
+    previous_date = start_date
+    cnt_measure_DEB_HLM = 1
     for e in data:
         to_be_added = True
         # Create variable that will contain the data of the measures for a timestamp/date
         val = [datetime.datetime.fromtimestamp(int(e)).strftime('%Y-%m-%d %H') + ":00:00"]
-        # Iterate over the measures keys
-        for m in measures:
-            # Add value if there is one, otherwise add empty string
-            if m in data[e].keys():
-                val.append(data[e][m])
+
+        if (datetime.datetime.strptime(val[0], '%Y-%m-%d %H:%M:%S') <= datetime.datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S')):
+
+            # Iterate over the measures keys
+            for m in measures:
+                # Add value if there is one, otherwise add empty string
+                if m in data[e].keys():
+                    val.append(data[e][m])
+                else:
+                    val.append("0")
+
+            # Check that the array is not empty as we try to access the last added value
+            if array_data_formatted != []:
+                previous_date = array_data_formatted[-1][0]
+                # print(previous_date[:-6])
+                # print(val[0][:-6])
+                if ((measures[0] == "PLU") and (previous_date[:-6] == val[0][:-6])):
+                    array_data_formatted[-1][1] = str(float(array_data_formatted[-1][1])+float(val[1]))
+                    to_be_added = False
+                elif (measures[0] == "DEB") or (measures[0] == "HLM"):          
+                    if (previous_date[:-6] == val[0][:-6]):
+                        array_data_formatted[-1][1] = str(float(array_data_formatted[-1][1])+float(val[1]))
+                        array_data_formatted[-1][2] = str(float(array_data_formatted[-1][2])+float(val[2]))
+                        to_be_added = False
+                        cnt_measure_DEB_HLM+=1
+                    else:
+                        array_data_formatted[-1][1] = "{:.2f}".format(float(array_data_formatted[-1][1]) / cnt_measure_DEB_HLM)
+                        array_data_formatted[-1][2] = "{:.2f}".format(float(array_data_formatted[-1][2]) / cnt_measure_DEB_HLM)
+                        cnt_measure_DEB_HLM = 1
             else:
-                val.append("0")
-        previous_date = start_date
-        # Check that the array is not empty as we try to access the last added value
-        if array_data_formatted != []:
-            previous_date = array_data_formatted[-1][0]
-            if ((measures[0] == "PLU") and (previous_date[:-6] == val[0][:-6])):
-                array_data_formatted[-1][1] = str(float(array_data_formatted[-1][1])+float(val[1]))
-                to_be_added = False
-        else:
-            if (datetime.datetime.strptime(val[0], '%Y-%m-%d %H:%M:%S') > datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S')) and start_date == previous_date:
+                if (datetime.datetime.strptime(val[0], '%Y-%m-%d %H:%M:%S') > datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S')) and start_date == previous_date:
+                    array_data_formatted.append([previous_date]+['0' for _ in range(len(measures))])
+
+            # Iterate creating timestamps with empty values if there is a jump between the last and the next timestamp
+            while (datetime.datetime.strptime(val[0], '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime(previous_date, '%Y-%m-%d %H:%M:%S')) > datetime.timedelta(hours=1):
+                previous_date = ((datetime.datetime.strptime(previous_date, '%Y-%m-%d %H:%M:%S'))+datetime.timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
                 array_data_formatted.append([previous_date]+['0' for _ in range(len(measures))])
+            if to_be_added:
+                array_data_formatted.append(val)
 
-        # Iterate creating timestamps with empty values if there is a jump between the last and the next timestamp
-        while (datetime.datetime.strptime(val[0], '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime(previous_date, '%Y-%m-%d %H:%M:%S')) > datetime.timedelta(hours=1):
-            previous_date = ((datetime.datetime.strptime(previous_date, '%Y-%m-%d %H:%M:%S'))+datetime.timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
-            array_data_formatted.append([previous_date]+['0' for _ in range(len(measures))])
-        if to_be_added:
-            array_data_formatted.append(val)
+            previous_date = array_data_formatted[-1][0]
+    # Iterate creating timestamps with empty values if there is a jump between the last and the next timestamp
+    while (datetime.datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime(previous_date, '%Y-%m-%d %H:%M:%S')) >= datetime.timedelta(hours=1):
+        previous_date = ((datetime.datetime.strptime(previous_date, '%Y-%m-%d %H:%M:%S'))+datetime.timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
+        array_data_formatted.append([previous_date]+['0' for _ in range(len(measures))])
 
+    # print(end_date)
+    # print(array_data_formatted[-1])
     return array_data_formatted
 
 
-def create_data_file(data:dict, tmp_filename:str, path_original_data:str, measures:list, start_date:str, transformed:bool=False) -> None:
+def create_data_file(data:dict, tmp_filename:str, path_original_data:str, measures:list, start_date:str, end_date:str, transformed:bool=False) -> None:
     """
     Create a file with the data of the request. Will format the data (editing it or not) at some point to be able to write it into a file
     """
@@ -197,11 +224,11 @@ def create_data_file(data:dict, tmp_filename:str, path_original_data:str, measur
             measures_str += ","+e
 
     # Open and write in file
-    f = open(path_original_data+tmp_filename, "w")
+    f = open(path_original_data+tmp_filename+"_tmp", "w")
     f.write("localtime,"+measures_str+"\n")
 
     if transformed:
-        data_formatted = format_data_transformed(data, measures, start_date)
+        data_formatted = format_data_transformed(data, measures, start_date, end_date)
     else:
         data_formatted = format_data_original(data, measures)
     for line in data_formatted:
@@ -210,9 +237,11 @@ def create_data_file(data:dict, tmp_filename:str, path_original_data:str, measur
             f.write(','.join(line))
             f.write('\n')
     f.close()
+    merge_csv_by_date.merge_csv_by_date(path_original_data+tmp_filename, path_original_data+tmp_filename+"_tmp", '%Y-%m-%d %H:%M:%S')
+    os.remove(path_original_data+tmp_filename+"_tmp")
 
 
-def manage_data(data: dict, metering_code: str, measures: list, start_date: str) -> None:
+def manage_data(data: dict, metering_code: str, measures: list, start_date: str, end_date: str) -> None:
     """
     Will handle the data requested to VHG. It will first create an tmp file with the original data, in the corresponding folder, if the folder does not exists,
     it will automatically create the folder. Then it will merge the tmp original data file with the orginal data file. And repeat the same steps for the transformed datas
@@ -224,7 +253,7 @@ def manage_data(data: dict, metering_code: str, measures: list, start_date: str)
     path_original_data = '{}/../media/original/VHG/{}/'.format(__location__, map_station_acronyme_name[metering_code])
     original_data_filename = '{}_{}_original_merged.csv'.format(str(datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S').year), map_station_acronyme_name[metering_code])
 
-    create_data_file(data, original_data_filename, path_original_data, measures, start_date)
+    create_data_file(data, original_data_filename, path_original_data, measures, start_date, end_date)
 
     # Check if dir already exists if it's not the case, create new dir
     if(not os.path.isdir("{}/../media/transformed/VHG/{}".format(__location__, map_station_acronyme_name[metering_code]))):
@@ -232,7 +261,7 @@ def manage_data(data: dict, metering_code: str, measures: list, start_date: str)
     path_transformed_data = '{}/../media/transformed/VHG/{}/'.format(__location__, map_station_acronyme_name[metering_code])
     transformed_data_filename = '{}_{}.csv'.format(str(datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S').year), map_station_acronyme_name[metering_code])
 
-    create_data_file(data, transformed_data_filename, path_transformed_data, measures, start_date, True)
+    create_data_file(data, transformed_data_filename, path_transformed_data, measures, start_date, end_date, True)
 
 
 def main() -> None:
@@ -288,8 +317,9 @@ def main() -> None:
                 # data[measure] = request_data(start_date, end_date, metering_code, measure)
                 val = []
                 try:
-                    val = ast.literal_eval(request_data(start_date, tmp_end_date, metering_code, measure))
+                    val = ast.literal_eval(request_data(start_date, ((datetime.datetime.strptime(tmp_end_date, '%Y-%m-%d'))+datetime.timedelta(days=1)).strftime('%Y-%m-%d'), metering_code, measure))
                 except:
+                    print("There was an error...")
                     print(metering_code)
                 # Iterate over the answer of the requested data
                 for e in val:
@@ -311,7 +341,7 @@ def main() -> None:
                     str(int(time.mktime(datetime.datetime.strptime(tmp_end_date, "%Y-%m-%d").timetuple()))): empty_measures
                 }
 
-            manage_data(data, metering_code, measures_DEB_HLM, start_date+" 00:00:00")
+            manage_data(data, metering_code, measures_DEB_HLM, start_date+" 00:00:00", tmp_end_date+" 23:00:00")
 
         # Call metering code and measures for PLU and similar
         # For now it only contains PLU
@@ -323,8 +353,9 @@ def main() -> None:
                 # data[measure] = request_data(start_date, end_date, metering_code, measure)
                 val = []
                 try:
-                    val = ast.literal_eval(request_data(start_date, tmp_end_date, metering_code, measure))
+                    val = ast.literal_eval(request_data(start_date, ((datetime.datetime.strptime(tmp_end_date, '%Y-%m-%d'))+datetime.timedelta(days=1)).strftime('%Y-%m-%d'), metering_code, measure))
                 except:
+                    print("There was an error...")
                     print(metering_code)
 
                 for e in val:
@@ -343,12 +374,13 @@ def main() -> None:
                     str(int(time.mktime(datetime.datetime.strptime(start_date, "%Y-%m-%d").timetuple()))): empty_measures, 
                     str(int(time.mktime(datetime.datetime.strptime(tmp_end_date, "%Y-%m-%d").timetuple()))): empty_measures
                 }
-            manage_data(data, metering_code, measures_PLU, start_date+" 00:00:00")
+            manage_data(data, metering_code, measures_PLU, start_date+" 00:00:00", tmp_end_date+" 23:00:00")
 
 
         start_date = datetime.datetime.strftime(datetime.datetime.strptime(tmp_end_date, '%Y-%m-%d') + datetime.timedelta(days=1), '%Y-%m-%d')
 
     print("--------------- Ending requests to VHG : {} ---------------".format(time.strftime("%Y-%m-%d %H:%M:%S")))
+    print(end_date)
 
 
 if __name__ == '__main__':
