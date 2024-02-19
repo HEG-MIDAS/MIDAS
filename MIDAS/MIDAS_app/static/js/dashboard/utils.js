@@ -177,7 +177,23 @@ function removeResearch(e, idx){
     document.getElementById("addResearchButton").innerHTML = "Ajouter une recherche ("+(document.querySelectorAll("[id^='accordionDashboard']").length-1)+"/"+NBMAXPARALLELSEARCHS+`) <i class="fa-solid fa-circle-plus"></i>`;
 }
 
-function formatDataJSON(lastStartingDateMap, jsonData){
+function checkDataOutput(dataFormatted, lastStartingDateMap, lastEndingDateMap){
+    previousDate = Date.parse(lastStartingDateMap)
+    lastEndingDate = Date.parse(lastEndingDateMap)
+    for (let i = 0; i < dataFormatted.length-1; i++) {
+        if ((Date.parse(dataFormatted[i][0]) + 3600000) - Date.parse(dataFormatted[i+1][0]) != 0){
+            console.log(dataFormatted[i][0])
+            console.log(Date.parse(dataFormatted[i][0]))
+            console.log(dataFormatted[i+1][0])
+            console.log("ERROR")
+        }
+    }
+    console.log("CHECK ENDED")
+
+}
+
+function formatDataJSON(lastStartingDateMap, lastEndingDateMap, jsonData){
+    lastEndingDate = Date.parse(lastEndingDateMap)
     for (let i = 0; i < jsonData.length; i++) {
         sourceFormatted = {}
         for (var source in jsonData[i]) {
@@ -187,19 +203,28 @@ function formatDataJSON(lastStartingDateMap, jsonData){
                 for (var parameter in jsonData[i][source][station]) {
                     previousDate = Date.parse(lastStartingDateMap)
                     dataFormatted = []
-                    console.log("POUET")
+                    cDate = Date.parse(jsonData[i][source][station][parameter][0][0])
+                    if (previousDate < cDate) {
+                        dateOb = new Date(previousDate)
+                        dataFormatted.push([dateOb.toLocaleString("sv-SE"), ""])
+                    }
                     for (let j = 0; j < jsonData[i][source][station][parameter].length; j++) {
                         cDate = Date.parse(jsonData[i][source][station][parameter][j][0])
                         while ((previousDate + 3600000) < cDate) {
-                            console.log("TRUEEEEEE")
-                            console.log(previousDate)
-                            dateOb = new Date(previousDate + 3600000)
-                            dataFormatted.push([dateOb.toLocaleString("sv-SE"), ""])
                             previousDate = previousDate + 3600000
+                            dateOb = new Date(previousDate)
+                            dataFormatted.push([dateOb.toLocaleString("sv-SE"), ""])
                         }
                         dataFormatted.push(jsonData[i][source][station][parameter][j])
-                        // console.log(jsonData[i][source][station][parameter][j])
                         previousDate = cDate
+                    }
+                    while ((previousDate + 3600000) < lastEndingDate) {
+                        dateOb = new Date(previousDate + 3600000)
+                        dataFormatted.push([dateOb.toLocaleString("sv-SE"), ""])
+                        previousDate = previousDate + 3600000;
+                    }
+                    if (station == "David-Dufour") {
+                        checkDataOutput(dataFormatted, lastStartingDateMap, lastEndingDateMap);
                     }
                     parameterFormatted[parameter] = dataFormatted
                 }
@@ -208,6 +233,6 @@ function formatDataJSON(lastStartingDateMap, jsonData){
             sourceFormatted[source] = stationFormatted
         }
     }
-    console.log(sourceFormatted)
+    // console.log(sourceFormatted)
     return [sourceFormatted]
 }

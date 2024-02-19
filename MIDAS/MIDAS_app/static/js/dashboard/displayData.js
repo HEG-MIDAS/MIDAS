@@ -1,5 +1,5 @@
 function deleteSmoothlyAlertDiv(){
-    console.log($('.divAlert:last'))
+    // console.log($('.divAlert:last'))
     $('.divAlert:last').fadeOut(500, function(){
         $('.divAlert:last').remove();
     });
@@ -322,6 +322,7 @@ function addRuleOfEChartsParameters(idChart, echartSeriesNames){
 
 
 function generateData(JSONdata, currentIndex, nbOffset, hasFilters){
+    // console.log(JSONdata)
     var jsonSeriesData = [];
     var jsonLegendData = [];
     var jsonxAxisData = [];
@@ -420,12 +421,16 @@ function drawChart(JSONdata, mainID) {
     });
     var legendData = []
     JSONgenerateData.forEach(element => element['legend'].forEach(e => legendData.push(e)));
+    // console.log(legendData)
     var seriesData = []
     JSONgenerateData.forEach(element =>element['series'].forEach(e => seriesData.push(e)));
+    // console.log(seriesData)
     var xaxisData = []
     JSONgenerateData.forEach(element => element['xaxis'].forEach(e => xaxisData.push(e)));
+    // console.log(xaxisData)
     var yaxisData = []
     JSONgenerateData.forEach(element =>element['yaxis'].forEach(e => yaxisData.push(e)));
+    // console.log(yaxisData)
 
     checkDivAlert =  document.getElementById("divAlert");
     if (checkDivAlert!=null) {
@@ -438,7 +443,7 @@ function drawChart(JSONdata, mainID) {
                 for (var station in JSONdata[i][key]) {
                     if (JSONdata[i][key].hasOwnProperty(station)) {
                         if (Object.keys(JSONdata[i][key][station]).length === 0) {
-                            console.log(JSONdata[i][key])
+                            // console.log(JSONdata[i][key])
                             let divAlert = document.createElement("div");
                             divAlert.classList.add("alert", "alert-warning", "alert-dismissible", "fade", "show", "divAlert");
                             divAlert.id = "divAlert".concat(station);

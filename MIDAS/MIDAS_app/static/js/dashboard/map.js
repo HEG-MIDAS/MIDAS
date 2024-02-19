@@ -266,7 +266,7 @@ async function manageParametersOnStationDeletion(){
         }
         try {
             const parametersData = await requestParametersSimplified(options);
-            console.log(parametersData)
+            // console.log(parametersData)
             var array_params_stations = []
             parametersData.forEach(e => {
                 array_params_stations.push(e.slug);
@@ -369,7 +369,7 @@ function requestMapData(lastStartingDate, lastEndingDate, sources, stations, par
 function waitForElement(elementId, callBack){
     window.setTimeout(function(){
         var element = document.getElementById(elementId);
-        console.log(element.classList.contains('show'))
+        // console.log(element.classList.contains('show'))
         if(element.classList.contains('show')){
             callBack(elementId, element);
         }
@@ -632,7 +632,7 @@ async function openSelectionMenuBadge(stationSlug, stationName) {
     try {
         const parametersData = await requestParametersSimplified(options);
 
-        console.log(parametersData)
+        // console.log(parametersData)
         
         manageMarkerColor(stationSlug);
         manageMapMenu(stationSlug, stationName, parametersData)
@@ -792,7 +792,7 @@ const myInput = document.getElementById('displayButton')
 myModalEl.addEventListener('shown.bs.modal', async event => {
     myInput.focus()
     let jsonData = await requestMapData(lastStartingDateMap, lastEndingDateMap, sourcesMap, stationsMap.map(e => e.slug), parametersMap.map(e => e.slug));
-    jsonDataFormatted = formatDataJSON(lastStartingDateMap.toString().replace("T", " ") + ":00", [jsonData])
+    jsonDataFormatted = formatDataJSON(lastStartingDateMap.toString().replace("T", " ") + ":00", lastEndingDateMap.toString().replace("T", " ") + ":00", [jsonData])
     drawChart(jsonDataFormatted, "mainMap");
     // Remove loader icon
     loader.className = '';
