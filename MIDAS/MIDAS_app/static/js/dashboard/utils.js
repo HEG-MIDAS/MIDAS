@@ -262,9 +262,9 @@ function formatDataJSON(lastStartingDateMap, lastEndingDateMap, jsonData){
                         }
                         previousDate = previousDate + 3600000;
                     }
-                    if (station == "David-Dufour") {
-                        // checkDataOutput(dataFormatted, lastStartingDateMap, lastEndingDateMap);
-                    }
+                    // if (station == "David-Dufour") {
+                    //     // checkDataOutput(dataFormatted, lastStartingDateMap, lastEndingDateMap);
+                    // }
                     parameterFormatted[parameter] = dataFormatted
                     console.log(station)
                     console.log(dataFormatted.length)
