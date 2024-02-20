@@ -192,6 +192,23 @@ function checkDataOutput(dataFormatted, lastStartingDateMap, lastEndingDateMap){
 
 }
 
+function checkGapBeginning(dataFormatted1, dataFormatted2){
+    console.log("Checking gap beginning")
+    for (let i = 0; i < dataFormatted1.length-1; i++) {
+        if (dataFormatted1[i][0] != dataFormatted2[i][0]){
+            console.log(dataFormatted1[i][0])
+            console.log(Date.parse(dataFormatted1[i][0]))
+
+            console.log(dataFormatted2[i][0])
+            console.log(Date.parse(dataFormatted2[i][0]))
+            console.log("ERROR")
+            break
+        }
+    }
+    console.log("CHECK 2 ENDED")
+
+}
+
 function formatDataJSON(lastStartingDateMap, lastEndingDateMap, jsonData){
     lastEndingDate = Date.parse(lastEndingDateMap)
     for (let i = 0; i < jsonData.length; i++) {
@@ -213,26 +230,51 @@ function formatDataJSON(lastStartingDateMap, lastEndingDateMap, jsonData){
                         while ((previousDate + 3600000) < cDate) {
                             previousDate = previousDate + 3600000
                             dateOb = new Date(previousDate)
-                            dataFormatted.push([dateOb.toLocaleString("sv-SE"), ""])
+                            if (parseInt(dateOb.toLocaleString("sv-SE")[12]) - parseInt(dataFormatted[dataFormatted.length-1][0][12]) == 2) {
+                                tmp = dateOb.toLocaleString("sv-SE")
+                                tmp = tmp.slice(0, 12) + '2' + tmp.slice(13)
+                                dataFormatted.push([tmp, ""])
+                                dataFormatted.push([dateOb.toLocaleString("sv-SE"), ""])
+                            }
+                            else if (dateOb.toLocaleString("sv-SE") == dataFormatted[dataFormatted.length-1][0]) {
+                                continue
+                            }
+                            else {
+                                dataFormatted.push([dateOb.toLocaleString("sv-SE"), ""])
+                            }
                         }
                         dataFormatted.push(jsonData[i][source][station][parameter][j])
                         previousDate = cDate
                     }
                     while ((previousDate + 3600000) < lastEndingDate) {
                         dateOb = new Date(previousDate + 3600000)
-                        dataFormatted.push([dateOb.toLocaleString("sv-SE"), ""])
+                        if (parseInt(dateOb.toLocaleString("sv-SE")[12]) - parseInt(dataFormatted[dataFormatted.length-1][0][12]) == 2) {
+                            tmp = dateOb.toLocaleString("sv-SE")
+                            tmp = tmp.slice(0, 12) + '2' + tmp.slice(13)
+                            dataFormatted.push([tmp, ""])
+                            dataFormatted.push([dateOb.toLocaleString("sv-SE"), ""])
+                        }
+                        else if (dateOb.toLocaleString("sv-SE") == dataFormatted[dataFormatted.length-1][0]) {
+                            continue
+                        }
+                        else {
+                            dataFormatted.push([dateOb.toLocaleString("sv-SE"), ""])
+                        }
                         previousDate = previousDate + 3600000;
                     }
                     if (station == "David-Dufour") {
-                        checkDataOutput(dataFormatted, lastStartingDateMap, lastEndingDateMap);
+                        // checkDataOutput(dataFormatted, lastStartingDateMap, lastEndingDateMap);
                     }
                     parameterFormatted[parameter] = dataFormatted
+                    console.log(station)
+                    console.log(dataFormatted.length)
                 }
                 stationFormatted[station] = parameterFormatted
             }
             sourceFormatted[source] = stationFormatted
         }
     }
+    // checkGapBeginning(sourceFormatted["Climacity"]["Prairie"]["Tamb_Avg*"], sourceFormatted["VHG"]["David-Dufour"]["PLU"])
     // console.log(sourceFormatted)
     return [sourceFormatted]
 }
