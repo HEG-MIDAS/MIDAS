@@ -1,5 +1,6 @@
 {% extends 'layouts/base.html' %}
 {% load static %}
+{% load compress %}
 {% block extracss %}
     <link rel="stylesheet" href="/static/css/dashboard.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
@@ -12,6 +13,7 @@
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
      integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
      crossorigin=""></script>
+     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 {% endblock %}
 
 {% block body_alert %}
@@ -241,20 +243,19 @@
     <button type="button" class="btn btn-outline-primary" onclick="handleAdvancedOrMap(this)">Avancé</button>
 </div>
 
-<script type="text/javascript">
-    var idx = 1;
-    var array_current_idx = [];
-</script>
+{% compress js inline %}
+    <script type="text/javascript">
+        var idx = 1;
+        var array_current_idx = [];
+    </script>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script type="text/javascript" src="{% static 'js/dashboard/variables.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/dashboard/utils.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/dashboard/displayData.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/dashboard/getData.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/dashboard/map.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/dashboard/advanced.js' %}"></script>
-
-
+    <script type="text/javascript" src="{% static 'js/dashboard/variables.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/dashboard/utils.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/dashboard/displayData.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/dashboard/getData.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/dashboard/map.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/dashboard/advanced.js' %}"></script>
+{% endcompress %}
 
 <script type="text/javascript">
 
