@@ -19,7 +19,6 @@ function animateChevron(){
 }
 
 function deleteSmoothlyAlertDiv(){
-    // console.log($('.divAlert:last'))
     $('.divAlert:last').fadeOut(500, function(){
         $('.divAlert:last').remove();
     });
@@ -211,6 +210,7 @@ function removeResearch(e, idx){
 
 // Check the data output. Used for debugging purposes.
 function checkDataOutput(dataFormatted, lastStartingDateMap, lastEndingDateMap){
+    console.log("Checking data output")
     previousDate = Date.parse(lastStartingDateMap)
     lastEndingDate = Date.parse(lastEndingDateMap)
     for (let i = 0; i < dataFormatted.length-1; i++) {

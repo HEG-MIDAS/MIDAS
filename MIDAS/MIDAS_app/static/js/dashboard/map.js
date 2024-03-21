@@ -269,7 +269,6 @@ async function manageParametersOnStationDeletion(){
         }
         try {
             const parametersData = await requestParametersSimplified(options);
-            // console.log(parametersData)
             var array_params_stations = []
             parametersData.forEach(e => {
                 array_params_stations.push(e.slug);

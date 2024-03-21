@@ -55,11 +55,9 @@ function changeLinePlotDisplay(name, displayType){
 
 // Change the display of the extremes values on Y axis
 function changeXtremeValuesDisplayYAxis(value, filterWorkingOn, changeMax=true){
-    // console.log(value)
     if (value.length == 0){
         value = undefined;
     }
-    // console.log(value)
     if (changeMax){
         option.yAxis[filterWorkingOn].max = value;
     }
@@ -298,7 +296,6 @@ function addRuleOfEChartsParameters(idChart, echartSeriesNames){
 
 // Format the JSON data to be rendered in an object that can be used for display by echarts
 function generateData(JSONdata, currentIndex, nbOffset, hasFilters){
-    // console.log(JSONdata)
     var jsonSeriesData = [];
     var jsonLegendData = [];
     var jsonxAxisData = [];
@@ -314,7 +311,6 @@ function generateData(JSONdata, currentIndex, nbOffset, hasFilters){
                             JSONdata[source][station][parameter].forEach(element => arrayData.push(element[1]))
                             var arrayTemp = []
                             JSONdata[source][station][parameter].forEach(element => arrayTemp.push(element[0]))
-                            //console.log(arrayData);
                             var nameOfParam = String(parameter)+" ("+String(station)+" - "+String(source)+")";
                             if (hasFilters){
                                 nameOfParam.concat(" Filtre " + (arrayCurrentIdx.indexOf(arrayCurrentIdx[currentIndex])+1).toString());
@@ -398,16 +394,12 @@ function drawChart(JSONdata, mainID) {
     });
     var legendData = []
     JSONgenerateData.forEach(element => element['legend'].forEach(e => legendData.push(e)));
-    // console.log(legendData)
     var seriesData = []
     JSONgenerateData.forEach(element =>element['series'].forEach(e => seriesData.push(e)));
-    // console.log(seriesData)
     var xaxisData = []
     JSONgenerateData.forEach(element => element['xaxis'].forEach(e => xaxisData.push(e)));
-    // console.log(xaxisData)
     var yaxisData = []
     JSONgenerateData.forEach(element =>element['yaxis'].forEach(e => yaxisData.push(e)));
-    // console.log(yaxisData)
 
     const checkDivAlert =  document.getElementById("divAlert");
     if (checkDivAlert!=null) {
@@ -420,7 +412,6 @@ function drawChart(JSONdata, mainID) {
                 for (var station in JSONdata[i][key]) {
                     if (JSONdata[i][key].hasOwnProperty(station)) {
                         if (Object.keys(JSONdata[i][key][station]).length === 0) {
-                            // console.log(JSONdata[i][key])
                             let divAlert = document.createElement("div");
                             divAlert.classList.add("alert", "alert-warning", "alert-dismissible", "fade", "show", "divAlert");
                             divAlert.id = "divAlert".concat(station);

@@ -28,7 +28,6 @@ async function requestStations(options, idx){
     .then(function(responseJSONData) {
         // Parse JSON
         var jsonData = JSON.parse(responseJSONData);
-        console.log(jsonData.length)
         // Array that will contain all the slugs of the stations of the request
         var stationsSlug = [];
         var accordionStations = document.getElementById("accordionStations"+idx.toString());
@@ -220,7 +219,6 @@ async function requestDataFetch(options){
     })
     .then(function(responseJSONData) {
         // Parse JSON response
-        // console.log(responseJSONData);
         var jsonData = JSON.parse(responseJSONData);
         return jsonData;
     }).catch(error => console.log(error));
