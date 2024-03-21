@@ -13,6 +13,10 @@ echo "Collect Static Files"
 python MIDAS/manage.py collectstatic --noinput
 echo "Creating super user"
 DJANGO_SUPERUSER_USERNAME=$admin_username DJANGO_SUPERUSER_PASSWORD=$admin_password DJANGO_SUPERUSER_EMAIL=$admin_email python3 MIDAS/manage.py createsuperuser --noinput
+echo "Installing nodejs with nvm"
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+nvm install 20
+rm install.sh
 echo "Installing npm"
 curl -qL https://www.npmjs.com/install.sh | sh
 echo "Installing google-closure-compiler"
