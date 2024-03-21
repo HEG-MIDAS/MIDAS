@@ -372,7 +372,6 @@ function requestMapData(lastStartingDate, lastEndingDate, sources, stations, par
 function waitForElement(elementId, callBack){
     window.setTimeout(function(){
         var element = document.getElementById(elementId);
-        // console.log(element.classList.contains('show'))
         if(element.classList.contains('show')){
             callBack(elementId, element);
         }
@@ -631,8 +630,6 @@ async function openSelectionMenuBadge(stationSlug, stationName) {
     }
     try {
         const parametersData = await requestParametersSimplified(options);
-
-        // console.log(parametersData)
         
         manageMarkerColor(stationSlug);
         manageMapMenu(stationSlug, stationName, parametersData)
