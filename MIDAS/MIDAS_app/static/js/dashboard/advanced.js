@@ -1,3 +1,7 @@
+// Author : David Nogueiras Blanco
+// Last edition : 21.03.2024
+// Project : MIDAS (HEG)
+
 //////////////////////////////////////////////////////////////////////////////////////
 // Elements Dashboard Selection
 //////////////////////////////////////////////////////////////////////////////////////
@@ -16,7 +20,6 @@ async function requestData(displayData = true){
         document.getElementById('mainAdvanced').classList.add("opacity-low");
     }
     
-
     var array_promises = [];
     for (var cnt=0; cnt < arrayCurrentIdx.length; cnt++) {
         var startingDateValue = document.getElementById('startingDate'+arrayCurrentIdx[cnt].toString()).value;
@@ -26,7 +29,6 @@ async function requestData(displayData = true){
         if (startingDateValue != '' && endingDateValue != '' && sources[cnt].length > 0 && stations[cnt].length > 0 && parameters[cnt].length > 0) {
             // Format dates
             var startingDate = new Date(startingDateValue);
-            // console.log(startingDate)
             var startingDateString = startingDate.getFullYear() +"-"+ (startingDate.getMonth()+1) +"-"+ startingDate.getDate() + " " + startingDate.getHours() + ":" + startingDate.getMinutes() + ":" + startingDate.getSeconds();
             var endingDate = new Date(endingDateValue);
             var endingDateString = endingDate.getFullYear() +"-"+ (endingDate.getMonth()+1) +"-"+ endingDate.getDate() + " " + endingDate.getHours() + ":" + endingDate.getMinutes() + ":" + endingDate.getSeconds();
@@ -48,8 +50,7 @@ async function requestData(displayData = true){
             document.getElementById("error-dashboard-message").hidden = false;
         } else {
             if (displayData){
-                console.log(data[0])
-                var jsonData = formatDataJSON(startingDateString, data[0])
+                var jsonData = formatDataJSON(startingDateString, endingDateString, data[0])
                 drawChart(jsonData, 'mainAdvanced');
             }
             else{
@@ -217,7 +218,6 @@ function select_station(e, idx){
             }
         }
     }
-    handleElementsSelection()
 }
 
 // Function lauched when a parameter is selected or deselected by the user
@@ -265,20 +265,4 @@ function select_parameter(e, idx){
             }
         }
     }
-    handleElementsSelection()
-}
-
-function handleElementsSelection() {
-    var allParameters = document.querySelectorAll('[id^="accordionParameters"]');
-    //console.log(allParameters);
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-// Change the dimension display
-//////////////////////////////////////////////////////////////////////////////////////
-
-
-function flipDimensionDisplay(){
-    console.log("Switch");
 }

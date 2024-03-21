@@ -1,20 +1,10 @@
-function deleteSmoothlyAlertDiv(){
-    // console.log($('.divAlert:last'))
-    $('.divAlert:last').fadeOut(500, function(){
-        $('.divAlert:last').remove();
-    });
-    if ($('.divAlert:last').length != 0){
-        setTimeout(deleteSmoothlyAlertDiv, 2000);
-    }
-}
-
-
-
+// Author : David Nogueiras Blanco
+// Last edition : 21.03.2024
+// Project : MIDAS (HEG)
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Echarts
 //////////////////////////////////////////////////////////////////////////////////////
-
 
 // Handles the responsiveness of the echarts plot
 function resetEchartsPlot() {
@@ -31,12 +21,12 @@ function resetEchartsPlot() {
 
 window.addEventListener('resize', resetEchartsPlot);
 
-
+// Draw lines on echarts plot following the requested parameter
 function addMarkLineToEchartsPlot(e, typeString, nameString){
     if (e.checked) {
         for (var i=0; i < option.series.length; i++) {
             if (!option.series[i].markLine.data.some(e => e.type === typeString)){
-                option.series[i].markLine.data.push({ type: typeString, name: nameString });//), { type: 'median', name: 'Median line' }];
+                option.series[i].markLine.data.push({ type: typeString, name: nameString });
             }
         }
     }
@@ -52,9 +42,8 @@ function addMarkLineToEchartsPlot(e, typeString, nameString){
     resetEchartsPlot();
 }
 
-
+// 
 function changeLinePlotDisplay(name, displayType){
-    //console.log(displayType)
     option.series.forEach(function(element, currentIndex) {
         if (element.name == name){
             element.type = displayType;
@@ -81,20 +70,7 @@ function changeXtremeValuesDisplayYAxis(value, filterWorkingOn, changeMax=true){
     resetEchartsPlot();
 }
 
-
-function animateChevron(){
-    var btn = document.getElementById("echartsParametersCollapse");
-    if (btn.getAttribute('aria-expanded') == "true") {
-        btn.classList.remove("echartsParametersCollapseOff")
-        btn.classList.add("echartsParametersCollapseOn")
-    }
-    else {
-        btn.classList.remove("echartsParametersCollapseOn")
-        btn.classList.add("echartsParametersCollapseOff")
-    }
-}
-
-
+// Add the possibility to display mean, max, min on the plotted data
 function addRuleOfEChartsParameters(idChart, echartSeriesNames){
     let baseDiv = document.getElementById("EchartsParameters");
     if (idChart == "mainMap"){
@@ -320,7 +296,7 @@ function addRuleOfEChartsParameters(idChart, echartSeriesNames){
     baseDiv.appendChild(div);
 }
 
-
+// Format the JSON data to be rendered in an object that can be used for display by echarts
 function generateData(JSONdata, currentIndex, nbOffset, hasFilters){
     // console.log(JSONdata)
     var jsonSeriesData = [];
@@ -400,6 +376,7 @@ function generateData(JSONdata, currentIndex, nbOffset, hasFilters){
     return jsonDataParsed
 }
 
+// Draw the chart in the page
 function drawChart(JSONdata, mainID) {
 
     myChartMainID = mainID

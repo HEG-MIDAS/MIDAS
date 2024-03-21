@@ -1,3 +1,7 @@
+// Author : David Nogueiras Blanco
+// Last edition : 21.03.2024
+// Project : MIDAS (HEG)
+
 //////////////////////////////////////////////////////////////////////////////////////
 // Fetch requests to get data Advanced part
 //////////////////////////////////////////////////////////////////////////////////////
@@ -226,6 +230,7 @@ async function requestDataFetch(options){
 // Fetch requests to get data Map part
 //////////////////////////////////////////////////////////////////////////////////////
 
+// Request all the stations available for the selected sources in a simplified way
 async function requestStationsSimplified(options){
     // Request station-dashboard view
     return fetch('/stations-dashboard/',{
