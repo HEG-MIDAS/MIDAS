@@ -23,7 +23,7 @@ async function requestStations(options, idx){
     })
     .then(function(responseJSONData) {
         // Parse JSON
-        jsonData = JSON.parse(responseJSONData);
+        var jsonData = JSON.parse(responseJSONData);
         console.log(jsonData.length)
         // Array that will contain all the slugs of the stations of the request
         var stationsSlug = [];
@@ -86,7 +86,7 @@ async function requestStations(options, idx){
             }
             // Remove all parameters of the array
             parameters[index] = [];
-            parametersAccordeon = document.getElementById('headingParameters'+idx.toString()).getElementsByTagName('button')[0];
+            const parametersAccordeon = document.getElementById('headingParameters'+idx.toString()).getElementsByTagName('button')[0];
             // Disabled the accordeon of parameters as there is no stations selected
             parametersAccordeon.disabled = true;
         }
@@ -112,7 +112,7 @@ function requestParameters(options, idx){
     })
     .then(function(responseJSONData) {
         // Parse the JSON response
-        jsonData = JSON.parse(responseJSONData);
+        var jsonData = JSON.parse(responseJSONData);
         // Array that will serve to know which parameters were in the request (we will use the slug)
         var parametersSlug = [];
         var accordionParameters = document.getElementById("accordionParameters"+idx.toString());
@@ -217,7 +217,7 @@ async function requestDataFetch(options){
     .then(function(responseJSONData) {
         // Parse JSON response
         // console.log(responseJSONData);
-        jsonData = JSON.parse(responseJSONData);
+        var jsonData = JSON.parse(responseJSONData);
         return jsonData;
     }).catch(error => console.log(error));
 }

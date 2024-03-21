@@ -7,7 +7,7 @@ async function requestData(displayData = true){
     // Hide the error message if it's not already hidden
     document.getElementById("error-dashboard-message").hidden = true;
     // Create loader icon
-    loader = document.getElementById('loader');
+    var loader = document.getElementById('loader');
     if (myChart == null){
         loader.classList.add("loader");
     }
@@ -17,7 +17,7 @@ async function requestData(displayData = true){
     }
     
 
-    array_promises = [];
+    var array_promises = [];
     for (var cnt=0; cnt < arrayCurrentIdx.length; cnt++) {
         var startingDateValue = document.getElementById('startingDate'+arrayCurrentIdx[cnt].toString()).value;
         var endingDateValue = document.getElementById('endingDate'+arrayCurrentIdx[cnt].toString()).value;
@@ -49,7 +49,7 @@ async function requestData(displayData = true){
         } else {
             if (displayData){
                 console.log(data[0])
-                jsonData = formatDataJSON(startingDateString, data[0])
+                var jsonData = formatDataJSON(startingDateString, data[0])
                 drawChart(jsonData, 'mainAdvanced');
             }
             else{
@@ -118,11 +118,11 @@ async function select_source(e, idx){
             if (cs.getAttribute('aria-expanded') === 'true') {
                 cs.click();
             }
-            var cs = document.getElementById('buttonParameters'+idx.toString());
+            cs = document.getElementById('buttonParameters'+idx.toString());
             if (cs.getAttribute('aria-expanded') === 'true') {
                 cs.click();
             }
-            var cs = document.getElementById('buttonDates'+idx.toString());
+            cs = document.getElementById('buttonDates'+idx.toString());
             if (cs.getAttribute('aria-expanded') === 'true') {
                 cs.click();
             }
@@ -131,7 +131,7 @@ async function select_source(e, idx){
             parameters[index] = [];
             // Disable the possibility to expand accordeon of stations and parameters
             stationsAccordeon.disabled = true;
-            parametersAccordeon = document.getElementById('headingParameters'+idx.toString()).getElementsByTagName('button')[0];
+            var parametersAccordeon = document.getElementById('headingParameters'+idx.toString()).getElementsByTagName('button')[0];
             parametersAccordeon.disabled = true;
             parametersAccordeon = document.getElementById('headingDates'+idx.toString()).getElementsByTagName('button')[0];
             parametersAccordeon.disabled = true;

@@ -83,7 +83,7 @@ function changeXtremeValuesDisplayYAxis(value, filterWorkingOn, changeMax=true){
 
 
 function animateChevron(){
-    btn = document.getElementById("echartsParametersCollapse");
+    var btn = document.getElementById("echartsParametersCollapse");
     if (btn.getAttribute('aria-expanded') == "true") {
         btn.classList.remove("echartsParametersCollapseOff")
         btn.classList.add("echartsParametersCollapseOn")
@@ -334,12 +334,12 @@ function generateData(JSONdata, currentIndex, nbOffset, hasFilters){
                 if (JSONdata[source].hasOwnProperty(station)) {
                     for (var parameter in JSONdata[source][station]) {
                         if (JSONdata[source].hasOwnProperty(station)) {
-                            arrayData = []
+                            var arrayData = []
                             JSONdata[source][station][parameter].forEach(element => arrayData.push(element[1]))
-                            arrayTemp = []
+                            var arrayTemp = []
                             JSONdata[source][station][parameter].forEach(element => arrayTemp.push(element[0]))
                             //console.log(arrayData);
-                            nameOfParam = String(parameter)+" ("+String(station)+" - "+String(source)+")";
+                            var nameOfParam = String(parameter)+" ("+String(station)+" - "+String(source)+")";
                             if (hasFilters){
                                 nameOfParam.concat(" Filtre " + (arrayCurrentIdx.indexOf(arrayCurrentIdx[currentIndex])+1).toString());
                             }
@@ -396,7 +396,7 @@ function generateData(JSONdata, currentIndex, nbOffset, hasFilters){
         }
     }
     nbOffset.offset = cnt-1;
-    jsonDataParsed = {"legend" : jsonLegendData, "series": jsonSeriesData, "xaxis": jsonxAxisData, "yaxis": jsonyAxisData};
+    var jsonDataParsed = {"legend" : jsonLegendData, "series": jsonSeriesData, "xaxis": jsonxAxisData, "yaxis": jsonyAxisData};
     return jsonDataParsed
 }
 
@@ -414,8 +414,8 @@ function drawChart(JSONdata, mainID) {
 
     const colors = ['#5470C6', '#EE6666'];
 
-    JSONgenerateData = [];
-    nbOffset = {"offset": 0}
+    var JSONgenerateData = [];
+    var nbOffset = {"offset": 0}
     JSONdata.forEach(function(element, currentIndex) {
         JSONgenerateData.push(generateData(element, currentIndex, nbOffset, mainID=="mainAdvanced"));
     });
@@ -432,7 +432,7 @@ function drawChart(JSONdata, mainID) {
     JSONgenerateData.forEach(element =>element['yaxis'].forEach(e => yaxisData.push(e)));
     // console.log(yaxisData)
 
-    checkDivAlert =  document.getElementById("divAlert");
+    const checkDivAlert =  document.getElementById("divAlert");
     if (checkDivAlert!=null) {
         checkDivAlert.remove();
     }
@@ -515,7 +515,7 @@ function drawChart(JSONdata, mainID) {
     // Display the chart using the configuration items and data just specified.
     myChart.setOption(option, true);
 
-    echartSeriesNames = [];
+    var echartSeriesNames = [];
     option.series.forEach(element => echartSeriesNames.push(element.name));
 
     addRuleOfEChartsParameters(mainID, echartSeriesNames);
