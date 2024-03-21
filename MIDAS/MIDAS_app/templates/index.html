@@ -31,24 +31,6 @@
 
 {% csrf_token %}
 
-{% comment %}
-<div class="btn-group dimension-display" role="group" aria-label="Selection of display graph mode 2D or 3D" onchange="flipDimensionDisplay()">
-    <input type="radio" class="btn-check" name="btnradio" id="btn2D" autocomplete="off"  checked>
-    <label class="btn btn-outline-primary" for="btn2D">2D</label>
-
-    <input type="radio" class="btn-check" name="btnradio" id="btn3D" autocomplete="off">
-    <label class="btn btn-outline-primary" for="btn3D">3D</label>
-</div>
-
-<div class="switch-accordeon">
-    <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" value="" id="fixedSources" onclick="fixedAccordeon(this)" checked>
-        <label class="form-check-label" for="fixedSources">
-            Affichage fixe
-        </label>
-    </div>
-</div>
-{% endcomment %}
 <div class="midas-container container-fluid" id="midas-container-advanced">
     <p class="h1 title">Dashboard</p>
     <div class="accordion" id="accordionDashboard0" hidden>
@@ -244,11 +226,6 @@
 </div>
 
 {% compress js inline %}
-    <script type="text/javascript">
-        var idx = 1;
-        var array_current_idx = [];
-    </script>
-
     <script type="text/javascript" src="{% static 'js/dashboard/variables.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/dashboard/utils.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/dashboard/displayData.js' %}"></script>
@@ -256,41 +233,5 @@
     <script type="text/javascript" src="{% static 'js/dashboard/map.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/dashboard/advanced.js' %}"></script>
 {% endcompress %}
-
-<script type="text/javascript">
-
-    // var sources = ['climacity'];
-    // var stations = ['prairie'];
-    // var parameters = ['tamb_avg'];
-    // var start_date = '2022-05-08 00:00:00';
-    // var end_date = '2022-05-08 23:59:59';
-
-    // const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value
-    function test(){
-        fetch('/api/search/',{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrf,
-                'Authorization': "Midas admin :1[YLC!DL]}id<Ip*@Pc"
-            },
-            body: JSON.stringify({
-                'sources': sources,
-                'stations': stations,
-                'parameters': parameters,
-                'start_date': start_date,
-                'end_date': end_date
-            })
-        })
-        .then(function(response) {
-            return response.json();
-        })
-        .then(function(myBlob) {
-            //console.log(myBlob)
-            console.log()
-        });
-    }
-    // test();
-</script>
 
 {% endblock %}

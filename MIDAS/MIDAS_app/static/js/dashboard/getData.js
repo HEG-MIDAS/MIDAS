@@ -1,3 +1,7 @@
+// Author : David Nogueiras Blanco
+// Last edition : 21.03.2024
+// Project : MIDAS (HEG)
+
 //////////////////////////////////////////////////////////////////////////////////////
 // Fetch requests to get data Advanced part
 //////////////////////////////////////////////////////////////////////////////////////
@@ -24,7 +28,6 @@ async function requestStations(options, idx){
     .then(function(responseJSONData) {
         // Parse JSON
         var jsonData = JSON.parse(responseJSONData);
-        console.log(jsonData.length)
         // Array that will contain all the slugs of the stations of the request
         var stationsSlug = [];
         var accordionStations = document.getElementById("accordionStations"+idx.toString());
@@ -216,7 +219,6 @@ async function requestDataFetch(options){
     })
     .then(function(responseJSONData) {
         // Parse JSON response
-        // console.log(responseJSONData);
         var jsonData = JSON.parse(responseJSONData);
         return jsonData;
     }).catch(error => console.log(error));
@@ -226,6 +228,7 @@ async function requestDataFetch(options){
 // Fetch requests to get data Map part
 //////////////////////////////////////////////////////////////////////////////////////
 
+// Request all the stations available for the selected sources in a simplified way
 async function requestStationsSimplified(options){
     // Request station-dashboard view
     return fetch('/stations-dashboard/',{

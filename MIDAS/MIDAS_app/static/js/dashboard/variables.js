@@ -1,3 +1,7 @@
+// Author : David Nogueiras Blanco
+// Last edition : 21.03.2024
+// Project : MIDAS (HEG)
+
 // CONSTANTS
 const NBMAXPARAMETERSSELECTED = 6;
 const NBMAXPARALLELSEARCHS = 2;
@@ -110,5 +114,6 @@ legend.onAdd = function(map) {
   
 legend.addTo(map);
 
+// Disable click and scroll on divLegend
 L.DomEvent.disableClickPropagation(document.getElementById("divLegend"));
 L.DomEvent.disableScrollPropagation(document.getElementById("divLegend"));

@@ -166,7 +166,7 @@ STATICFILES_FINDERS = [
 COMPRESS_FILTERS = {
     'js': ['compressor.filters.closure.ClosureCompilerFilter']
 }
-COMPRESS_CLOSURE_COMPILER_BINARY = "java -jar " + str(os.path.join(BASE_DIR,'MIDAS/settings/closure-compiler.jar'))# + " --compilation_level ADVANCED"
+COMPRESS_CLOSURE_COMPILER_BINARY = "google-closure-compiler"# "java -jar " + str(os.path.join(BASE_DIR,'MIDAS/settings/closure-compiler.jar'))# + " --compilation_level ADVANCED"
 STATIC_ROOT=os.path.join(BASE_DIR,'../static')
 COMPRESS_OFFLINE = True
 COMPRESS_ENABLED = True

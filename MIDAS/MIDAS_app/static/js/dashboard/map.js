@@ -1,5 +1,5 @@
 // Author : David Nogueiras Blanco
-// Last edition : 29.03.2023
+// Last edition : 21.03.2024
 // Project : MIDAS (HEG)
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -148,7 +148,10 @@ function handleButtonCollapse(collapse=false){
     }
 }
 
-
+// Manage color of the marken depending on station state
+// Not selected : Blue
+// Selected : Yellow
+// Station added but not selected : Green
 function manageMarkerColor(currentStationSlug=""){
     markersArray.forEach(marker => {
         if (stationsMap.some(e => e.slug === marker.options.stationSlug)){
@@ -177,13 +180,13 @@ function manageMarkerColor(currentStationSlug=""){
     });
 }
 
-
+// Open the div containing the menu of the map
 function openMapMenu(){
     manageMarkerColor();
     manageMapMenu();
 }
 
-
+// Syncronize the color of the station and the collapsing button
 function synchronizeButtonCollapseAndMarkers(){
     const chevronNode = document.getElementById("extension-chevron");
     const stationsNode = document.getElementById("burger-map-stations");
@@ -266,7 +269,6 @@ async function manageParametersOnStationDeletion(){
         }
         try {
             const parametersData = await requestParametersSimplified(options);
-            // console.log(parametersData)
             var array_params_stations = []
             parametersData.forEach(e => {
                 array_params_stations.push(e.slug);
@@ -366,10 +368,10 @@ function requestMapData(lastStartingDate, lastEndingDate, sources, stations, par
     // }).catch(e => {console.log(e); document.getElementById("error-dashboard-message").hidden = false;});
 }
 
+// Wait for elementId to contain in classList the class "show"
 function waitForElement(elementId, callBack){
     window.setTimeout(function(){
         var element = document.getElementById(elementId);
-        // console.log(element.classList.contains('show'))
         if(element.classList.contains('show')){
             callBack(elementId, element);
         }
@@ -379,12 +381,7 @@ function waitForElement(elementId, callBack){
     }, 500)
 }
 
-async function displayDataMap(){
-    // let jsonData = await requestMapData(lastStartingDateMap, lastEndingDateMap, sourcesMap, stationsMap.map(e => e.slug), parametersMap.map(e => e.slug));
-    // drawChart([jsonData], "mainMap");
-}
-
-
+// Manage the text to display as legend
 function manageLegendText(isOpen=false, parametersData=null){
     const divLegend = document.getElementById("divLegend");
     if (isOpen){
@@ -522,7 +519,6 @@ function manageMapMenu(stationSlug=null, stationName=null, parametersData=null){
         let btnDisplay = document.createElement("button");
         btnDisplay.setAttribute("type", "button");
         btnDisplay.classList.add("btn", "btn-primary");
-        btnDisplay.setAttribute("onclick", "displayDataMap()");
         btnDisplay.innerHTML = "Visualiser";
         btnDisplay.disabled = !checkIfRequestIsPossible();
         btnDisplay.id = "displayButton";
@@ -590,6 +586,7 @@ function manageMapMenu(stationSlug=null, stationName=null, parametersData=null){
     handleButtonCollapse();
 }
 
+// Open the meu of selection for a given station
 async function openSelectionMenuMarker() {
     options = {
         'sources': sourcesMap,
@@ -605,6 +602,7 @@ async function openSelectionMenuMarker() {
     }
 }
 
+// Draw markers to the map at the position of the station when the exact latitude and longitude is known
 function addingMarker2Map(latitude, longitude, stationName, slug) {
     var marker = new customMarker([parseFloat(latitude), parseFloat(longitude)], { 
         station: stationName,
@@ -614,6 +612,7 @@ function addingMarker2Map(latitude, longitude, stationName, slug) {
     markersArray.push(marker);
 }
 
+// Draw a circle to the map in the region of where the station should approximately be
 function addingCircle2Map(latitude, longitude, stationName, slug) {
     var marker = new customCircle([parseFloat(latitude), parseFloat(longitude)], 600, options = {
         station: stationName,
@@ -631,8 +630,6 @@ async function openSelectionMenuBadge(stationSlug, stationName) {
     }
     try {
         const parametersData = await requestParametersSimplified(options);
-
-        // console.log(parametersData)
         
         manageMarkerColor(stationSlug);
         manageMapMenu(stationSlug, stationName, parametersData)
@@ -665,7 +662,7 @@ async function setUpStationsOnMap(){
     }
 }
 
-
+// Compute the levenshtein Distance between the given strings (used for the search)
 const levenshteinDistance = (s, t) => {
     if (!s.length) return t.length;
     if (!t.length) return s.length;
@@ -686,7 +683,7 @@ const levenshteinDistance = (s, t) => {
     return arr[t.length][s.length];
 };
 
-
+// Manage the search bar by displaying the stations when more than 3 caracters are entered
 function searchBarStations(valueOfSearchBar){
     const cardResultsList = document.getElementById("cardResultsList");
     cardResultsList.innerHTML = "";
@@ -716,7 +713,7 @@ function searchBarStations(valueOfSearchBar){
     }
 }
 
-
+// Manage the opening of the menu of the station when the search is done
 function keyIputSearch(){
     let cardResultsList = document.getElementById("cardResultsList");
     let searchBar = document.getElementById("searchBar");
@@ -734,14 +731,14 @@ function keyIputSearch(){
     }
 }
 
-
+// On an input in the search bar execute the code managing it
 const searchInput = document.querySelector('#searchBar');
 searchInput.addEventListener("input", (e) => {
     // Clean the content of the results
     searchBarStations(e.target.value);
 });
 
-
+// On click in given buttons execute the corresponding code
 document.addEventListener('click', function(event){
     let searchClick = document.getElementById("searchBar").contains(event.target);
     let searchBar = document.getElementById("searchBar");
@@ -765,7 +762,7 @@ document.addEventListener('click', function(event){
     }
 });
 
-
+// When enter is presed in the search bar the search is executed and if a match is found, the menu of the station is opened
 searchInput.addEventListener('keydown', function(event){
     if (event.key === "Enter") {
 
@@ -778,10 +775,6 @@ searchInput.addEventListener('keydown', function(event){
         }
     }
 });
-
-//////////////////////////////////////////////////////////////////////////////////////
-// Start of code
-//////////////////////////////////////////////////////////////////////////////////////
 
 // Creates request to request all the stations available on the API
 options = {'sources': sourcesMap};
@@ -796,6 +789,7 @@ myModalEl.addEventListener('shown.bs.modal', async event => {
     var jsonDataFormatted = formatDataJSON(lastStartingDateMap.toString().replace("T", " ") + ":00", lastEndingDateMap.toString().replace("T", " ") + ":00", [jsonData])
     drawChart(jsonDataFormatted, "mainMap");
     // Remove loader icon
+    const loader = document.getElementById('loaderMap');
     loader.className = '';
     document.getElementById('mainMap').classList.remove("opacity-low");
 })

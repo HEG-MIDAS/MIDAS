@@ -13,5 +13,11 @@ echo "Collect Static Files"
 python MIDAS/manage.py collectstatic --noinput
 echo "Creating super user"
 DJANGO_SUPERUSER_USERNAME=$admin_username DJANGO_SUPERUSER_PASSWORD=$admin_password DJANGO_SUPERUSER_EMAIL=$admin_email python3 MIDAS/manage.py createsuperuser --noinput
+echo "Installing npm"
+curl -qL https://www.npmjs.com/install.sh | sh
+echo "Installing google-closure-compiler"
+npm i -g google-closure-compiler
+echo "Runing compression module"
+python3 MIDAS/manage.py compress --force
 echo "Runing server"
 python -u MIDAS/manage.py runserver 0.0.0.0:8000 --noreload

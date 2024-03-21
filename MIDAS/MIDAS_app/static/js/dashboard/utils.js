@@ -1,3 +1,32 @@
+// Author : David Nogueiras Blanco
+// Last edition : 21.03.2024
+// Project : MIDAS (HEG)
+
+//////////////////////////////////////////////////////////////////////////////////////
+// Some utils functions
+//////////////////////////////////////////////////////////////////////////////////////
+
+function animateChevron(){
+    var btn = document.getElementById("echartsParametersCollapse");
+    if (btn.getAttribute('aria-expanded') == "true") {
+        btn.classList.remove("echartsParametersCollapseOff")
+        btn.classList.add("echartsParametersCollapseOn")
+    }
+    else {
+        btn.classList.remove("echartsParametersCollapseOn")
+        btn.classList.add("echartsParametersCollapseOff")
+    }
+}
+
+function deleteSmoothlyAlertDiv(){
+    $('.divAlert:last').fadeOut(500, function(){
+        $('.divAlert:last').remove();
+    });
+    if ($('.divAlert:last').length != 0){
+        setTimeout(deleteSmoothlyAlertDiv, 2000);
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 // Manage the download of the data
 //////////////////////////////////////////////////////////////////////////////////////
@@ -82,6 +111,7 @@ function handleAdvancedOrMap(element) {
 // Handle research and parallel research
 //////////////////////////////////////////////////////////////////////////////////////
 
+// Add research div for the advanced view
 function addResearch(pageLoaded=true){
     // Check if it is possible to add a new research interface
     if (document.querySelectorAll("[id^='accordionDashboard']").length < NBMAXPARALLELSEARCHS+1) {
@@ -132,7 +162,8 @@ function addResearch(pageLoaded=true){
 
 window.addEventListener("load", addResearch(false));
 
-
+// Activates or deactivates the submit button
+// Check if required data is filled
 function handleSubmitButton(){
     var domDates = document.querySelectorAll('*[id^="buttonDates"]');
     var wait4submit = false;
@@ -151,7 +182,7 @@ function handleSubmitButton(){
     }
 }
 
-
+// Remove research div for the advanced view
 function removeResearch(e, idx){
     e.parentElement.remove()
 
@@ -177,7 +208,9 @@ function removeResearch(e, idx){
     document.getElementById("addResearchButton").innerHTML = "Ajouter une recherche ("+(document.querySelectorAll("[id^='accordionDashboard']").length-1)+"/"+NBMAXPARALLELSEARCHS+`) <i class="fa-solid fa-circle-plus"></i>`;
 }
 
+// Check the data output. Used for debugging purposes.
 function checkDataOutput(dataFormatted, lastStartingDateMap, lastEndingDateMap){
+    console.log("Checking data output")
     previousDate = Date.parse(lastStartingDateMap)
     lastEndingDate = Date.parse(lastEndingDateMap)
     for (let i = 0; i < dataFormatted.length-1; i++) {
@@ -185,13 +218,11 @@ function checkDataOutput(dataFormatted, lastStartingDateMap, lastEndingDateMap){
             console.log(dataFormatted[i][0])
             console.log(Date.parse(dataFormatted[i][0]))
             console.log(dataFormatted[i+1][0])
-            console.log("ERROR")
         }
     }
-    console.log("CHECK ENDED")
-
 }
 
+// Check the data output. Used for debugging purposes.
 function checkGapBeginning(dataFormatted1, dataFormatted2){
     console.log("Checking gap beginning")
     for (let i = 0; i < dataFormatted1.length-1; i++) {
@@ -201,14 +232,13 @@ function checkGapBeginning(dataFormatted1, dataFormatted2){
 
             console.log(dataFormatted2[i][0])
             console.log(Date.parse(dataFormatted2[i][0]))
-            console.log("ERROR")
             break
         }
     }
-    console.log("CHECK 2 ENDED")
-
 }
 
+// Format data from JSON to expected format.
+// Iterate over the JSON object and then the sources -> stations -> parameters and fill the data if there is missed dates.
 function formatDataJSON(lastStartingDateMap, lastEndingDateMap, jsonData){
     var lastEndingDate = Date.parse(lastEndingDateMap)
     for (let i = 0; i < jsonData.length; i++) {
@@ -262,19 +292,12 @@ function formatDataJSON(lastStartingDateMap, lastEndingDateMap, jsonData){
                         }
                         previousDate = previousDate + 3600000;
                     }
-                    // if (station == "David-Dufour") {
-                    //     // checkDataOutput(dataFormatted, lastStartingDateMap, lastEndingDateMap);
-                    // }
                     parameterFormatted[parameter] = dataFormatted
-                    console.log(station)
-                    console.log(dataFormatted.length)
                 }
                 stationFormatted[station] = parameterFormatted
             }
             sourceFormatted[source] = stationFormatted
         }
     }
-    // checkGapBeginning(sourceFormatted["Climacity"]["Prairie"]["Tamb_Avg*"], sourceFormatted["VHG"]["David-Dufour"]["PLU"])
-    // console.log(sourceFormatted)
     return [sourceFormatted]
 }
