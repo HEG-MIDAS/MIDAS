@@ -5,8 +5,8 @@
 function downloadData(JSONDataToCSV) {
    
     for (var elementNumber in JSONDataToCSV) {
-        CSVHeader = []
-        data = []
+        var CSVHeader = []
+        var data = []
         if (JSONDataToCSV.hasOwnProperty(elementNumber)) {
             for (var source in JSONDataToCSV[elementNumber]) {
                 if (JSONDataToCSV[elementNumber].hasOwnProperty(source)) {
@@ -24,7 +24,7 @@ function downloadData(JSONDataToCSV) {
                                     else {
                                         CSVHeader.push(source+"-"+station+"-"+parameter)
                                         // Extract only the value of the parameter from the 2d array and create a new array
-                                        dataParameter = JSONDataToCSV[elementNumber][source][station][parameter].map(a => a[1]).flat(1)
+                                        var dataParameter = JSONDataToCSV[elementNumber][source][station][parameter].map(a => a[1]).flat(1)
                                         // Add new value to already existing data
                                         for (let i = 0; i < data.length; i++) {
                                             data[i].push(dataParameter[i]);
@@ -118,7 +118,7 @@ function addResearch(pageLoaded=true){
         stations.push([]);
         parameters.push([]);
 
-        target = document.querySelector("#addResearchDiv");
+        var target = document.querySelector("#addResearchDiv");
         target.parentNode.insertBefore(clone, target);
 
         handleSubmitButton();
@@ -210,19 +210,19 @@ function checkGapBeginning(dataFormatted1, dataFormatted2){
 }
 
 function formatDataJSON(lastStartingDateMap, lastEndingDateMap, jsonData){
-    lastEndingDate = Date.parse(lastEndingDateMap)
+    var lastEndingDate = Date.parse(lastEndingDateMap)
     for (let i = 0; i < jsonData.length; i++) {
-        sourceFormatted = {}
+        var sourceFormatted = {}
         for (var source in jsonData[i]) {
-            stationFormatted = {}
+            var stationFormatted = {}
             for (var station in jsonData[i][source]) {
-                parameterFormatted = {}
+                var parameterFormatted = {}
                 for (var parameter in jsonData[i][source][station]) {
-                    previousDate = Date.parse(lastStartingDateMap)
-                    dataFormatted = []
-                    cDate = Date.parse(jsonData[i][source][station][parameter][0][0])
+                    var previousDate = Date.parse(lastStartingDateMap)
+                    var dataFormatted = []
+                    var cDate = Date.parse(jsonData[i][source][station][parameter][0][0])
                     if (previousDate < cDate) {
-                        dateOb = new Date(previousDate)
+                        var dateOb = new Date(previousDate)
                         dataFormatted.push([dateOb.toLocaleString("sv-SE"), ""])
                     }
                     for (let j = 0; j < jsonData[i][source][station][parameter].length; j++) {
@@ -231,7 +231,7 @@ function formatDataJSON(lastStartingDateMap, lastEndingDateMap, jsonData){
                             previousDate = previousDate + 3600000
                             dateOb = new Date(previousDate)
                             if (parseInt(dateOb.toLocaleString("sv-SE")[12]) - parseInt(dataFormatted[dataFormatted.length-1][0][12]) == 2) {
-                                tmp = dateOb.toLocaleString("sv-SE")
+                                var tmp = dateOb.toLocaleString("sv-SE")
                                 tmp = tmp.slice(0, 12) + '2' + tmp.slice(13)
                                 dataFormatted.push([tmp, ""])
                                 dataFormatted.push([dateOb.toLocaleString("sv-SE"), ""])
