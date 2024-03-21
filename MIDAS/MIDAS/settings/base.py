@@ -152,16 +152,21 @@ CLIMACITY_ROOT = os.path.join(BASE_DIR, '../Climacity')
 SABRA_ROOT = os.path.join(BASE_DIR, '../SABRA')
 VHG_ROOT = os.path.join(BASE_DIR, '../VHG')
 STATIC_ROOT=os.path.join(BASE_DIR,'../static')
-COMPRESS_OFFLINE = True
-COMPRESS_ENABLED = True
 
 AUTH_USER_MODEL = 'MIDAS_app.User'
 
 GEOIP_PATH =os.path.join(BASE_DIR,'geoip')
 
-STATICFILES_FINDERS = (
+STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    # other finders..
     'compressor.finders.CompressorFinder',
-)
+]
+
+COMPRESS_FILTERS = {
+    'js': ['compressor.filters.closure.ClosureCompilerFilter']
+}
+COMPRESS_CLOSURE_COMPILER_BINARY = "java -jar " + str(os.path.join(BASE_DIR,'MIDAS/settings/closure-compiler.jar'))# + " --compilation_level ADVANCED"
+STATIC_ROOT=os.path.join(BASE_DIR,'../static')
+COMPRESS_OFFLINE = True
+COMPRESS_ENABLED = True
