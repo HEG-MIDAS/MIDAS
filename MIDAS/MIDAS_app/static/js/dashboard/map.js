@@ -6,12 +6,12 @@
 // Arrays of data selected
 //////////////////////////////////////////////////////////////////////////////////////
 
-sourcesMap = ["climacity", "sabra", "vhg"];
-stationsMap4Search = [];
-stationsMap = [];
-parametersMap = [];
+var sourcesMap = ["climacity", "sabra", "vhg"];
+var stationsMap4Search = [];
+var stationsMap = [];
+var parametersMap = [];
 
-markersArray = [];
+var markersArray = [];
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Handles the offcanvas display
@@ -204,7 +204,7 @@ function synchronizeButtonCollapseAndMarkers(){
 
 // Manage the display of the badges for the stations and the parameters
 function manageBadges(){
-    badgesElement = document.getElementById("badges-recap");
+    const badgesElement = document.getElementById("badges-recap");
     badgesElement.innerHTML = '';
 
     // let badgeSearch = document.createElement("span");
@@ -233,7 +233,7 @@ function manageBadges(){
 
 // Manage the parameters selected or unselected
 function manageParameter(parameterSlug, parameterName){
-    btn = document.getElementById(parameterSlug);
+    const btn = document.getElementById(parameterSlug);
     if (btn.classList.contains("btn-outline-secondary")){
         btn.classList.remove("btn-outline-secondary");
         btn.classList.add("btn-secondary");
@@ -292,7 +292,7 @@ async function manageParametersOnStationDeletion(){
 
 // Manage the station selected or unselected
 function manageStation(stationSlug, stationName){
-    btn = document.getElementById(stationSlug);
+    const btn = document.getElementById(stationSlug);
     if (!stationsMap.some(e => e.slug === stationSlug)){
         stationsMap.push({
             slug: stationSlug,
@@ -321,7 +321,7 @@ function requestMapData(lastStartingDate, lastEndingDate, sources, stations, par
     // Hide the error message if it's not already hidden
     document.getElementById("error-dashboard-message").hidden = true;
     // Create loader icon
-    loader = document.getElementById('loaderMap');
+    const loader = document.getElementById('loaderMap');
     if (myChart == null){
         loader.classList.add("loader");
     }
@@ -688,7 +688,7 @@ const levenshteinDistance = (s, t) => {
 
 
 function searchBarStations(valueOfSearchBar){
-    cardResultsList = document.getElementById("cardResultsList");
+    const cardResultsList = document.getElementById("cardResultsList");
     cardResultsList.innerHTML = "";
 
     if (valueOfSearchBar.length >= 3 && valueOfSearchBar.trim().length >= 3){
@@ -700,7 +700,7 @@ function searchBarStations(valueOfSearchBar){
         if (resultsFilter.length > 0){
 
             resultsFilter.forEach(result => {
-                listElement = document.createElement("li");
+                const listElement = document.createElement("li");
                 listElement.classList.add("list-group-item", "listElementSelection");
                 listElement.innerHTML = result.name.concat(" - ", result.slug);
                 listElement.setAttribute("onclick", "".concat("openSelectionMenuBadge(`", result.slug,"`,`", result.name,"`)"))
@@ -709,7 +709,7 @@ function searchBarStations(valueOfSearchBar){
         }
     }
     else {
-        listElement = document.createElement("li");
+        const listElement = document.createElement("li");
         listElement.classList.add("list-group-item", "clueListElementSelection");
         listElement.innerHTML = "Entrer au moins 3 caractères";
         cardResultsList.appendChild(listElement);
@@ -773,6 +773,7 @@ searchInput.addEventListener('keydown', function(event){
         let valOfSearchBar = searchBar.value
         if (valOfSearchBar.length >= 3) {
             keyIputSearch();
+            const cardResultsList = document.getElementById("cardResultsList");
             cardResultsList.parentNode.hidden = true;
         }
     }
@@ -792,7 +793,7 @@ const myInput = document.getElementById('displayButton')
 myModalEl.addEventListener('shown.bs.modal', async event => {
     myInput.focus()
     let jsonData = await requestMapData(lastStartingDateMap, lastEndingDateMap, sourcesMap, stationsMap.map(e => e.slug), parametersMap.map(e => e.slug));
-    jsonDataFormatted = formatDataJSON(lastStartingDateMap.toString().replace("T", " ") + ":00", lastEndingDateMap.toString().replace("T", " ") + ":00", [jsonData])
+    var jsonDataFormatted = formatDataJSON(lastStartingDateMap.toString().replace("T", " ") + ":00", lastEndingDateMap.toString().replace("T", " ") + ":00", [jsonData])
     drawChart(jsonDataFormatted, "mainMap");
     // Remove loader icon
     loader.className = '';
