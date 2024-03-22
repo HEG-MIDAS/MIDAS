@@ -3,16 +3,12 @@
 {% load compress %}
 {% block extracss %}
     <link rel="stylesheet" href="/static/css/dashboard.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-    integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
-    crossorigin=""/>
+    <link rel="stylesheet" href="/static/lib/leaflet/leaflet.css">
 {% endblock %}
 
 {% block extrajs %}
     <script src="/static/lib/echarts/echarts.js" charset="utf-8"></script>
-    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
-     integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
-     crossorigin=""></script>
+     <script src="/static/lib/leaflet/leaflet.js" charset="utf-8"></script>
      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 {% endblock %}
 

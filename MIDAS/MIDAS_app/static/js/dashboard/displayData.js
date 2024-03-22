@@ -12,11 +12,15 @@ function resetEchartsPlot() {
         myChart.dispose() //Solve the error reported by echarts dom already loaded
     }
 
-    // Initialize the echarts instance based on the prepared dom
-    myChart = echarts.init(document.getElementById(myChartMainID));
+    try {
+        // Initialize the echarts instance based on the prepared dom
+        myChart = echarts.init(document.getElementById(myChartMainID));
 
-    // Display the chart using the configuration items and data just specified.
-    myChart.setOption(option, true);
+        // Display the chart using the configuration items and data just specified.
+        myChart.setOption(option, true);
+    } catch(error){
+        
+    }
 }
 
 window.addEventListener('resize', resetEchartsPlot);
