@@ -11,4 +11,4 @@ Here is the webapp architecture :
 
 More information to come...
 
-https://midas.gexplore.ch
+https://www.gexplore.ch
