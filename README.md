@@ -7,7 +7,7 @@ The webapp will get weather and air quality data in Geneva and display it throug
 
 Here is the webapp architecture :
 
-
+![](midas_diagramme.png)
 
 More information to come...
 
