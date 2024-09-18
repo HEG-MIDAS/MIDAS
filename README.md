@@ -30,7 +30,7 @@ Les emplacements des stations de mesure sont également enregistrés dans notre 
 
 La partie frontend est quant à elle écrite en JavaScript à l'aide de la librairie ECharts pour la visualisation des données. Le dashboard peut être utilisé de deux façons :
 
-La première utilise une carte d'OpenStreetMap, centre la vue de celle-ci sur Genève et dessine des marqueurs sur les emplacements dont nous possèdons des données. La sélection s'effectue directement sur les stations et il est possible de choisir le type de mesures à afficher. Elle a spécifiquement été développée pour l'accessibilité et l'expérience utilisateur.
+La première utilise une carte d'OpenStreetMap, centre la vue de celle-ci sur Genève et dessine des marqueurs sur les emplacements dont nous possédons des données. La sélection s'effectue directement sur les stations et il est possible de choisir le type de mesures à afficher. Elle a spécifiquement été développée pour l'accessibilité et l'expérience utilisateur.
 
 La seconde est une vue simplifiée où la sélection des données à afficher s'effectue en choisisant d'abord la source des données, puis la station qui nous intéresse, et finalement les paramètres. Il devient alors possible de croiser plusieurs paramètres différents ou à des échelles de temps différentes. Cette version est destinée à un public qui sait ce qu'il recherche ou souhaite effectuer des requêtes plus complexes.
 
@@ -39,6 +39,10 @@ La seconde est une vue simplifiée où la sélection des données à afficher s'
 Afin de permettre non seulement la visualisation des données, mais également leur exploitation. Nous avons mis en place une API REST accessible pour les personnes possèdant un compte. Ils peuvent ainsi créer des tokens pour des accès sécurisés et un usage contrôlé afin d'effectuer des requêtes adaptées à leurs besoins en matière de recherche climatique.
 
 L'objectif est de faciliter l'accès des données climatiques du canton de Genève aux institutions et aux chercheurs. 
+
+## Intégration et déploiement continu
+
+Afin de faciliter l'intégration et le déploiement de l'application web, nous avons dans un premier temps conteneurisé cette dernière avec Docker grâce aux GitHub Actions. Dans un second temps, lorsque l'image est générée, celle-ci est automatiquement téléchargée par le serveur de production et déployée.
 
 ## Code Open Source
 
