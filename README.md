@@ -4,6 +4,8 @@ Le projet MIDAS porte sur le climat urbain à Genève. Celui-ci a été réalis�
 
 Dans le cadre de ce projet, il est apparu le besoin de centraliser divers types de données climatiques et de pouvoir les visualiser rapidement et facilement à l'aide d'un dashboard dédié afin de mieux comprendre et anticiper les phénomènes liés au climat urbain. Celui-ci est accessible à l'url suivante : [https://gexplore.ch/](https://gexplore.ch/).
 
+## Architecture
+
 Architecture de l'application web :
 
 ![](midas_diagramme.png)
