@@ -42,6 +42,4 @@ L'objectif est de faciliter l'accès des données climatiques du canton de Genè
 
 ## Code Open Source
 
-Le Dashboard est open source et son code accessible sur GitHub au lien suivant : [https://github.com/HEG-MIDAS/MIDAS](https://github.com/HEG-MIDAS/MIDAS).
-
-Il se veut transparent et réutilisable par d'autres organismes souhaitant développer une solution similaire. De plus, le projet est ouvert aux contributions, et nous encourageons les développeurs à participer à l'amélioration et l'évolution de cet outil.
+Le Dashboard est open source. Il se veut transparent et réutilisable par d'autres organismes souhaitant développer une solution similaire. De plus, le projet est ouvert aux contributions, et nous encourageons les développeurs à participer à l'amélioration et l'évolution de cet outil.
