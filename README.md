@@ -1,8 +1,10 @@
 # MIDAS
 
-Le projet MIDAS porte sur le climat urbain à Genève. Celui-ci a été réalisé en collaboration entre la Haute école de gestion de Genève (HEG-GE) et la Haute école du paysage, d'ingénierie et d'architecture (HEPIA). Il a notamment donné lieu à deux Hackathons SmartCity Xperience, et plusieurs Data Stories. Plus d'informations sur le projet au lien suivant : [https://campus.hesge.ch/id_bilingue/projekte/MIDAS/index.html](https://campus.hesge.ch/id_bilingue/projekte/MIDAS/index.html).
+Le projet MIDAS porte sur le climat urbain à Genève. Celui-ci a été réalisé en collaboration entre la Haute école de gestion de Genève ([HEG-GE](https://www.hesge.ch/heg)) et la Haute école du paysage, d'ingénierie et d'architecture ([HEPIA](https://www.hesge.ch/hepia/)). Il a notamment donné lieu à deux Hackathons SmartCity Xperience, et plusieurs Data Stories. Plus d'informations sur le projet au lien suivant : [https://campus.hesge.ch/id_bilingue/projekte/MIDAS/index.html](https://campus.hesge.ch/id_bilingue/projekte/MIDAS/index.html).
 
-Dans le cadre de ce projet, il est apparu le besoin de centraliser divers types de données climatiques et de pouvoir les visualiser rapidement et facilement à l'aide d'un dashboard dédié afin de mieux comprendre et anticiper les phénomènes liés au climat urbain. Celui-ci est accessible à l'url suivante : [https://gexplore.ch/](https://gexplore.ch/).
+Dans le cadre de ce projet, il est apparu le besoin de centraliser divers types de données climatiques et de pouvoir les visualiser rapidement et facilement à l'aide d'un dashboard dédié afin de mieux comprendre et anticiper les phénomènes liés au climat urbain. 
+
+Celui-ci est accessible à l'url suivante : [https://www.gexplore.ch/](https://www.gexplore.ch/).
 
 ## Architecture
 
@@ -14,11 +16,11 @@ Architecture de l'application web :
 
 Pour réaliser le dashboard, nous avons décidé d'utiliser le framework Django. Celui-ci nous offre une grande flexibilité pour la récolte de données et leur traitement à l'aide du langage Python, ainsi que la possibilité de créer simplement et efficacement une API REST dédiée grâce aux modules déjà existants.
 
-Concernant la base de données, nous avons opté pour MySQL pour sa rapidité, stabilité et facilité d'utilisation.
+Concernant la base de données, nous avons opté pour SQLite pour sa rapidité, stabilité et facilité d'utilisation.
 
 ## Données
 
-Les données disponibles sur [https://gexplore.ch/](https://gexplore.ch/) sont extraites de la station de mesures de l'HEPIA, des stations de mesure du Service de l'air, du bruit et des rayonnements non ionisants (SABRA) de Genève, ainsi que des mesures de l'Office cantonal de l'eau (OCEau).
+Les données disponibles sur [https://www.gexplore.ch/](https://www.gexplore.ch/) sont extraites de la station de mesures de l'HEPIA ([Climacity](http://www.climacity.org/Axis/)), des stations de mesure du Service de l'air, du bruit et des rayonnements non ionisants ([SABRA](https://www.ge.ch/organisation/ocev-service-air-du-bruit-rayonnements-non-ionisants)) de Genève, ainsi que des mesures de l'Office cantonal de l'eau ([OCEau](https://www.ge.ch/organisation/office-cantonal-eau-oceau)).
 
 ## Backend
 
@@ -26,11 +28,11 @@ Le backend gère la récolte de données auprès de différentes sources, soit a
 
 Le principal enjeu auquel nous avons fait face lors de la normalisation des données a été de convenir d'une échelle de temps identique pour toutes les données indépandemment de leur fréquence de mesure. Afin de conserver une certaine granularité sans détériorer artificiellement des mesures journalières, nous avons opté pour un interval horaire. Les mesures ont donc été ajustées soit en réalisant une moyenne, soit en duplicant la valeur sur cette unité.
 
-Les emplacements des stations de mesure sont également enregistrés dans notre base de données MySQL. Un système d'utilisateur a également été implémenté afin de permettre la création de Tokens pour l'utilisation de l'API REST mise à disposition.
+Les emplacements des stations de mesure sont également enregistrés dans notre base de données. Un système d'utilisateur a également été implémenté afin de permettre la création de Tokens pour l'utilisation de l'API REST mise à disposition.
 
 ## Frontend
 
-La partie frontend est quant à elle écrite en JavaScript à l'aide de la librairie ECharts pour la visualisation des données. Le dashboard peut être utilisé de deux façons :
+La partie frontend est quant à elle écrite en JavaScript à l'aide de la librairie [ECharts](https://echarts.apache.org/en/index.html) pour la visualisation des données. Le dashboard peut être utilisé de deux façons :
 
 La première utilise une carte d'OpenStreetMap, centre la vue de celle-ci sur Genève et dessine des marqueurs sur les emplacements dont nous possédons des données. La sélection s'effectue directement sur les stations et il est possible de choisir le type de mesures à afficher. Elle a spécifiquement été développée pour l'accessibilité et l'expérience utilisateur.
 
@@ -48,4 +50,4 @@ Afin de faciliter l'intégration et le déploiement de l'application web, nous a
 
 ## Code Open Source
 
-Le Dashboard est open source. Il se veut transparent et réutilisable par d'autres organismes souhaitant développer une solution similaire. De plus, le projet est ouvert aux contributions, et nous encourageons les développeurs à participer à l'amélioration et l'évolution de cet outil.
+Le Dashboard est open source sous la licence GPL version 3. Il se veut transparent et réutilisable par d'autres organismes souhaitant développer une solution similaire. De plus, le projet est ouvert aux contributions, et nous encourageons les développeurs à participer à l'amélioration et l'évolution de cet outil.
