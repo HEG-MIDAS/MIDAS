@@ -31,6 +31,9 @@ const dropupBootstrap = new bootstrap.Dropdown('#dropdownMenuButtonLegend', {
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
+    // Politique OSM : les navigateurs doivent envoyer un Referer, sinon le trafic n'est pas attribuable
+    // au site et OSM repond 403. Force l'envoi de l'origine quelle que soit la Referrer-Policy de la page.
+    referrerPolicy: 'strict-origin-when-cross-origin',
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 
