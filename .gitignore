@@ -23,3 +23,7 @@ docker-compose.override.yml
 # Ignore static
 static/*
 !static/index.html
+
+# Artefacts de build du paquet local (pip install ./packaging_merge_csv_by_date)
+*.egg-info/
+packaging_merge_csv_by_date/build/

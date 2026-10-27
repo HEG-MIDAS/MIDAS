@@ -18,10 +18,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '^_rew1t7e&yce-9!!6)(w@!e5bun!cuq+=nryz@!(s-&@)(nrf'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '^_rew1t7e&yce-9!!6)(w@!e5bun!cuq+=nryz@!(s-&@)(nrf')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', '1') == '1'
 
 ALLOWED_HOSTS = ["*"]
 
@@ -41,11 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'captcha',
     'compressor',
-    'geoip2'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # Sert les fichiers de STATIC_ROOT (collectstatic) quand DEBUG est a False ; inactif en dev (runserver + DEBUG)
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -55,6 +56,8 @@ MIDDLEWARE = [
 ]
 
 CSRF_TRUSTED_ORIGINS = ['https://www.gexplore.ch','https://gexplore.ch','http://localhost']
+# Origines supplementaires, separees par des virgules (ex. URL de port Coder en dev) : DJANGO_CSRF_TRUSTED_ORIGINS="https://*.example.com"
+CSRF_TRUSTED_ORIGINS += [o.strip() for o in os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',') if o.strip()]
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_AGE = None
 CSRF_COOKIE_SAMESITE = 'Strict'
@@ -122,8 +125,6 @@ TIME_ZONE = 'Europe/Zurich'
 
 USE_I18N = True
 
-USE_L10N = True
-
 USE_TZ = True
 
 
@@ -167,5 +168,4 @@ COMPRESS_FILTERS = {
     'js': ['compressor.filters.closure.ClosureCompilerFilter']
 }
 COMPRESS_CLOSURE_COMPILER_BINARY = "google-closure-compiler"# "java -jar " + str(os.path.join(BASE_DIR,'MIDAS/settings/closure-compiler.jar'))# + " --compilation_level ADVANCED"
-STATIC_ROOT=os.path.join(BASE_DIR,'../static')
 # COMPRESS_OFFLINE = True

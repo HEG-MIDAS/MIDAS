@@ -3,6 +3,7 @@ import time
 import re
 import sys
 import getopt
+import shutil
 import numpy as np
 from sys import platform
 from selenium import webdriver
@@ -154,7 +155,7 @@ def manipulate(year_working_on: str):
                     typologie = x.strip().split("Typologie:  ")[1]
                 # If line has 'Polluant'
                 elif x.find('Polluant')>-1:
-                    polluant = re.search("\((.*?)\)",x.strip().split("Polluant:  ")[1]).group(1)
+                    polluant = re.search(r"\((.*?)\)",x.strip().split("Polluant:  ")[1]).group(1)
                 # If line has 'Date'
                 elif x.find('Date')>-1:
                     # Do it for Hourly
@@ -286,7 +287,7 @@ def firefoxDriver():
     """
     # Create Firefox Options needed to autodownload
     options = webdriver.FirefoxOptions()
-    options.headless = True
+    options.add_argument("-headless")
     options.set_preference("browser.download.folderList", 2)
     options.set_preference("browser.download.viewableInternally.enabledTypes", "")
     options.set_preference("browser.download.useDownloadDir", True)
@@ -295,8 +296,11 @@ def firefoxDriver():
     options.set_preference("pdfjs.disabled", True)
     options.set_preference("browser.helperApps.neverAsk.openFile", "text/csv,application/octet-stream")
     # Create Service for Firefox (Gecko) Driver Location
+    # geckodriver du systeme (image Docker / devcontainer) en priorite, sinon le binaire embarque dans SABRA/
     service = None
-    if platform == "darwin":
+    if shutil.which('geckodriver'):
+        service = Service(shutil.which('geckodriver'))
+    elif platform == "darwin":
         service = Service(os.path.join(scraper_path,'geckodriver_osx'))
     elif platform == "linux" or platform == "linux2":
         service = Service(os.path.join(scraper_path,'geckodriver_linux'))
@@ -313,12 +317,14 @@ def chromeDriver():
           the driver using Chrome
     """
     options = webdriver.ChromeOptions()
-    options.headless = True
+    options.add_argument("--headless=new")
     # Specify Download folder
     prefs = {"download.default_directory" : scraper_path}
     options.add_experimental_option("prefs",prefs)
     service = None
-    if platform == "darwin":
+    if shutil.which('chromedriver'):
+        service = sv(shutil.which('chromedriver'))
+    elif platform == "darwin":
         service = sv(os.path.join(scraper_path,'chromedriver_osx'))
     elif platform == "linux" or platform == "linux2":
         service = sv(os.path.join(scraper_path,'chromedriver_linux'))
@@ -357,8 +363,8 @@ def download(s:str,e:str,b:str):
     for u in urbanArea:
         for k, v in pollTimeStep.items():
             scraper(URL,driver,u,k,'autre',s,e,v)
-    # Close Firefox Driver
-    driver.close()
+    # Close Firefox Driver (quit : ferme aussi le processus du navigateur)
+    driver.quit()
 
 def operation(sD:str,eD:str,b:str):
     """Wrapper Function

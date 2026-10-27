@@ -5,7 +5,7 @@
 {% block registration_content %}
 {% if user.is_authenticated%}
 <div class="mb-3 row justify-content-center">
-    <p class="col-sm-12 text-center">Vous êtes déjà connecté. Souhaitez-vous vous <a href="/logout">déconnecter</a>?</p>
+    <p class="col-sm-12 text-center">Vous êtes déjà connecté. Souhaitez-vous vous <button type="submit" form="logout-form" class="btn btn-link p-0 align-baseline">déconnecter</button>?</p>
 </div>
 {% else %}
 <form method="post">

@@ -3,7 +3,7 @@
 # Get yesterday date
 YDate=$(date -d "yesterday" +'%Y-%m-%d')
 SHELL=/bin/bash
-PYTHONPATH=/usr/local/lib/python3.9/site-packages
+PATH=/usr/local/bin:/usr/bin:/bin
 
 # Climacity
 #0 0 * * * /usr/local/bin/python /app/Climacity/climacity.py -s $YDate > /proc/1/fd/1 2>/proc/1/fd/2

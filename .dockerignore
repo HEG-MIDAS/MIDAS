@@ -1,0 +1,18 @@
+# Contexte de build du Dockerfile de production : exclut ce qui n'est pas copie dans l'image
+.git
+.github
+.devcontainer
+**/__pycache__
+**/*.pyc
+**/*.sqlite3
+media/**/*.csv
+media/**/*.zip
+logs/*.txt
+# Pilotes Selenium embarques : l'image installe Firefox ESR + geckodriver ; seul geckodriver_linux reste en secours
+SABRA/chromedriver_*
+SABRA/geckodriver_osx
+SABRA/geckodriver_linux_old
+SABRA/geckodriver_linux_new_old
+SABRA/geckodriver_linux_latest
+IDAWEB
+HEPIA
