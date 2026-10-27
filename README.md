@@ -46,7 +46,14 @@ L'objectif est de faciliter l'accès des données climatiques du canton de Genè
 
 ## Intégration et déploiement continu
 
-Afin de faciliter l'intégration et le déploiement de l'application web, nous avons dans un premier temps conteneurisé cette dernière avec Docker grâce aux GitHub Actions. Dans un second temps, lorsque l'image est générée, celle-ci est automatiquement téléchargée par le serveur de production et déployée.
+Afin de faciliter l'intégration et le déploiement de l'application web, nous avons conteneurisé cette dernière avec Docker grâce aux GitHub Actions : à chaque push sur `master`, l'image est construite sur un runner GitHub et publiée sur `ghcr.io/heg-midas/midas:master` (un lancement manuel depuis l'onglet Actions publie l'image d'une autre branche sous le nom de cette branche).
+
+Le déploiement se fait ensuite sur le serveur de production, qui héberge son propre `docker-compose.yml` (base SQLite montée depuis l'hôte, nginx pour `/static/`, Traefik devant) :
+
+```sh
+docker pull ghcr.io/heg-midas/midas:master
+docker stack deploy --with-registry-auth --resolve-image always -c /home/docker/midas/docker-compose.yml midas
+```
 
 ## Développement local (devcontainer)
 
