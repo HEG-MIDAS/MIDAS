@@ -72,9 +72,9 @@ endingDateMap.value = lastEndingDateMap
 
 var map = L.map('map').setView([46.2026, 6.1235], 12);
 map.zoomControl.setPosition('topright');
-        map.addLayer(new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            // {attribution:'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'}
-        ));
+// La couche de tuiles OpenStreetMap est ajoutee dans map.js (URL https officielle, attribution, referrerPolicy).
+// L'ancienne couche http://{s}.tile.openstreetmap.org ajoutee ici faisait doublon (tuiles chargees deux fois)
+// et utilisait une forme d'URL interdite par la politique d'usage d'OSM.
 
 L.DomEvent.disableClickPropagation(document.getElementById("map-menu"));
 L.DomEvent.disableScrollPropagation(document.getElementById("map-menu"));

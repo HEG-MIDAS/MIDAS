@@ -65,6 +65,11 @@ CSRF_USE_SESSIONS = True
 
 SESSION_COOKIE_SAMESITE = 'Strict'
 
+# Envoie l'origine (https://www.gexplore.ch) aux ressources externes, dont les tuiles OpenStreetMap :
+# leur politique d'usage exige un Referer et bloque (403) le trafic non attribuable. Le defaut Django
+# ('same-origin') supprime le Referer. Valeur = celle par defaut des navigateurs, le chemin n'est pas envoye.
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+
 ROOT_URLCONF = 'MIDAS.urls'
 
 TEMPLATES = [
