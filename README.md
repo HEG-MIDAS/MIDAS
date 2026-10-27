@@ -14,7 +14,7 @@ Architecture de l'application web :
 
 ## Choix des technologies
 
-Pour réaliser le dashboard, nous avons décidé d'utiliser le framework Django. Celui-ci nous offre une grande flexibilité pour la récolte de données et leur traitement à l'aide du langage Python, ainsi que la possibilité de créer simplement et efficacement une API REST dédiée grâce aux modules déjà existants.
+Pour réaliser le dashboard, nous avons décidé d'utiliser le framework Django (Django 5.2 LTS sur Python 3.13). Celui-ci nous offre une grande flexibilité pour la récolte de données et leur traitement à l'aide du langage Python, ainsi que la possibilité de créer simplement et efficacement une API REST dédiée grâce aux modules déjà existants.
 
 Concernant la base de données, nous avons opté pour SQLite pour sa rapidité, stabilité et facilité d'utilisation.
 
@@ -47,6 +47,27 @@ L'objectif est de faciliter l'accès des données climatiques du canton de Genè
 ## Intégration et déploiement continu
 
 Afin de faciliter l'intégration et le déploiement de l'application web, nous avons dans un premier temps conteneurisé cette dernière avec Docker grâce aux GitHub Actions. Dans un second temps, lorsque l'image est générée, celle-ci est automatiquement téléchargée par le serveur de production et déployée.
+
+## Développement local (devcontainer)
+
+Le dossier `.devcontainer/` fournit un environnement complet : Python 3.13, dépendances de `requirements.txt` dans un venv persistant (`/opt/venv`), Firefox ESR et geckodriver pour le scraper SABRA.
+
+```sh
+devcontainer up --workspace-folder .
+```
+
+Au démarrage, le conteneur installe les dépendances, génère et applique les migrations, crée le compte `admin` / `pw` (variables `admin_username`, `admin_password`, `admin_email` de `.devcontainer/docker-compose.yml`), insère les sources de `sources.csv` puis lance `runserver`. Le site répond sur le port 8282 de l'hôte (8000 dans le conteneur).
+
+Depuis un terminal du conteneur (`devcontainer exec --workspace-folder . bash`) :
+
+- `python MIDAS/manage.py <commande>` : commandes Django (`insert_ssp_db`, `update_db_params_infos`, `test`, ...)
+- `python Climacity/climacity.py -s 2024-01-01 -e 2024-01-02` : récolte Climacity
+- `python SABRA/sabra.py -s 2024-01-01 -e 2024-01-02` : récolte SABRA (Firefox headless)
+- `pip install <paquet>` puis ajout de la version dans `requirements.txt`
+
+Les variables d'environnement `DJANGO_SECRET_KEY`, `DJANGO_DEBUG` (`1`/`0`) et `DJANGO_CSRF_TRUSTED_ORIGINS` (origines séparées par des virgules) surchargent `MIDAS/MIDAS/settings/base.py`.
+
+L'image de production (`Dockerfile`, `docker-compose.prod.yml`) repose sur `python:3.13-slim-bookworm` avec Firefox ESR, geckodriver, Node.js et Google Closure Compiler (minification JS de django-compressor) installés au build. `MIDAS/MIDAS/settings/prod.py` désactive `DEBUG` et WhiteNoise sert les fichiers statiques collectés par `collectstatic`.
 
 ## Code Open Source
 

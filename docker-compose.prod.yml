@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   midas:
     image: ghcr.io/heg-midas/midas:master

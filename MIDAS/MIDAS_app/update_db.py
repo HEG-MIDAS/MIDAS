@@ -97,7 +97,7 @@ def update_infos_parameters():
                                     if file.split('.')[-1] == 'csv':
                                         with open(os.path.join(station_path, file)) as f:
                                             for line in f:
-                                                line_array = re.split('\s{3,}', line.rstrip())
+                                                line_array = re.split(r'\s{3,}', line.rstrip())
                                                 if re.match("^-+-$", line.rstrip()):
                                                     break
                                                 if line_array[0] in parameters:

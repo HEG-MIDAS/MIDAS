@@ -1,0 +1,32 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Meme uid que coder (1000) : les fichiers crees (db.sqlite3, migrations, media) gardent le bon proprietaire
+    user: vscode
+    volumes:
+      - ..:/workspace:cached
+      # Paquets Python hors du bind mount : persistent d'un redemarrage a l'autre sans rebuild de l'image
+      - midas_venv:/opt/venv
+    working_dir: /workspace
+    environment:
+      DJANGO_SETTINGS_MODULE: MIDAS.settings.base
+      # Origines CSRF en plus de celles de MIDAS/MIDAS/settings/base.py (URLs de port Coder + acces direct)
+      DJANGO_CSRF_TRUSTED_ORIGINS: "https://*.workspace.ebea.xyz,http://localhost:8282"
+      admin_username: admin
+      admin_password: pw
+      admin_email: midas@midas.ch
+    ports:
+      - "8282:8000"
+    command: sh /workspace/.devcontainer/dev-start.sh
+
+volumes:
+  midas_venv:
+
+networks:
+  default:
+    ipam:
+      config:
+        # Sous-reseau fixe : sinon Docker prend 192.168.0.0/20, ce qui masque le LAN 192.168.5.x
+        - subnet: 10.254.4.0/24

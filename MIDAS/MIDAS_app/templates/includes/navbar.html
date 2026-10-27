@@ -68,7 +68,13 @@
                         <li><a class="dropdown-item" href="/admin">Panneau d'administration</a></li>
                         {% endif %}
                         <li><div class="dropdown-divider"></div></li>
-                        <li><a class="dropdown-item" aria-current="page" href="/logout">Déconnexion</a></li>
+                        <li>
+                            {# Django 5 : la déconnexion exige un POST #}
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="dropdown-item">Déconnexion</button>
+                            </form>
+                        </li>
                     </ul>
                 </li>
                 {% else %}

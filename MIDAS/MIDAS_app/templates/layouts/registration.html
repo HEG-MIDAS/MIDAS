@@ -47,6 +47,10 @@
             </div>
             {% block registration_content %}
             {% endblock%}
+            {% if user.is_authenticated %}
+            {# Cible des boutons "déconnecter" des pages de connexion (Django 5 : la déconnexion exige un POST) #}
+            <form id="logout-form" method="post" action="{% url 'logout' %}" class="d-none">{% csrf_token %}</form>
+            {% endif %}
         </div>
     </div>
 </div>

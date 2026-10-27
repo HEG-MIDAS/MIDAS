@@ -33,14 +33,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
       - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.3.0
-        with:
-          cosign-release: 'v2.2.2'
+        uses: sigstore/cosign-installer@v3
       - name: Check install!
         run: cosign version
 

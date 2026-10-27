@@ -1,0 +1,33 @@
+{
+  "name": "MIDAS",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "remoteUser": "vscode",
+  // Garde la commande du compose (pip install + migrations + runserver, voir dev-start.sh) ;
+  // sinon le devcontainer CLI la remplace par un sleep
+  "overrideCommand": false,
+
+  "forwardPorts": [8282],
+  "portsAttributes": {
+    "8282": {
+      "label": "MIDAS (Django)",
+      "onAutoForward": "openBrowser"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "batisteo.vscode-django"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/opt/venv/bin/python",
+        "python.analysis.extraPaths": ["/workspace/MIDAS"],
+        "editor.tabSize": 4
+      }
+    }
+  }
+}
